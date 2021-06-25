@@ -4,9 +4,17 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_notifications_handler/src/app_state.dart';
+import 'package:flutter/cupertino.dart' show GlobalKey, NavigatorState;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+/// custom sound
+/// channel id and all
+/// debug print for logs
+/// send notification endpoint?
+/// on arrive foreground message call back?
+/// on bg notification arrive??
+///
 class PushNotificationService {
   // ADD THIS IN ANDROID MANIFEST FOR DEFAULT CHANNEL (mandatory for custom sound when app closed)
   //
@@ -18,6 +26,10 @@ class PushNotificationService {
 
   static final _fcm = FirebaseMessaging.instance;
 
+  static GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+
+  static GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
+
   static String? get fcmToken => _fcmToken;
   static String? _fcmToken;
 
@@ -25,7 +37,11 @@ class PushNotificationService {
 
   static Stream<String> get onTokenRefresh => _fcm.onTokenRefresh;
 
-  static void Function(AppState, Map<String, dynamic> payload)? _onTap;
+  static void Function(
+    GlobalKey<NavigatorState>,
+    AppState,
+    Map<String, dynamic> payload,
+  )? _onTap;
 
   static bool _openedAppFromNotification = false;
 
@@ -34,10 +50,18 @@ class PushNotificationService {
   static Future<String?> initialize({
     String? vapidKey,
     bool enableLogs = true,
-    void Function(AppState, Map<String, dynamic> payload)? onTap,
+    void Function(
+      GlobalKey<NavigatorState>,
+      AppState,
+      Map<String, dynamic> payload,
+    )?
+        onTap,
+    GlobalKey<NavigatorState>? navigatorKey,
   }) async {
     _onTap = onTap;
     _enableLog = enableLogs;
+
+    if (navigatorKey != null) _navigatorKey = navigatorKey;
 
     // Firebase app not initialized.
     // if (Firebase.apps.isEmpty) await Firebase.initializeApp();
@@ -90,6 +114,7 @@ class PushNotificationService {
       onSelectNotification: (String? payload) async {
         if (_onTap != null)
           _onTap!(
+            navigatorKey,
             AppState.open,
             payload == null ? {} : jsonDecode(payload),
           );
@@ -151,7 +176,7 @@ class PushNotificationService {
 
     /// if AppState is open, do not handle onTap here because it will trigger as soon as
     /// notification arrives, instead handle in initialize method in onSelectNotification callback.
-    else if (_onTap != null) _onTap!(appState!, message.data);
+    else if (_onTap != null) _onTap!(navigatorKey, appState!, message.data);
   }
 }
 
