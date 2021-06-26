@@ -137,9 +137,6 @@ class PushNotificationService {
     *******************************************************\n
 """);
 
-    // Firebase app not initialized.
-    if (Firebase.apps.isEmpty) await Firebase.initializeApp();
-
     final _androidSpecifics = AndroidNotificationDetails(
       message.notification?.android?.channelId ?? 'Notifications',
       'Notifications',
