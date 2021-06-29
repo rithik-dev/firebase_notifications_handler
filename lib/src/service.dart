@@ -62,6 +62,12 @@ class PushNotificationService {
   /// {@macro notificationIdCallback}
   static late int Function(RemoteMessage) _notificationIdCallback;
 
+  /// {@macro onOpenNotificationArrive}
+  static late void Function(
+    GlobalKey<NavigatorState> navigatorKey,
+    Map<String, dynamic> payload,
+  )? _onOpenNotificationArrive;
+
   /// Initialize the implementation class
   static Future<String?> initialize({
     String? vapidKey,
@@ -79,11 +85,17 @@ class PushNotificationService {
     required String channelDescription,
     required String groupKey,
     required final int Function(RemoteMessage) notificationIdCallback,
+    required void Function(
+      GlobalKey<NavigatorState> navigatorKey,
+      Map<String, dynamic> payload,
+    )?
+        onOpenNotificationArrive,
   }) async {
     _onTap = onTap;
-    _enableLogs = enableLogs;
+    _enableLogs = true;
     _customSound = customSound;
     _notificationIdCallback = notificationIdCallback;
+    _onOpenNotificationArrive = onOpenNotificationArrive;
 
     _channelId = channelId;
     _channelName = channelName;
@@ -194,7 +206,7 @@ class PushNotificationService {
 
     final _localNotifications = await _initializeLocalNotifications();
 
-    if (appState == AppState.open)
+    if (appState == AppState.open) {
       await _localNotifications.show(
         _notificationIdCallback(message),
         message.notification?.title,
@@ -202,6 +214,9 @@ class PushNotificationService {
         notificationPlatformSpecifics,
         payload: jsonEncode(message.data),
       );
+      if (_onOpenNotificationArrive != null)
+        _onOpenNotificationArrive!(_navigatorKey, message.data);
+    }
 
     /// if AppState is open, do not handle onTap here because it will trigger as soon as
     /// notification arrives, instead handle in initialize method in onSelectNotification callback.

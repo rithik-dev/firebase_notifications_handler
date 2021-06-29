@@ -114,6 +114,20 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// {@endtemplate}
   final void Function(BuildContext, String?)? onFCMTokenUpdate;
 
+  /// {@template onOpenNotificationArrive}
+  /// This callback is triggered when the a new notification arrives
+  /// when the app is open i.e. appState is [AppState.open].
+  ///
+  /// When the notification is tapped on, [onTap] is called.
+  ///
+  /// See also:
+  ///   * [onTap] parameter.
+  /// {@endtemplate}
+  final void Function(
+    GlobalKey<NavigatorState> navigatorKey,
+    Map<String, dynamic> payload,
+  )? onOpenNotificationArrive;
+
   /// {@template onTap}
   /// This callback is triggered when the notification is tapped.
   /// It provides 3 values namely:
@@ -144,6 +158,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
     this.onTap,
     this.onFCMTokenInitialize,
     this.onFCMTokenUpdate,
+    this.onOpenNotificationArrive,
     this.defaultNavigatorKey,
     this.customSound,
     this.notificationIdCallback,
@@ -174,6 +189,7 @@ class _FirebaseNotificationsHandlerState
         channelName: this.widget.channelName,
         channelDescription: this.widget.channelDescription,
         groupKey: this.widget.groupKey,
+        onOpenNotificationArrive: this.widget.onOpenNotificationArrive,
         notificationIdCallback: this.widget.notificationIdCallback ??
             (_) => DateTime.now().hashCode,
       );
