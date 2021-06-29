@@ -82,7 +82,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   ///
   /// For Android 7.0 or newer.
   /// {@endtemplate}
-  final String groupKey;
+  final String? groupKey;
 
   /// {@template enableLogs}
   /// Whether to enable logs on certain events like new notification or
@@ -163,9 +163,9 @@ class FirebaseNotificationsHandler extends StatefulWidget {
     this.customSound,
     this.notificationIdCallback,
     this.channelId = 'Notifications',
-    this.channelName = 'Notifications',
-    this.channelDescription = 'Notifications',
-    this.groupKey = '',
+    this.channelName = '',
+    this.channelDescription = '',
+    this.groupKey,
     required this.child,
   }) : super(key: key);
 
@@ -190,8 +190,7 @@ class _FirebaseNotificationsHandlerState
         channelDescription: this.widget.channelDescription,
         groupKey: this.widget.groupKey,
         onOpenNotificationArrive: this.widget.onOpenNotificationArrive,
-        notificationIdCallback: this.widget.notificationIdCallback ??
-            (_) => DateTime.now().hashCode,
+        notificationIdCallback: this.widget.notificationIdCallback,
       );
       this.widget.onFCMTokenInitialize?.call(context, token);
 

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_notifications_handler/src/app_state.dart';
+import 'package:firebase_notifications_handler/src/constants.dart';
 import 'package:flutter/cupertino.dart'
     show GlobalKey, NavigatorState, debugPrint;
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -26,22 +27,22 @@ class PushNotificationService {
   static String? _fcmToken;
 
   /// {@macro enableLogs}
-  static late bool _enableLogs;
+  static bool? _enableLogs;
 
   /// {@macro customSound}
   static String? _customSound;
 
   /// {@macro channelId}
-  static late String _channelId;
+  static String? _channelId;
 
   /// {@macro channelName}
-  static late String _channelName;
+  static String? _channelName;
 
   /// {@macro channelDescription}
-  static late String _channelDescription;
+  static String? _channelDescription;
 
   /// {@macro groupKey}
-  static late String _groupKey;
+  static String? _groupKey;
 
   /// Called when token is refreshed.
   static Stream<String> get onTokenRefresh => _fcm.onTokenRefresh;
@@ -60,7 +61,7 @@ class PushNotificationService {
   static bool get openedAppFromNotification => _openedAppFromNotification;
 
   /// {@macro notificationIdCallback}
-  static late int Function(RemoteMessage) _notificationIdCallback;
+  static int Function(RemoteMessage)? _notificationIdCallback;
 
   /// {@macro onOpenNotificationArrive}
   static late void Function(
@@ -71,7 +72,7 @@ class PushNotificationService {
   /// Initialize the implementation class
   static Future<String?> initialize({
     String? vapidKey,
-    bool enableLogs = true,
+    bool enableLogs = Constants.enableLogs,
     void Function(
       GlobalKey<NavigatorState>,
       AppState,
@@ -83,8 +84,8 @@ class PushNotificationService {
     required String channelId,
     required String channelName,
     required String channelDescription,
-    required String groupKey,
-    required final int Function(RemoteMessage) notificationIdCallback,
+    required String? groupKey,
+    int Function(RemoteMessage)? notificationIdCallback,
     required void Function(
       GlobalKey<NavigatorState> navigatorKey,
       Map<String, dynamic> payload,
@@ -92,7 +93,7 @@ class PushNotificationService {
         onOpenNotificationArrive,
   }) async {
     _onTap = onTap;
-    _enableLogs = true;
+    _enableLogs = enableLogs;
     _customSound = customSound;
     _notificationIdCallback = notificationIdCallback;
     _onOpenNotificationArrive = onOpenNotificationArrive;
@@ -109,11 +110,11 @@ class PushNotificationService {
 
     _fcmToken = await _fcm.getToken(vapidKey: vapidKey);
 
-    if (_enableLogs) debugPrint("FCM Token initialized: $fcmToken");
+    if (_enableLogs!) debugPrint("FCM Token initialized: $fcmToken");
 
     _fcm.onTokenRefresh.listen((token) {
       _fcmToken = token;
-      if (_enableLogs) debugPrint("FCM Token updated: $fcmToken");
+      if (_enableLogs!) debugPrint("FCM Token updated: $fcmToken");
     });
 
     final _bgMessage = await _fcm.getInitialMessage();
@@ -172,7 +173,8 @@ class PushNotificationService {
     RemoteMessage message, {
     AppState? appState,
   }) async {
-    if (_enableLogs) debugPrint("""\n
+    _enableLogs ??= Constants.enableLogs;
+    if (_enableLogs!) debugPrint("""\n
     ******************************************************* 
                       NEW NOTIFICATION
     *******************************************************
@@ -182,10 +184,14 @@ class PushNotificationService {
     *******************************************************\n
 """);
 
+    _channelId ??= Constants.channelId;
+    _channelName ??= Constants.channelName;
+    _channelDescription ??= Constants.channelDescription;
+
     final _androidSpecifics = AndroidNotificationDetails(
-      message.notification?.android?.channelId ?? _channelId,
-      _channelName,
-      _channelDescription,
+      message.notification?.android?.channelId ?? _channelId!,
+      _channelName!,
+      _channelDescription!,
       importance: Importance.max,
       priority: Priority.high,
       groupKey: _groupKey,
@@ -206,9 +212,11 @@ class PushNotificationService {
 
     final _localNotifications = await _initializeLocalNotifications();
 
+    _notificationIdCallback ??= (_) => DateTime.now().hashCode;
+
     if (appState == AppState.open) {
       await _localNotifications.show(
-        _notificationIdCallback(message),
+        _notificationIdCallback!(message),
         message.notification?.title,
         message.notification?.body,
         notificationPlatformSpecifics,
