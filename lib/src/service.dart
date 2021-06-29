@@ -3,49 +3,66 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_notifications_handler/src/app_state.dart';
-import 'package:flutter/cupertino.dart' show GlobalKey, NavigatorState;
+import 'package:flutter/cupertino.dart'
+    show GlobalKey, NavigatorState, debugPrint;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-/// custom sound
-/// channel id and all
-/// debug print for logs
-/// send notification endpoint?
-/// on arrive foreground message call back?
-/// on bg notification arrive??
-///
+/// Internal implementation class
 class PushNotificationService {
-  // ADD THIS IN ANDROID MANIFEST FOR DEFAULT CHANNEL (mandatory for custom sound when app closed)
-  //
-  // <meta-data
-  //             android:name="com.google.firebase.messaging.default_notification_channel_id"
-  //             android:value="<same as channelId in _notificationHandler>" />
-  //
-  // ADD AUDIO FILE in android/app/src/main/res/raw/____.mp3 FOR CUSTOM SOUND
-
+  /// Internal [FirebaseMessaging] instance
   static final _fcm = FirebaseMessaging.instance;
 
+  /// {@macro navigatorKey}
   static GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
+  /// [_navigatorKey] getter.
   static GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
 
+  /// [_fcmToken] getter
   static String? get fcmToken => _fcmToken;
+
+  /// {@macro fcmToken}
   static String? _fcmToken;
 
-  static late bool _enableLog;
+  /// {@macro enableLogs}
+  static late bool _enableLogs;
 
+  /// {@macro customSound}
+  static String? _customSound;
+
+  /// {@macro channelId}
+  static late String _channelId;
+
+  /// {@macro channelName}
+  static late String _channelName;
+
+  /// {@macro channelDescription}
+  static late String _channelDescription;
+
+  /// {@macro groupKey}
+  static late String _groupKey;
+
+  /// Called when token is refreshed.
   static Stream<String> get onTokenRefresh => _fcm.onTokenRefresh;
 
+  /// {@macro onTap}
   static void Function(
     GlobalKey<NavigatorState>,
     AppState,
     Map<String, dynamic> payload,
   )? _onTap;
 
+  /// {@macro openedAppFromNotification}
   static bool _openedAppFromNotification = false;
 
+  /// [_openedAppFromNotification] getter.
   static bool get openedAppFromNotification => _openedAppFromNotification;
 
+  /// {@macro notificationIdCallback}
+  static late int Function(RemoteMessage) _notificationIdCallback;
+
+  /// Initialize the implementation class
   static Future<String?> initialize({
     String? vapidKey,
     bool enableLogs = true,
@@ -56,25 +73,35 @@ class PushNotificationService {
     )?
         onTap,
     GlobalKey<NavigatorState>? navigatorKey,
+    String? customSound,
+    required String channelId,
+    required String channelName,
+    required String channelDescription,
+    required String groupKey,
+    required final int Function(RemoteMessage) notificationIdCallback,
   }) async {
     _onTap = onTap;
-    _enableLog = enableLogs;
+    _enableLogs = enableLogs;
+    _customSound = customSound;
+    _notificationIdCallback = notificationIdCallback;
+
+    _channelId = channelId;
+    _channelName = channelName;
+    _channelDescription = channelDescription;
+    _groupKey = groupKey;
 
     if (navigatorKey != null) _navigatorKey = navigatorKey;
-
-    // Firebase app not initialized.
-    // if (Firebase.apps.isEmpty) await Firebase.initializeApp();
 
     /// Required only for iOS
     if (!kIsWeb && Platform.isIOS) await _fcm.requestPermission();
 
     _fcmToken = await _fcm.getToken(vapidKey: vapidKey);
 
-    if (_enableLog) print("FCM Token initialized: $fcmToken");
+    if (_enableLogs) debugPrint("FCM Token initialized: $fcmToken");
 
     _fcm.onTokenRefresh.listen((token) {
       _fcmToken = token;
-      if (_enableLog) print("FCM Token updated: $fcmToken");
+      if (_enableLogs) debugPrint("FCM Token updated: $fcmToken");
     });
 
     final _bgMessage = await _fcm.getInitialMessage();
@@ -83,6 +110,7 @@ class PushNotificationService {
       _onBackgroundMessage(_bgMessage);
     }
 
+    /// Registering the listeners
     FirebaseMessaging.onMessage.listen(_onMessage);
     FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedApp);
@@ -90,15 +118,20 @@ class PushNotificationService {
     return fcmToken;
   }
 
+  /// [_onMessage] callback for the notification
   static Future<void> _onMessage(RemoteMessage message) =>
       _notificationHandler(message, appState: AppState.open);
 
+  /// [_onBackgroundMessage] callback for the notification
   static Future<void> _onBackgroundMessage(RemoteMessage message) =>
       _notificationHandler(message, appState: AppState.closed);
 
+  /// [_onMessageOpenedApp] callback for the notification
   static Future<void> _onMessageOpenedApp(RemoteMessage message) =>
       _notificationHandler(message, appState: AppState.background);
 
+  /// [_initializeLocalNotifications] function to initialize the local
+  /// notifications to show a notification when the app is in foreground.
   static Future<FlutterLocalNotificationsPlugin>
       _initializeLocalNotifications() async {
     final _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -122,14 +155,15 @@ class PushNotificationService {
     return _flutterLocalNotificationsPlugin;
   }
 
+  /// [_notificationHandler] implementation
   static Future<void> _notificationHandler(
     RemoteMessage message, {
     AppState? appState,
   }) async {
-    if (_enableLog) print("""\n
+    if (_enableLogs) debugPrint("""\n
     ******************************************************* 
                       NEW NOTIFICATION
-    ******************************************************* 
+    *******************************************************
     Title: ${message.notification?.title}
     Body: ${message.notification?.body}
     Payload: ${message.data}
@@ -137,13 +171,15 @@ class PushNotificationService {
 """);
 
     final _androidSpecifics = AndroidNotificationDetails(
-      message.notification?.android?.channelId ?? 'Notifications',
-      'Notifications',
-      'Notifications',
+      message.notification?.android?.channelId ?? _channelId,
+      _channelName,
+      _channelDescription,
       importance: Importance.max,
       priority: Priority.high,
-      groupKey: '',
-      // sound: RawResourceAndroidNotificationSound('notification_sound'),
+      groupKey: _groupKey,
+      sound: _customSound == null
+          ? null
+          : RawResourceAndroidNotificationSound(_customSound),
       playSound: true,
       enableLights: true,
       enableVibration: true,
@@ -158,12 +194,9 @@ class PushNotificationService {
 
     final _localNotifications = await _initializeLocalNotifications();
 
-    final id = DateTime.now().hashCode;
-
     if (appState == AppState.open)
       await _localNotifications.show(
-        // message.notification?.hashCode ?? 0,
-        id,
+        _notificationIdCallback(message),
         message.notification?.title,
         message.notification?.body,
         notificationPlatformSpecifics,
@@ -175,24 +208,3 @@ class PushNotificationService {
     else if (_onTap != null) _onTap!(navigatorKey, appState!, message.data);
   }
 }
-
-/*
-*    To send FCM notification using REST API:
-*
-*  ENDPOINT:
-*     https://fcm.googleapis.com/fcm/send
-*
-*  HEADERS:
-*       Content-Type: application/json
-*       Authorization: key=<SERVER_KEY_FROM_FIREBASE_CLOUD_MESSAGING>
-*
-*  BODY:
-*  {
-      "to": <FCM_TOKEN>,
-      "notification": {
-          "title": "Title here",
-          "body": "Body here",
-      }
-*  }
-*
-* */

@@ -1,3 +1,3 @@
-## [0.0.1] - TODO: Add release date.
+## [0.0.1] - 30/06/2021
 
-* TODO: Describe initial release.
+* Simple notifications handler which provides callbacks like onTap which really make it easy to handle notification taps and a lot more.
