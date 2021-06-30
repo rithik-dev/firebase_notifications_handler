@@ -162,7 +162,7 @@ FirebaseNotificationsHandler(
 You can check the remaining parameters [here](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/lib/src/widget.dart).
 They are fully documented and won't face an issue while using them
 
-### Send notification using REST API
+## Send notification using REST API
 
 To send FCM notification using REST API:
 
@@ -196,7 +196,7 @@ or only pass one fcm token in the "to" parameter for single user.
 
 Add all the rest of the payload data in "data" field which will be provided in the `onTap` callback.
 
-#### Sample Usage
+## Sample Usage
 ```dart
 import 'package:flutter/material.dart';
 import 'package:firebase_notifications_handler/firebase_notifications_handler.dart';
