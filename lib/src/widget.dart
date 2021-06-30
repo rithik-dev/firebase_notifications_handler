@@ -1,5 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_notifications_handler/src/app_state.dart';
+import 'package:firebase_notifications_handler/src/constants.dart';
 import 'package:firebase_notifications_handler/src/service.dart';
 import 'package:flutter/material.dart';
 
@@ -57,21 +58,21 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// then it is used, if not then the default value is used, else the value
   /// passed will be used.
   ///
-  /// The notification channel's id.
+  /// The notification channel's id. Defaults to 'Notifications'.
   ///
   /// Required for Android 8.0 or newer.
   /// {@endtemplate}
   final String channelId;
 
   /// {@template channelName}
-  /// The notification channel's name.
+  /// The notification channel's name. Defaults to 'Notifications'.
   ///
   /// Required for Android 8.0 or newer.
   /// {@endtemplate}
   final String channelName;
 
   /// {@template channelDescription}
-  /// The notification channel's description.
+  /// The notification channel's description. Defaults to 'Notifications'.
   ///
   /// Required for Android 8.0 or newer.
   /// {@endtemplate}
@@ -162,9 +163,9 @@ class FirebaseNotificationsHandler extends StatefulWidget {
     this.defaultNavigatorKey,
     this.customSound,
     this.notificationIdCallback,
-    this.channelId = 'Notifications',
-    this.channelName = '',
-    this.channelDescription = '',
+    this.channelId = Constants.channelId,
+    this.channelName = Constants.channelName,
+    this.channelDescription = Constants.channelDescription,
     this.groupKey,
     required this.child,
   }) : super(key: key);
