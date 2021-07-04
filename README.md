@@ -42,11 +42,13 @@ Add the default channel in AndroidManifest. Pass the same in the channelId param
 ```xml
 <meta-data
     android:name="com.google.firebase.messaging.default_notification_channel_id"
-    android:value="<same as channelId in FirebaseNotificationsHandler>" />
+    android:value="Notifications" />
 ```
+The `android:value` should be the same as the channel id in FirebaseNotificationsHandler.
+The default value for channel id is "Notifications".
+
 
 Also, add this intent-filter in AndroidManifest
-
 ```xml
 <intent-filter>
     <action android:name="FLUTTER_NOTIFICATION_CLICK" />
