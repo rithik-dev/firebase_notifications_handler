@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_notifications_handler/src/app_state.dart';
 import 'package:firebase_notifications_handler/src/constants.dart';
+import 'package:firebase_notifications_handler/src/image_downloader.dart';
 import 'package:flutter/cupertino.dart'
     show GlobalKey, NavigatorState, debugPrint;
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -188,11 +189,34 @@ class PushNotificationService {
     _channelName ??= Constants.channelName;
     _channelDescription ??= Constants.channelDescription;
 
+    StyleInformation? styleInformation;
+
+    String? imageUrl;
+    if (message.notification?.android?.imageUrl != null)
+      imageUrl = message.notification?.android?.imageUrl;
+    else if (message.notification?.apple?.imageUrl != null)
+      imageUrl = message.notification?.apple?.imageUrl;
+
+    if (appState == AppState.open && imageUrl != null) {
+      final notificationImage = await ImageDownloaderService.downloadImage(
+        url: imageUrl,
+        fileName: 'notificationImage',
+      );
+
+      if (notificationImage != null)
+        styleInformation = BigPictureStyleInformation(
+          FilePathAndroidBitmap(notificationImage),
+          largeIcon: FilePathAndroidBitmap(notificationImage),
+          hideExpandedLargeIcon: true,
+        );
+    }
+
     final _androidSpecifics = AndroidNotificationDetails(
       message.notification?.android?.channelId ?? _channelId!,
       _channelName!,
       _channelDescription!,
       importance: Importance.max,
+      styleInformation: styleInformation,
       priority: Priority.high,
       groupKey: _groupKey,
       sound: _customSound == null
@@ -203,7 +227,9 @@ class PushNotificationService {
       enableVibration: true,
     );
 
-    final _iOsSpecifics = const IOSNotificationDetails();
+    final _iOsSpecifics = IOSNotificationDetails(
+      sound: _customSound == null ? null : _customSound,
+    );
 
     final notificationPlatformSpecifics = NotificationDetails(
       android: _androidSpecifics,
@@ -228,6 +254,6 @@ class PushNotificationService {
 
     /// if AppState is open, do not handle onTap here because it will trigger as soon as
     /// notification arrives, instead handle in initialize method in onSelectNotification callback.
-    else if (_onTap != null) _onTap!(navigatorKey, appState!, message.data);
+    else if (_onTap != null) _onTap!(_navigatorKey, appState!, message.data);
   }
 }

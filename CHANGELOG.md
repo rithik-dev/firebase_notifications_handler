@@ -1,3 +1,10 @@
+## [0.0.5] - 01/08/2021
+
+* Added custom sound support for iOS
+* Added images support in notifications
+* Updated dependencies
+* Updated README.md
+
 ## [0.0.4] - 04/07/2021
 
 * Updated README.md

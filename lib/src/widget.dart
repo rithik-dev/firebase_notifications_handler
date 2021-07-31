@@ -41,7 +41,13 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// Pass in the name of the audio file as a string if you
   /// want a custom sound for the notification.
   ///
-  /// Add the custom audio file in android/app/src/main/res/raw/____.mp3
+  /// .
+  ///
+  /// Android: Add the audio file in android/app/src/main/res/raw/___audio_file_here___
+  ///
+  /// iOS: Add the audio file in Runner/Resources/___audio_file_here___
+  ///
+  /// .
   ///
   /// Add the default channelId in the AndroidManifest file in your project.
   ///

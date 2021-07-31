@@ -36,7 +36,7 @@ void main() async {
 
 ### Android
 
-Add the default channel in AndroidManifest. Pass the same in the channelId parameter in the
+Add the default channel in AndroidManifest in the <application> tag. Pass the same in the channelId parameter in the
 `FirebaseNotificationsHandler` widget to enable custom sounds.
 
 ```xml
@@ -56,8 +56,12 @@ Also, add this intent-filter in AndroidManifest
 </intent-filter>
 ```
 
+### Custom Sound
 #### Adding custom notification sounds in Android
-For custom audio, add the audio file in android/app/src/main/res/raw/____.mp3
+Add the audio file in android/app/src/main/res/raw/___audio_file_here___
+
+#### Adding custom notification sounds in iOS
+Add the audio file in Runner/Resources/___audio_file_here___
 
 ### Web
 Provide the vapidKey in FirebaseNotificationsHandler from the cloud messaging settings by generating
@@ -186,7 +190,8 @@ The body is framed as follows:
 
       "notification": {
             "title": "Title here",
-            "body": "Body here"
+            "body": "Body here",
+            "image": "Image url here",
       },
       "data": {
             "click_action":"FLUTTER_NOTIFICATION_CLICK"
