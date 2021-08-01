@@ -1,3 +1,11 @@
+## [0.0.7] - 01/08/2021
+
+* Updated README.md
+
+## [0.0.6] - 01/08/2021
+
+* Updated README.md
+
 ## [0.0.5] - 01/08/2021
 
 * Added custom sound support for iOS

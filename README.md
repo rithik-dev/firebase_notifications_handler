@@ -56,13 +56,6 @@ Also, add this intent-filter in AndroidManifest
 </intent-filter>
 ```
 
-### Custom Sound
-#### Adding custom notification sounds in Android
-Add the audio file in android/app/src/main/res/raw/___audio_file_here___
-
-#### Adding custom notification sounds in iOS
-Add the audio file in Runner/Resources/___audio_file_here___
-
 ### Web
 Provide the vapidKey in FirebaseNotificationsHandler from the cloud messaging settings by generating
 a new Web push certificate
@@ -112,6 +105,13 @@ self.addEventListener('notificationclick', function (event) {
     console.log('notification received: ', event)
 });
 ```
+
+## Custom Sound
+#### Adding custom notification sounds in Android
+- Add the audio file in android/app/src/main/res/raw/___audio_file_here___
+
+#### Adding custom notification sounds in iOS
+- Add the audio file in Runner/Resources/___audio_file_here___
 
 ## Usage
 
