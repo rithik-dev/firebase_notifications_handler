@@ -1,3 +1,10 @@
+## [0.0.8] - 28/10/2021
+
+* Exposed initializeFCMToken & onFCMTokenRefresh callbacks
+* Updated dependencies
+* Updated example app
+* Updated README.md
+
 ## [0.0.7] - 01/08/2021
 
 * Updated README.md

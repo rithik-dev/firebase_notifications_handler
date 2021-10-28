@@ -17,7 +17,7 @@ Visit [`Understand Firebase Projects`](https://firebase.google.com/docs/projects
 Registering your app is often called "adding" your app to your project.
 
 Also, register a web app if using on the web.
-Follow on the screen instructions to initilalize the project.
+Follow on the screen instructions to initialize the project.
 
 Add the latest version 'firebase-messaging' CDN from [here](https://firebase.google.com/docs/web/setup#available-libraries) in index.html.
 (Tested on version 8.6.1)
@@ -129,20 +129,29 @@ First and foremost, import the widget.
 import 'package:firebase_notifications_handler/firebase_notifications_handler.dart';
 ```
 
-Wrap the `MaterialApp` with `FirebaseNotificationsHandler` to enable your application to receive notifications.
+Wrap the `FirebaseNotificationsHandler` on a widget to enable your application to receive notifications.
+Typically wrap it on the screen, when you have all the initial setup done. (like on the home screen).
+
+When the app launches, the splash screen typically loads all the stuff, initializes the users and 
+sends to the home screen, then the onTap will trigger, and can be handled accordingly from the callback.
+
+If wrapped on the material app, then you might push the user to the specified screen too early,
+before initializing the user or something that you need.
 ```dart
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FirebaseNotificationsHandler(
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: HomeScreen(),
-      ),
+      child: HomeScreen(),
     );
   }
 }
 ```
+
+Although, the widget automatically initializes the fcmToken, but if the FCM token is needed before the widget is built,
+then use the initializeFCMToken() function to initialize the token. Which will return the initialized token.
+
+Also, keep in mind, when the widget is built, the onFCMTokenInitialize callback will also fire, with the same token.
 
 There are multiple parameters that can be passed to the widget, some of them are shown.
 ```dart
@@ -191,7 +200,7 @@ The body is framed as follows:
       "notification": {
             "title": "Title here",
             "body": "Body here",
-            "image": "Image url here",
+            "image": "Image url here"
       },
       "data": {
             "click_action":"FLUTTER_NOTIFICATION_CLICK"
@@ -210,13 +219,28 @@ import 'package:firebase_notifications_handler/firebase_notifications_handler.da
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  // TODO: add firebase_core and call
+  // await Firebase.initializeApp();
   runApp(_MainApp());
 }
 
 String? fcmToken;
 
 class _MainApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      navigatorKey: FirebaseNotificationsHandler.navigatorKey,
+      home: _HomeScreen(),
+    );
+  }
+}
+
+class _HomeScreen extends StatelessWidget {
+  const _HomeScreen({
+    Key? key,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return FirebaseNotificationsHandler(
@@ -226,9 +250,9 @@ class _MainApp extends StatelessWidget {
       onTap: (navigatorState, appState, payload) {
         print("Notification tapped with $appState & payload $payload");
 
-        final context = navigatorState.currentContext!;
         navigatorState.currentState!.pushNamed('newRouteName');
         // OR
+        final context = navigatorState.currentContext!;
         Navigator.pushNamed(context, 'newRouteName');
       },
       onFCMTokenInitialize: (_, token) => fcmToken = token,
@@ -236,8 +260,15 @@ class _MainApp extends StatelessWidget {
         fcmToken = token;
         // await User.updateFCM(token);
       },
-      child: MaterialApp(
-        navigatorKey: FirebaseNotificationsHandler.navigatorKey,
+      child: SafeArea(
+        child: Scaffold(
+          body: Center(
+            child: Text(
+              '_HomeScreen',
+              style: Theme.of(context).textTheme.headline3,
+            ),
+          ),
+        ),
       ),
     );
   }

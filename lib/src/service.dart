@@ -109,14 +109,7 @@ class PushNotificationService {
     /// Required only for iOS
     if (!kIsWeb && Platform.isIOS) await _fcm.requestPermission();
 
-    _fcmToken = await _fcm.getToken(vapidKey: vapidKey);
-
-    if (_enableLogs!) debugPrint("FCM Token initialized: $fcmToken");
-
-    _fcm.onTokenRefresh.listen((token) {
-      _fcmToken = token;
-      if (_enableLogs!) debugPrint("FCM Token updated: $fcmToken");
-    });
+    _fcmToken = await initializeFCMToken(vapidKey: vapidKey);
 
     final _bgMessage = await _fcm.getInitialMessage();
     if (_bgMessage != null) {
@@ -130,6 +123,22 @@ class PushNotificationService {
     FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedApp);
 
     return fcmToken;
+  }
+
+  static Future<String?> initializeFCMToken({
+    String? vapidKey,
+    bool log = true,
+  }) async {
+    _fcmToken ??= await _fcm.getToken(vapidKey: vapidKey);
+
+    if (_enableLogs ?? log) debugPrint("FCM Token initialized: $_fcmToken");
+
+    _fcm.onTokenRefresh.listen((token) {
+      _fcmToken = token;
+      if (_enableLogs ?? log) debugPrint("FCM Token updated: $_fcmToken");
+    });
+
+    return _fcmToken;
   }
 
   /// [_onMessage] callback for the notification
@@ -214,7 +223,7 @@ class PushNotificationService {
     final _androidSpecifics = AndroidNotificationDetails(
       message.notification?.android?.channelId ?? _channelId!,
       _channelName!,
-      _channelDescription!,
+      channelDescription: _channelDescription!,
       importance: Importance.max,
       styleInformation: styleInformation,
       priority: Priority.high,

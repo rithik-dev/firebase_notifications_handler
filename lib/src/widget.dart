@@ -176,6 +176,9 @@ class FirebaseNotificationsHandler extends StatefulWidget {
     required this.child,
   }) : super(key: key);
 
+  static final initializeFCMToken = PushNotificationService.initializeFCMToken;
+  static final onFCMTokenRefresh = PushNotificationService.onTokenRefresh;
+
   @override
   _FirebaseNotificationsHandlerState createState() =>
       _FirebaseNotificationsHandlerState();
@@ -199,6 +202,8 @@ class _FirebaseNotificationsHandlerState
         onOpenNotificationArrive: this.widget.onOpenNotificationArrive,
         notificationIdCallback: this.widget.notificationIdCallback,
       );
+
+      final context = PushNotificationService.navigatorKey.currentContext!;
       this.widget.onFCMTokenInitialize?.call(context, token);
 
       PushNotificationService.onTokenRefresh.listen((token) {

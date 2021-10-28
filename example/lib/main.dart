@@ -1,5 +1,5 @@
-import 'package:firebase_notifications_handler/firebase_notifications_handler.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_notifications_handler/firebase_notifications_handler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,6 +13,20 @@ String? fcmToken;
 class _MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    return MaterialApp(
+      navigatorKey: FirebaseNotificationsHandler.navigatorKey,
+      home: _HomeScreen(),
+    );
+  }
+}
+
+class _HomeScreen extends StatelessWidget {
+  const _HomeScreen({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return FirebaseNotificationsHandler(
       onOpenNotificationArrive: (_, payload) {
         print("Notification received while app is open with payload $payload");
@@ -20,9 +34,9 @@ class _MainApp extends StatelessWidget {
       onTap: (navigatorState, appState, payload) {
         print("Notification tapped with $appState & payload $payload");
 
-        final context = navigatorState.currentContext!;
         navigatorState.currentState!.pushNamed('newRouteName');
         // OR
+        final context = navigatorState.currentContext!;
         Navigator.pushNamed(context, 'newRouteName');
       },
       onFCMTokenInitialize: (_, token) => fcmToken = token,
@@ -30,8 +44,15 @@ class _MainApp extends StatelessWidget {
         fcmToken = token;
         // await User.updateFCM(token);
       },
-      child: MaterialApp(
-        navigatorKey: FirebaseNotificationsHandler.navigatorKey,
+      child: SafeArea(
+        child: Scaffold(
+          body: Center(
+            child: Text(
+              '_HomeScreen',
+              style: Theme.of(context).textTheme.headline3,
+            ),
+          ),
+        ),
       ),
     );
   }
