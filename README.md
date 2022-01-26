@@ -30,7 +30,7 @@ and call `Firebase.initializeApp()` in the `main` method as shown:
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(_MainApp());
 }
 ```
 
@@ -214,8 +214,8 @@ Add all the rest of the payload data in "data" field which will be provided in t
 
 ## Sample Usage
 ```dart
-import 'package:flutter/material.dart';
 import 'package:firebase_notifications_handler/firebase_notifications_handler.dart';
+import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -231,13 +231,13 @@ class _MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorKey: FirebaseNotificationsHandler.navigatorKey,
-      home: _HomeScreen(),
+      home: const HomeScreen(),
     );
   }
 }
 
-class _HomeScreen extends StatelessWidget {
-  const _HomeScreen({
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({
     Key? key,
   }) : super(key: key);
 
@@ -245,10 +245,12 @@ class _HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return FirebaseNotificationsHandler(
       onOpenNotificationArrive: (_, payload) {
-        print("Notification received while app is open with payload $payload");
+        debugPrint(
+          "Notification received while app is open with payload $payload",
+        );
       },
       onTap: (navigatorState, appState, payload) {
-        print("Notification tapped with $appState & payload $payload");
+        debugPrint("Notification tapped with $appState & payload $payload");
 
         navigatorState.currentState!.pushNamed('newRouteName');
         // OR
@@ -275,6 +277,8 @@ class _HomeScreen extends StatelessWidget {
 }
 
 ```
+
+See the [`example`](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/example) directory for a complete sample app.
 
 ### Created & Maintained By `Rithik Bhandari`
 

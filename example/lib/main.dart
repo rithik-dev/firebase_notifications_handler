@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_notifications_handler/firebase_notifications_handler.dart';
+import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,13 +15,13 @@ class _MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorKey: FirebaseNotificationsHandler.navigatorKey,
-      home: _HomeScreen(),
+      home: const HomeScreen(),
     );
   }
 }
 
-class _HomeScreen extends StatelessWidget {
-  const _HomeScreen({
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({
     Key? key,
   }) : super(key: key);
 
@@ -29,10 +29,12 @@ class _HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return FirebaseNotificationsHandler(
       onOpenNotificationArrive: (_, payload) {
-        print("Notification received while app is open with payload $payload");
+        debugPrint(
+          "Notification received while app is open with payload $payload",
+        );
       },
       onTap: (navigatorState, appState, payload) {
-        print("Notification tapped with $appState & payload $payload");
+        debugPrint("Notification tapped with $appState & payload $payload");
 
         navigatorState.currentState!.pushNamed('newRouteName');
         // OR

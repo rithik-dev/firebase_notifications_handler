@@ -158,7 +158,7 @@ class PushNotificationService {
   static Future<FlutterLocalNotificationsPlugin>
       _initializeLocalNotifications() async {
     final _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    final initializationSettings = InitializationSettings(
+    const initializationSettings = InitializationSettings(
       android: AndroidInitializationSettings('@mipmap/ic_launcher'),
       // iOS: IOSInitializationSettings(
       //   onDidReceiveLocalNotification: (id, title, body, payload) async {},
@@ -167,12 +167,13 @@ class PushNotificationService {
     await _flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
       onSelectNotification: (String? payload) async {
-        if (_onTap != null)
+        if (_onTap != null) {
           _onTap!(
             navigatorKey,
             AppState.open,
             payload == null ? {} : jsonDecode(payload),
           );
+        }
       },
     );
     return _flutterLocalNotificationsPlugin;
@@ -184,7 +185,8 @@ class PushNotificationService {
     AppState? appState,
   }) async {
     _enableLogs ??= Constants.enableLogs;
-    if (_enableLogs!) debugPrint("""\n
+    if (_enableLogs!) {
+      debugPrint("""\n
     ******************************************************* 
                       NEW NOTIFICATION
     *******************************************************
@@ -193,6 +195,7 @@ class PushNotificationService {
     Payload: ${message.data}
     *******************************************************\n
 """);
+    }
 
     _channelId ??= Constants.channelId;
     _channelName ??= Constants.channelName;
@@ -201,10 +204,11 @@ class PushNotificationService {
     StyleInformation? styleInformation;
 
     String? imageUrl;
-    if (message.notification?.android?.imageUrl != null)
+    if (message.notification?.android?.imageUrl != null) {
       imageUrl = message.notification?.android?.imageUrl;
-    else if (message.notification?.apple?.imageUrl != null)
+    } else if (message.notification?.apple?.imageUrl != null) {
       imageUrl = message.notification?.apple?.imageUrl;
+    }
 
     if (appState == AppState.open && imageUrl != null) {
       final notificationImage = await ImageDownloaderService.downloadImage(
@@ -212,12 +216,13 @@ class PushNotificationService {
         fileName: 'notificationImage',
       );
 
-      if (notificationImage != null)
+      if (notificationImage != null) {
         styleInformation = BigPictureStyleInformation(
           FilePathAndroidBitmap(notificationImage),
           largeIcon: FilePathAndroidBitmap(notificationImage),
           hideExpandedLargeIcon: true,
         );
+      }
     }
 
     final _androidSpecifics = AndroidNotificationDetails(
@@ -236,9 +241,7 @@ class PushNotificationService {
       enableVibration: true,
     );
 
-    final _iOsSpecifics = IOSNotificationDetails(
-      sound: _customSound == null ? null : _customSound,
-    );
+    final _iOsSpecifics = IOSNotificationDetails(sound: _customSound);
 
     final notificationPlatformSpecifics = NotificationDetails(
       android: _androidSpecifics,
@@ -257,12 +260,15 @@ class PushNotificationService {
         notificationPlatformSpecifics,
         payload: jsonEncode(message.data),
       );
-      if (_onOpenNotificationArrive != null)
+      if (_onOpenNotificationArrive != null) {
         _onOpenNotificationArrive!(_navigatorKey, message.data);
+      }
     }
 
     /// if AppState is open, do not handle onTap here because it will trigger as soon as
     /// notification arrives, instead handle in initialize method in onSelectNotification callback.
-    else if (_onTap != null) _onTap!(_navigatorKey, appState!, message.data);
+    else if (_onTap != null) {
+      _onTap!(_navigatorKey, appState!, message.data);
+    }
   }
 }

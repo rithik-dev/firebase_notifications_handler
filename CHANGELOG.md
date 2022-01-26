@@ -1,3 +1,10 @@
+## [1.0.0] - 26/01/2022
+
+* Added linter and updated code accordingly
+* Updated example app
+* Updated dependencies
+* Updated README.md
+
 ## [0.0.8] - 28/10/2021
 
 * Exposed initializeFCMToken & onFCMTokenRefresh callbacks

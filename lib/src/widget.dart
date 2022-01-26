@@ -176,7 +176,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
     required this.child,
   }) : super(key: key);
 
-  static final initializeFCMToken = PushNotificationService.initializeFCMToken;
+  static const initializeFCMToken = PushNotificationService.initializeFCMToken;
   static final onFCMTokenRefresh = PushNotificationService.onTokenRefresh;
 
   @override
@@ -190,29 +190,29 @@ class _FirebaseNotificationsHandlerState
   void initState() {
     () async {
       final token = await PushNotificationService.initialize(
-        vapidKey: this.widget.vapidKey,
-        enableLogs: this.widget.enableLogs,
-        onTap: this.widget.onTap,
-        navigatorKey: this.widget.defaultNavigatorKey,
-        customSound: this.widget.customSound,
-        channelId: this.widget.channelId,
-        channelName: this.widget.channelName,
-        channelDescription: this.widget.channelDescription,
-        groupKey: this.widget.groupKey,
-        onOpenNotificationArrive: this.widget.onOpenNotificationArrive,
-        notificationIdCallback: this.widget.notificationIdCallback,
+        vapidKey: widget.vapidKey,
+        enableLogs: widget.enableLogs,
+        onTap: widget.onTap,
+        navigatorKey: widget.defaultNavigatorKey,
+        customSound: widget.customSound,
+        channelId: widget.channelId,
+        channelName: widget.channelName,
+        channelDescription: widget.channelDescription,
+        groupKey: widget.groupKey,
+        onOpenNotificationArrive: widget.onOpenNotificationArrive,
+        notificationIdCallback: widget.notificationIdCallback,
       );
 
       final context = PushNotificationService.navigatorKey.currentContext!;
-      this.widget.onFCMTokenInitialize?.call(context, token);
+      widget.onFCMTokenInitialize?.call(context, token);
 
       PushNotificationService.onTokenRefresh.listen((token) {
-        this.widget.onFCMTokenUpdate?.call(context, token);
+        widget.onFCMTokenUpdate?.call(context, token);
       });
     }();
     super.initState();
   }
 
   @override
-  Widget build(BuildContext context) => this.widget.child;
+  Widget build(BuildContext context) => widget.child;
 }
