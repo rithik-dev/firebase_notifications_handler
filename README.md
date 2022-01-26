@@ -1,4 +1,4 @@
-# FirebaseNotificationsHandler For Flutter
+# [FirebaseNotificationsHandler](https://pub.dev/packages/firebase_notifications_handler) For Flutter
 [![pub package](https://img.shields.io/pub/v/firebase_notifications_handler.svg)](https://pub.dev/packages/firebase_notifications_handler)
 [![likes](https://badges.bar/firebase_notifications_handler/likes)](https://pub.dev/packages/firebase_notifications_handler/score)
 [![popularity](https://badges.bar/firebase_notifications_handler/popularity)](https://pub.dev/packages/firebase_notifications_handler/score)
