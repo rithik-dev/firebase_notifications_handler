@@ -1,3 +1,9 @@
+## [1.0.2] - 14/03/2022
+
+* Added sendNotification function to trigger FCM notification.
+* Updated dependencies
+* Updated README.md
+
 ## [1.0.1] - 26/01/2022
 
 * Updated license

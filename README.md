@@ -177,6 +177,13 @@ FirebaseNotificationsHandler(
 You can check the remaining parameters [here](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/lib/src/widget.dart).
 They are fully documented and won't face an issue while using them
 
+## Trigger FCM Notification
+
+You can use the in-built `sendNotification` static method on the `FirebaseNotificationsHandler` widget
+to trigger the notification.
+
+# OR
+
 ## Send notification using REST API
 
 To send FCM notification using REST API:

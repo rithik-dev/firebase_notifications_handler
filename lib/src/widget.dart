@@ -3,6 +3,7 @@ import 'package:firebase_notifications_handler/src/app_state.dart';
 import 'package:firebase_notifications_handler/src/constants.dart';
 import 'package:firebase_notifications_handler/src/service.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 /// Wrap this widget on the [MaterialApp] to enable receiving notifications.
 class FirebaseNotificationsHandler extends StatefulWidget {
@@ -178,6 +179,55 @@ class FirebaseNotificationsHandler extends StatefulWidget {
 
   static const initializeFCMToken = PushNotificationService.initializeFCMToken;
   static final onFCMTokenRefresh = PushNotificationService.onTokenRefresh;
+
+  /// Trigger FCM notification.
+  ///
+  /// [cloudMessagingServerKey] : The server key from the cloud messaging console.
+  /// This key is required to trigger the notification.
+  ///
+  /// [title] : The notification's title.
+  ///
+  /// [body] : The notification's body.
+  ///
+  /// [imageUrl] : The notification's image URL.
+  ///
+  /// [fcmTokens] : List of the registered devices' tokens.
+  ///
+  /// [additionalHeaders] : Additional headers,
+  /// other than 'Content-Type' and 'Authorization'.
+  ///
+  /// [payload] : Notification payload, is provided in the [onTap] callback.
+  ///
+  static Future<http.Response> sendNotification({
+    required String cloudMessagingServerKey,
+    required String title,
+    String? body,
+    String? imageUrl,
+    List<String> fcmTokens = const [],
+    Map? additionalHeaders,
+    Map? payload,
+  }) async {
+    return await http.post(
+      Uri.parse('https://fcm.googleapis.com/fcm/send'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'key=$cloudMessagingServerKey',
+        ...?additionalHeaders,
+      },
+      body: {
+        "registration_ids": fcmTokens,
+        "notification": {
+          "title": title,
+          "body": body,
+          "image": imageUrl,
+        },
+        "data": {
+          "click_action": "FLUTTER_NOTIFICATION_CLICK",
+          ...?payload,
+        }
+      },
+    );
+  }
 
   @override
   _FirebaseNotificationsHandlerState createState() =>
