@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_notifications_handler/src/app_state.dart';
 import 'package:firebase_notifications_handler/src/constants.dart';
@@ -217,7 +219,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
         'Authorization': 'key=$cloudMessagingServerKey',
         ...?additionalHeaders,
       },
-      body: {
+      body: jsonEncode({
         if (fcmTokens.length == 1)
           "to": fcmTokens.first
         else
@@ -232,7 +234,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
           "click_action": "FLUTTER_NOTIFICATION_CLICK",
           ...?payload,
         },
-      },
+      }),
     );
   }
 

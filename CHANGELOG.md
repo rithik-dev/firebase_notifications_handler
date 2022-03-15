@@ -1,3 +1,7 @@
+## [1.0.6] - 15/03/2022
+
+* Fixed sendNotification bug
+
 ## [1.0.5] - 15/03/2022
 
 * Fixed null check error in main widget.
