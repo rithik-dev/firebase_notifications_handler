@@ -50,7 +50,7 @@ class HomeScreen extends StatelessWidget {
         child: Scaffold(
           body: Center(
             child: Text(
-              '_HomeScreen',
+              'HomeScreen',
               style: Theme.of(context).textTheme.headline3,
             ),
           ),

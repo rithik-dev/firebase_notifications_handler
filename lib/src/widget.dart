@@ -260,7 +260,6 @@ class _FirebaseNotificationsHandlerState
         notificationIdCallback: widget.notificationIdCallback,
       );
 
-      final context = PushNotificationService.navigatorKey.currentContext!;
       widget.onFCMTokenInitialize?.call(context, token);
 
       PushNotificationService.onTokenRefresh.listen((token) {

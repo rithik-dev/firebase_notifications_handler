@@ -1,3 +1,8 @@
+## [1.0.5] - 15/03/2022
+
+* Fixed null check error in main widget.
+* Updated README.md
+
 ## [1.0.4] - 15/03/2022
 
 * Updated payload type.

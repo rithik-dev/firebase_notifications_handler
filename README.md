@@ -36,7 +36,7 @@ void main() async {
 
 ### Android
 
-Add the default channel in AndroidManifest in the <application> tag. Pass the same in the channelId parameter in the
+Add the default channel in AndroidManifest in the `<application>` tag. Pass the same in the channelId parameter in the
 `FirebaseNotificationsHandler` widget to enable custom sounds.
 
 ```xml
@@ -48,7 +48,7 @@ The `android:value` should be the same as the channel id in FirebaseNotification
 The default value for channel id is "Notifications".
 
 
-Also, add this intent-filter in AndroidManifest
+Also, add this intent-filter in AndroidManifest in the `<activity>` tag with `android:name=".MainActivity"`
 ```xml
 <intent-filter>
     <action android:name="FLUTTER_NOTIFICATION_CLICK" />
