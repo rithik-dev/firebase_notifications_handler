@@ -133,7 +133,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// {@endtemplate}
   final void Function(
     GlobalKey<NavigatorState> navigatorKey,
-    Map<String, dynamic> payload,
+    Map payload,
   )? onOpenNotificationArrive;
 
   /// {@template onTap}
@@ -152,8 +152,8 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// {@endtemplate}
   final void Function(
     GlobalKey<NavigatorState> navigatorKey,
-    AppState,
-    Map<String, dynamic> payload,
+    AppState appState,
+    Map payload,
   )? onTap;
 
   /// The child of the widget. Typically a [MaterialApp].
@@ -193,19 +193,22 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   ///
   /// [fcmTokens] : List of the registered devices' tokens.
   ///
+  /// [payload] : Notification payload, is provided in the [onTap] callback.
+  ///
   /// [additionalHeaders] : Additional headers,
   /// other than 'Content-Type' and 'Authorization'.
   ///
-  /// [payload] : Notification payload, is provided in the [onTap] callback.
-  ///
+  /// [notificationMeta] : Additional content that you might want to pass
+  /// in the "notification" attribute, apart from title, body, image.
   static Future<http.Response> sendNotification({
     required String cloudMessagingServerKey,
     required String title,
     String? body,
     String? imageUrl,
     List<String> fcmTokens = const [],
-    Map? additionalHeaders,
     Map? payload,
+    Map? additionalHeaders,
+    Map? notificationMeta,
   }) async {
     return await http.post(
       Uri.parse('https://fcm.googleapis.com/fcm/send'),
@@ -219,17 +222,16 @@ class FirebaseNotificationsHandler extends StatefulWidget {
           "to": fcmTokens.first
         else
           "registration_ids": fcmTokens,
-
         "notification": {
           "title": title,
           "body": body,
           "image": imageUrl,
+          ...?notificationMeta,
         },
-
         "data": {
           "click_action": "FLUTTER_NOTIFICATION_CLICK",
           ...?payload,
-        }
+        },
       },
     );
   }

@@ -1,3 +1,8 @@
+## [1.0.4] - 15/03/2022
+
+* Updated payload type.
+* Added notificationMeta in sendNotification.
+
 ## [1.0.3] - 15/03/2022
 
 * Minor fix in sendNotification.
