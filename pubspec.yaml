@@ -1,6 +1,6 @@
 name: firebase_notifications_handler
 description: Simple notifications handler which provides callbacks like onTap which really make it easy to handle notification taps and a lot more.
-version: 1.0.2
+version: 1.0.3
 homepage: https://github.com/rithik-dev/firebase_notifications_handler
 
 environment:

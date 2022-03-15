@@ -182,6 +182,21 @@ They are fully documented and won't face an issue while using them
 You can use the in-built `sendNotification` static method on the `FirebaseNotificationsHandler` widget
 to trigger the notification.
 
+```dart
+await FirebaseNotificationsHandler.sendNotification(
+  cloudMessagingServerKey: '<YOUR_CLOUD_MESSAGING_SERVER_KEY>',
+  title: 'This is a test notification',
+  body: 'This describes this notification',
+  fcmTokens: [
+    'fcmDeviceToken1',
+    'fcmDeviceToken2',
+  ],
+  payload: {
+    'key': 'value',
+  },
+);
+```
+
 # OR
 
 ## Send notification using REST API

@@ -59,3 +59,18 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
+void sendExampleNotification() async {
+  await FirebaseNotificationsHandler.sendNotification(
+    cloudMessagingServerKey: '<YOUR_CLOUD_MESSAGING_SERVER_KEY>',
+    title: 'This is a test notification',
+    body: 'This describes this notification',
+    fcmTokens: [
+      'fcmDeviceToken1',
+      'fcmDeviceToken2',
+    ],
+    payload: {
+      'key': 'value',
+    },
+  );
+}

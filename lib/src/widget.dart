@@ -215,12 +215,17 @@ class FirebaseNotificationsHandler extends StatefulWidget {
         ...?additionalHeaders,
       },
       body: {
-        "registration_ids": fcmTokens,
+        if (fcmTokens.length == 1)
+          "to": fcmTokens.first
+        else
+          "registration_ids": fcmTokens,
+
         "notification": {
           "title": title,
           "body": body,
           "image": imageUrl,
         },
+
         "data": {
           "click_action": "FLUTTER_NOTIFICATION_CLICK",
           ...?payload,

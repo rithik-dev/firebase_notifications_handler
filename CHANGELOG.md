@@ -1,3 +1,9 @@
+## [1.0.3] - 15/03/2022
+
+* Minor fix in sendNotification.
+* Updated example app
+* Updated README.md
+
 ## [1.0.2] - 14/03/2022
 
 * Added sendNotification function to trigger FCM notification.
