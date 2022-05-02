@@ -7,7 +7,7 @@
 * Simple notifications handler which provides callbacks like onTap which really make it easy to handle notification taps and a lot more.
 
 ## Screenshots
-<img src="https://user-images.githubusercontent.com/56810766/123861270-9a9e4800-d944-11eb-8c04-8fd3e9557876.png" height=600/>&nbsp;&nbsp;<img src="https://user-images.githubusercontent.com/56810766/123926531-96f0dc80-d9a9-11eb-85e4-eee661baaffd.jpeg" height=600/>
+<img src="https://user-images.githubusercontent.com/56810766/123861270-9a9e4800-d944-11eb-8c04-8fd3e9557876.png" height=600/>&nbsp;&nbsp;<img src="https://user-images.githubusercontent.com/56810766/123926531-96f0dc80-d9a9-11eb-85e4-eee661baaffd.jpeg" height=600/>&nbsp;&nbsp;<img src="https://user-images.githubusercontent.com/56810766/166269612-d555f82c-1634-4431-8ea4-619120e87815.png" height=600/>&nbsp;&nbsp;<img src="https://user-images.githubusercontent.com/56810766/166288543-5b7a4088-dcc8-4acf-9180-3f98d6b8900f.jpeg" height=600/>
 
 ## Getting Started
 <b>Step 1</b>: Before you can add Firebase to your app, you need to create a Firebase project to connect to your application.
