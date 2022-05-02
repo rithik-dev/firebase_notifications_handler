@@ -1,3 +1,9 @@
+## [1.0.7] - 02/05/2022
+
+* Updated example app to a fully functional app...
+* Updated dependencies
+* Updated README.md
+
 ## [1.0.6] - 15/03/2022
 
 * Fixed sendNotification bug
@@ -72,4 +78,5 @@
 
 ## [0.0.1] - 30/06/2021
 
-* Simple notifications handler which provides callbacks like onTap which really make it easy to handle notification taps and a lot more.
+* Simple notifications handler which provides callbacks like onTap which really make it easy to
+  handle notification taps and a lot more.

@@ -205,9 +205,9 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   static Future<http.Response> sendNotification({
     required String cloudMessagingServerKey,
     required String title,
+    required List<String> fcmTokens,
     String? body,
     String? imageUrl,
-    List<String> fcmTokens = const [],
     Map? payload,
     Map? additionalHeaders,
     Map? notificationMeta,
