@@ -62,6 +62,19 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// {@endtemplate}
   final String? customSound;
 
+  /// {@template handleInitialMessage}
+  ///
+  /// Whether to check if the application has been opened
+  /// from a terminated state via a [RemoteMessage].
+  ///
+  /// If false, then [openedAppFromNotification] will always be false.
+  ///
+  /// If true, then checks for the initial message, and
+  /// if it exists, [onTap] is called with [AppState.closed].
+  ///
+  /// {@endtemplate}
+  final bool handleInitialMessage;
+
   /// {@template channelId}
   /// If message.notification?.android?.channelId exists in the map,
   /// then it is used, if not then the default value is used, else the value
@@ -172,6 +185,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
     this.defaultNavigatorKey,
     this.customSound,
     this.notificationIdCallback,
+    this.handleInitialMessage = true,
     this.channelId = Constants.channelId,
     this.channelName = Constants.channelName,
     this.channelDescription = Constants.channelDescription,
@@ -239,6 +253,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _FirebaseNotificationsHandlerState createState() =>
       _FirebaseNotificationsHandlerState();
 }
@@ -254,6 +269,7 @@ class _FirebaseNotificationsHandlerState
         onTap: widget.onTap,
         navigatorKey: widget.defaultNavigatorKey,
         customSound: widget.customSound,
+        handleInitialMessage: widget.handleInitialMessage,
         channelId: widget.channelId,
         channelName: widget.channelName,
         channelDescription: widget.channelDescription,
@@ -262,6 +278,7 @@ class _FirebaseNotificationsHandlerState
         notificationIdCallback: widget.notificationIdCallback,
       );
 
+      if (!mounted) return;
       widget.onFCMTokenInitialize?.call(context, token);
 
       PushNotificationService.onTokenRefresh.listen((token) {

@@ -1,6 +1,6 @@
 name: firebase_notifications_handler
 description: Simple notifications handler which provides callbacks like onTap which really make it easy to handle notification taps and a lot more.
-version: 1.0.7
+version: 1.0.8
 homepage: https://github.com/rithik-dev/firebase_notifications_handler
 
 environment:
@@ -11,16 +11,16 @@ dependencies:
   flutter:
     sdk: flutter
 
-  firebase_messaging: ^11.2.15
-  flutter_local_notifications: ^9.4.1
+  firebase_messaging: ^11.4.1
+  flutter_local_notifications: ^9.6.0
   http: ^0.13.4
-  path_provider: ^2.0.9
+  path_provider: ^2.0.11
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^1.0.4
+  flutter_lints: ^2.0.1
 
 false_secrets:
   - /example/android/app/google-services.json

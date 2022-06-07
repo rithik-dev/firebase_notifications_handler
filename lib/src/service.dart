@@ -82,6 +82,7 @@ class PushNotificationService {
         onTap,
     GlobalKey<NavigatorState>? navigatorKey,
     String? customSound,
+    required bool handleInitialMessage,
     required String channelId,
     required String channelName,
     required String channelDescription,
@@ -111,10 +112,12 @@ class PushNotificationService {
 
     _fcmToken = await initializeFCMToken(vapidKey: vapidKey);
 
-    final _bgMessage = await _fcm.getInitialMessage();
-    if (_bgMessage != null) {
-      _openedAppFromNotification = true;
-      _onBackgroundMessage(_bgMessage);
+    if (handleInitialMessage) {
+      final bgMessage = await _fcm.getInitialMessage();
+      if (bgMessage != null) {
+        _openedAppFromNotification = true;
+        _onBackgroundMessage(bgMessage);
+      }
     }
 
     /// Registering the listeners
@@ -157,14 +160,14 @@ class PushNotificationService {
   /// notifications to show a notification when the app is in foreground.
   static Future<FlutterLocalNotificationsPlugin>
       _initializeLocalNotifications() async {
-    final _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     const initializationSettings = InitializationSettings(
       android: AndroidInitializationSettings('@mipmap/ic_launcher'),
       // iOS: IOSInitializationSettings(
       //   onDidReceiveLocalNotification: (id, title, body, payload) async {},
       // ),
     );
-    await _flutterLocalNotificationsPlugin.initialize(
+    await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
       onSelectNotification: (String? payload) async {
         if (_onTap != null) {
@@ -176,7 +179,7 @@ class PushNotificationService {
         }
       },
     );
-    return _flutterLocalNotificationsPlugin;
+    return flutterLocalNotificationsPlugin;
   }
 
   /// [_notificationHandler] implementation
@@ -225,7 +228,7 @@ class PushNotificationService {
       }
     }
 
-    final _androidSpecifics = AndroidNotificationDetails(
+    final androidSpecifics = AndroidNotificationDetails(
       message.notification?.android?.channelId ?? _channelId!,
       _channelName!,
       channelDescription: _channelDescription!,
@@ -241,19 +244,19 @@ class PushNotificationService {
       enableVibration: true,
     );
 
-    final _iOsSpecifics = IOSNotificationDetails(sound: _customSound);
+    final iOsSpecifics = IOSNotificationDetails(sound: _customSound);
 
     final notificationPlatformSpecifics = NotificationDetails(
-      android: _androidSpecifics,
-      iOS: _iOsSpecifics,
+      android: androidSpecifics,
+      iOS: iOsSpecifics,
     );
 
-    final _localNotifications = await _initializeLocalNotifications();
+    final localNotifications = await _initializeLocalNotifications();
 
     _notificationIdCallback ??= (_) => DateTime.now().hashCode;
 
     if (appState == AppState.open) {
-      await _localNotifications.show(
+      await localNotifications.show(
         _notificationIdCallback!(message),
         message.notification?.title,
         message.notification?.body,

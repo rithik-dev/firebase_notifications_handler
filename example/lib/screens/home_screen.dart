@@ -55,9 +55,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 onChanged: (value) {
                   setState(() => showNotificationsOnLifecycleChange = value);
                   if (showNotificationsOnLifecycleChange) {
-                    WidgetsBinding.instance?.addObserver(this);
+                    WidgetsBinding.instance.addObserver(this);
                   } else {
-                    WidgetsBinding.instance?.removeObserver(this);
+                    WidgetsBinding.instance.removeObserver(this);
                   }
                 },
                 value: showNotificationsOnLifecycleChange,

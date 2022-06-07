@@ -1,3 +1,11 @@
+## [1.0.8] - 07/06/2022
+
+* Updated dependencies
+* Fixed linter warnings
+* Added handleInitialMessage attribute
+* Exported firebase_messaging package
+* Updated README.md
+
 ## [1.0.7] - 02/05/2022
 
 * Updated example app to a fully functional app...

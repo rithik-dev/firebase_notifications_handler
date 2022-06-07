@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:label="notifications_handler_demo"
+        android:label="FirebaseNotificationsHandler Demo"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 

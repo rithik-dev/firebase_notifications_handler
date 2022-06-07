@@ -171,6 +171,8 @@ FirebaseNotificationsHandler(
     },
     channelId: 'ChannelId',
     enableLogs: true,
+
+    // ... and a lot more
 ),
 ```
 
