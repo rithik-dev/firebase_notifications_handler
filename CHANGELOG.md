@@ -1,3 +1,7 @@
+## [1.0.9] - 07/06/2022
+
+* Updated dependencies
+
 ## [1.0.8] - 07/06/2022
 
 * Updated dependencies
