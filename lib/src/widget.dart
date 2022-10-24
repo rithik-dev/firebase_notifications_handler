@@ -37,7 +37,8 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   static bool get openedAppFromNotification =>
       PushNotificationService.openedAppFromNotification;
 
-  /// Returns the default FCM token for this device.
+  /// On web, a [vapidKey] is required to fetch the default FCM token for the device.
+  /// The fcm token can be accessed from the [onFCMTokenInitialize] or [onFCMTokenUpdate] callbacks.
   final String? vapidKey;
 
   /// {@template customSound}
@@ -46,9 +47,9 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   ///
   /// .
   ///
-  /// Android: Add the audio file in android/app/src/main/res/raw/___audio_file_here___
+  /// Android: Add the audio file in android/app/src/main/res/raw/___audio-file-here___
   ///
-  /// iOS: Add the audio file in Runner/Resources/___audio_file_here___
+  /// iOS: Add the audio file in Runner/Resources/___audio-file-here___
   ///
   /// .
   ///
@@ -58,7 +59,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   ///      android:name="com.google.firebase.messaging.default_notification_channel_id"
   ///      android:value="ID" />
   ///
-  /// Pass in the same ID in the [channelId] parameter.
+  /// Pass in the same "ID" in the [channelId] parameter.
   /// {@endtemplate}
   final String? customSound;
 
@@ -160,7 +161,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// the [navigatorKey.currentState] of the navigator.
   ///
   ///   * [AppState] is an enum which provides the app state when the
-  ///   notification was tapped.
+  ///   notification arrived.
   ///
   ///   * [payload] is the payload passed to the notification in the 'data'
   ///   parameter when creating the notification.
@@ -279,12 +280,23 @@ class _FirebaseNotificationsHandlerState
       );
 
       if (!mounted) return;
-      widget.onFCMTokenInitialize?.call(context, token);
+
+      final navKey =
+          widget.defaultNavigatorKey ?? PushNotificationService.navigatorKey;
+
+      widget.onFCMTokenInitialize?.call(
+        navKey.currentContext ?? context,
+        token,
+      );
 
       PushNotificationService.onTokenRefresh.listen((token) {
-        widget.onFCMTokenUpdate?.call(context, token);
+        widget.onFCMTokenUpdate?.call(
+          navKey.currentContext ?? context,
+          token,
+        );
       });
     }();
+
     super.initState();
   }
 

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_notifications_handler/src/app_state.dart';
@@ -7,7 +6,6 @@ import 'package:firebase_notifications_handler/src/constants.dart';
 import 'package:firebase_notifications_handler/src/image_downloader.dart';
 import 'package:flutter/cupertino.dart'
     show GlobalKey, NavigatorState, debugPrint;
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 /// Internal implementation class
@@ -58,7 +56,7 @@ class PushNotificationService {
   /// {@macro openedAppFromNotification}
   static bool _openedAppFromNotification = false;
 
-  /// [_openedAppFromNotification] getter.
+  /// {@macro openedAppFromNotification}
   static bool get openedAppFromNotification => _openedAppFromNotification;
 
   /// {@macro notificationIdCallback}
@@ -107,8 +105,7 @@ class PushNotificationService {
 
     if (navigatorKey != null) _navigatorKey = navigatorKey;
 
-    /// Required only for iOS
-    if (!kIsWeb && Platform.isIOS) await _fcm.requestPermission();
+    await _fcm.requestPermission();
 
     _fcmToken = await initializeFCMToken(vapidKey: vapidKey);
 
@@ -163,13 +160,13 @@ class PushNotificationService {
     final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     const initializationSettings = InitializationSettings(
       android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-      // iOS: IOSInitializationSettings(
-      //   onDidReceiveLocalNotification: (id, title, body, payload) async {},
-      // ),
+      iOS: DarwinInitializationSettings(),
     );
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onSelectNotification: (String? payload) async {
+      onDidReceiveNotificationResponse: (details) {
+        final payload = details.payload;
+
         if (_onTap != null) {
           _onTap!(
             navigatorKey,
@@ -179,13 +176,14 @@ class PushNotificationService {
         }
       },
     );
+
     return flutterLocalNotificationsPlugin;
   }
 
   /// [_notificationHandler] implementation
   static Future<void> _notificationHandler(
     RemoteMessage message, {
-    AppState? appState,
+    required AppState appState,
   }) async {
     _enableLogs ??= Constants.enableLogs;
     if (_enableLogs!) {
@@ -244,7 +242,7 @@ class PushNotificationService {
       enableVibration: true,
     );
 
-    final iOsSpecifics = IOSNotificationDetails(sound: _customSound);
+    final iOsSpecifics = DarwinNotificationDetails(sound: _customSound);
 
     final notificationPlatformSpecifics = NotificationDetails(
       android: androidSpecifics,
@@ -263,6 +261,7 @@ class PushNotificationService {
         notificationPlatformSpecifics,
         payload: jsonEncode(message.data),
       );
+
       if (_onOpenNotificationArrive != null) {
         _onOpenNotificationArrive!(_navigatorKey, message.data);
       }
@@ -271,7 +270,7 @@ class PushNotificationService {
     /// if AppState is open, do not handle onTap here because it will trigger as soon as
     /// notification arrives, instead handle in initialize method in onSelectNotification callback.
     else if (_onTap != null) {
-      _onTap!(_navigatorKey, appState!, message.data);
+      _onTap!(_navigatorKey, appState, message.data);
     }
   }
 }

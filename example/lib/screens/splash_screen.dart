@@ -10,6 +10,7 @@ class SplashScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _SplashScreenState createState() => _SplashScreenState();
 }
 
@@ -18,6 +19,9 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     (() async {
       await Future.delayed(Duration.zero);
+
+      if (!mounted) return;
+
       Navigator.pushReplacementNamed(
         context,
         HomeScreen.id,

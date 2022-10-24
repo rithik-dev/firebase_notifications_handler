@@ -1,3 +1,9 @@
+## [1.1.0] - 25/10/2022
+
+* Updated example app
+* Updated documentation
+* Updated some dependencies to latest release
+
 ## [1.0.9] - 04/08/2022
 
 * Updated dependencies
