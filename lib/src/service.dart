@@ -153,16 +153,22 @@ class PushNotificationService {
   static Future<void> _onMessageOpenedApp(RemoteMessage message) =>
       _notificationHandler(message, appState: AppState.background);
 
-  /// [_initializeLocalNotifications] function to initialize the local
+  static FlutterLocalNotificationsPlugin? _flutterLocalNotificationsPlugin;
+
+  static FlutterLocalNotificationsPlugin? get flutterLocalNotificationsPlugin =>
+      _flutterLocalNotificationsPlugin;
+
+  /// [initializeLocalNotifications] function to initialize the local
   /// notifications to show a notification when the app is in foreground.
   static Future<FlutterLocalNotificationsPlugin>
-      _initializeLocalNotifications() async {
-    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+      initializeLocalNotifications() async {
+    _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     const initializationSettings = InitializationSettings(
       android: AndroidInitializationSettings('@mipmap/ic_launcher'),
       iOS: DarwinInitializationSettings(),
     );
-    await flutterLocalNotificationsPlugin.initialize(
+
+    await _flutterLocalNotificationsPlugin?.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: (details) {
         final payload = details.payload;
@@ -177,7 +183,7 @@ class PushNotificationService {
       },
     );
 
-    return flutterLocalNotificationsPlugin;
+    return _flutterLocalNotificationsPlugin!;
   }
 
   /// [_notificationHandler] implementation
@@ -257,12 +263,12 @@ class PushNotificationService {
       iOS: iOsSpecifics,
     );
 
-    final localNotifications = await _initializeLocalNotifications();
+    _flutterLocalNotificationsPlugin ??= await initializeLocalNotifications();
 
     _notificationIdCallback ??= (_) => DateTime.now().hashCode;
 
     if (appState == AppState.open) {
-      await localNotifications.show(
+      await _flutterLocalNotificationsPlugin!.show(
         _notificationIdCallback!(message),
         message.notification?.title,
         message.notification?.body,

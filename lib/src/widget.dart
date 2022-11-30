@@ -5,6 +5,7 @@ import 'package:firebase_notifications_handler/src/app_state.dart';
 import 'package:firebase_notifications_handler/src/constants.dart';
 import 'package:firebase_notifications_handler/src/service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 
 /// Wrap this widget on the [MaterialApp] to enable receiving notifications.
@@ -36,6 +37,9 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// {@endtemplate}
   static bool get openedAppFromNotification =>
       PushNotificationService.openedAppFromNotification;
+
+  static FlutterLocalNotificationsPlugin? get flutterLocalNotificationsPlugin =>
+      PushNotificationService.flutterLocalNotificationsPlugin;
 
   /// On web, a [vapidKey] is required to fetch the default FCM token for the device.
   /// The fcm token can be accessed from the [onFCMTokenInitialize] or [onFCMTokenUpdate] callbacks.
@@ -264,6 +268,8 @@ class _FirebaseNotificationsHandlerState
   @override
   void initState() {
     () async {
+      await PushNotificationService.initializeLocalNotifications();
+
       final token = await PushNotificationService.initialize(
         vapidKey: widget.vapidKey,
         enableLogs: widget.enableLogs,
