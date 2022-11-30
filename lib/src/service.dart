@@ -226,6 +226,8 @@ class PushNotificationService {
       }
     }
 
+    final androidSound = message.notification?.android?.sound ?? _customSound;
+
     final androidSpecifics = AndroidNotificationDetails(
       message.notification?.android?.channelId ?? _channelId!,
       _channelName!,
@@ -234,15 +236,21 @@ class PushNotificationService {
       styleInformation: styleInformation,
       priority: Priority.high,
       groupKey: _groupKey,
-      sound: _customSound == null
+      sound: androidSound == null
           ? null
-          : RawResourceAndroidNotificationSound(_customSound),
+          : RawResourceAndroidNotificationSound(androidSound),
       playSound: true,
       enableLights: true,
       enableVibration: true,
     );
 
-    final iOsSpecifics = DarwinNotificationDetails(sound: _customSound);
+    final iosSound = message.notification?.apple?.sound?.name ?? _customSound;
+    final iOsSpecifics = DarwinNotificationDetails(
+      sound: iosSound,
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
 
     final notificationPlatformSpecifics = NotificationDetails(
       android: androidSpecifics,
