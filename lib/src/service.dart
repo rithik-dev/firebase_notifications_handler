@@ -6,6 +6,7 @@ import 'package:firebase_notifications_handler/src/constants.dart';
 import 'package:firebase_notifications_handler/src/image_downloader.dart';
 import 'package:flutter/cupertino.dart'
     show GlobalKey, NavigatorState, debugPrint;
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 /// Internal implementation class
@@ -36,6 +37,8 @@ class PushNotificationService {
 
   /// {@macro channelName}
   static String? _channelName;
+
+  static late String _notificationIcon;
 
   /// {@macro channelDescription}
   static String? _channelDescription;
@@ -81,6 +84,7 @@ class PushNotificationService {
     GlobalKey<NavigatorState>? navigatorKey,
     String? customSound,
     required bool handleInitialMessage,
+    required String notificationIcon,
     required String channelId,
     required String channelName,
     required String channelDescription,
@@ -97,6 +101,7 @@ class PushNotificationService {
     _customSound = customSound;
     _notificationIdCallback = notificationIdCallback;
     _onOpenNotificationArrive = onOpenNotificationArrive;
+    _notificationIcon = notificationIcon;
 
     _channelId = channelId;
     _channelName = channelName;
@@ -163,9 +168,10 @@ class PushNotificationService {
   static Future<FlutterLocalNotificationsPlugin>
       initializeLocalNotifications() async {
     _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    const initializationSettings = InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-      iOS: DarwinInitializationSettings(),
+
+    final initializationSettings = InitializationSettings(
+      android: AndroidInitializationSettings(_notificationIcon),
+      iOS: const DarwinInitializationSettings(),
     );
 
     await _flutterLocalNotificationsPlugin?.initialize(

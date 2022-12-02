@@ -156,6 +156,8 @@ class FirebaseNotificationsHandler extends StatefulWidget {
     Map payload,
   )? onOpenNotificationArrive;
 
+  final String notificationIcon;
+
   /// {@template onTap}
   /// This callback is triggered when the notification is tapped.
   /// It provides 3 values namely:
@@ -184,6 +186,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
     this.vapidKey,
     this.enableLogs = true,
     this.onTap,
+    this.notificationIcon = '@mipmap/ic_launcher',
     this.onFCMTokenInitialize,
     this.onFCMTokenUpdate,
     this.onOpenNotificationArrive,
@@ -272,6 +275,7 @@ class _FirebaseNotificationsHandlerState
 
       final token = await PushNotificationService.initialize(
         vapidKey: widget.vapidKey,
+        notificationIcon: widget.notificationIcon,
         enableLogs: widget.enableLogs,
         onTap: widget.onTap,
         navigatorKey: widget.defaultNavigatorKey,
