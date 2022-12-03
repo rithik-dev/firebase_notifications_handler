@@ -38,7 +38,7 @@ class PushNotificationService {
   /// {@macro channelName}
   static String? _channelName;
 
-  static late String _notificationIcon;
+  static String? _notificationIcon;
 
   /// {@macro channelDescription}
   static String? _channelDescription;
@@ -170,7 +170,9 @@ class PushNotificationService {
     _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
     final initializationSettings = InitializationSettings(
-      android: AndroidInitializationSettings(_notificationIcon),
+      android: AndroidInitializationSettings(
+        _notificationIcon ?? '@mipmap/ic_launcher',
+      ),
       iOS: const DarwinInitializationSettings(),
     );
 
