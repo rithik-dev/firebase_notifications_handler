@@ -38,8 +38,14 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   static bool get openedAppFromNotification =>
       PushNotificationService.openedAppFromNotification;
 
-  static FlutterLocalNotificationsPlugin? get flutterLocalNotificationsPlugin =>
-      PushNotificationService.flutterLocalNotificationsPlugin;
+  static Future<FlutterLocalNotificationsPlugin?>
+      get flutterLocalNotificationsPlugin async {
+    if (PushNotificationService.flutterLocalNotificationsPlugin == null) {
+      await PushNotificationService.initializeLocalNotifications();
+    }
+
+    return PushNotificationService.flutterLocalNotificationsPlugin;
+  }
 
   /// On web, a [vapidKey] is required to fetch the default FCM token for the device.
   /// The fcm token can be accessed from the [onFCMTokenInitialize] or [onFCMTokenUpdate] callbacks.
