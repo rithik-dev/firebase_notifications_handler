@@ -195,6 +195,7 @@ class PushNotificationService {
   }
 
   /// [_notificationHandler] implementation
+  @pragma('vm:entry-point')
   static Future<void> _notificationHandler(
     RemoteMessage message, {
     required AppState appState,
