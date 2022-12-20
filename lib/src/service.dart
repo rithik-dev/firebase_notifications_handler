@@ -71,6 +71,9 @@ class PushNotificationService {
     Map<String, dynamic> payload,
   )? _onOpenNotificationArrive;
 
+  static int _semaphore = 0;
+  static RemoteMessage? _onMessageLastMessage;
+
   /// Initialize the implementation class
   static Future<String?> initialize({
     String? vapidKey,
@@ -123,7 +126,18 @@ class PushNotificationService {
     }
 
     /// Registering the listeners
-    FirebaseMessaging.onMessage.listen(_onMessage);
+    FirebaseMessaging.onMessage.listen((msg) {
+      if (_onMessageLastMessage?.toMap() == msg.toMap() && _semaphore != 0) {
+        return;
+      }
+
+      _semaphore = 1;
+      Future.delayed(
+        const Duration(milliseconds: 500),
+      ).then((_) => _semaphore = 0);
+
+      _onMessage(msg);
+    });
     FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedApp);
 
