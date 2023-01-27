@@ -86,6 +86,11 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// {@endtemplate}
   final bool handleInitialMessage;
 
+  /// {@template shouldHandleLocalNotification}
+  /// Whether to handle local notifications.
+  /// {@endtemplate}
+  final bool Function(Map)? shouldDisplayLocalNotification;
+
   /// {@template channelId}
   /// If message.notification?.android?.channelId exists in the map,
   /// then it is used, if not then the default value is used, else the value
@@ -196,6 +201,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
     this.onFCMTokenInitialize,
     this.onFCMTokenUpdate,
     this.onOpenNotificationArrive,
+    this.shouldDisplayLocalNotification,
     this.defaultNavigatorKey,
     this.customSound,
     this.notificationIdCallback,
@@ -287,6 +293,7 @@ class _FirebaseNotificationsHandlerState
         navigatorKey: widget.defaultNavigatorKey,
         customSound: widget.customSound,
         handleInitialMessage: widget.handleInitialMessage,
+        shouldDisplayLocalNotification: widget.shouldDisplayLocalNotification,
         channelId: widget.channelId,
         channelName: widget.channelName,
         channelDescription: widget.channelDescription,

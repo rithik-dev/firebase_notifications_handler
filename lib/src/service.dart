@@ -46,6 +46,9 @@ class PushNotificationService {
   /// {@macro groupKey}
   static String? _groupKey;
 
+  /// {@macro shouldHandleLocalNotification}
+  static bool Function(Map)? _shouldDisplayLocalNotification;
+
   /// Called when token is refreshed.
   static Stream<String> get onTokenRefresh => _fcm.onTokenRefresh;
 
@@ -87,6 +90,7 @@ class PushNotificationService {
     GlobalKey<NavigatorState>? navigatorKey,
     String? customSound,
     required bool handleInitialMessage,
+    required bool Function(Map)? shouldDisplayLocalNotification,
     required String notificationIcon,
     required String channelId,
     required String channelName,
@@ -105,6 +109,7 @@ class PushNotificationService {
     _notificationIdCallback = notificationIdCallback;
     _onOpenNotificationArrive = onOpenNotificationArrive;
     _notificationIcon = notificationIcon;
+    _shouldDisplayLocalNotification = shouldDisplayLocalNotification;
 
     _channelId = channelId;
     _channelName = channelName;
@@ -227,6 +232,14 @@ class PushNotificationService {
 """);
     }
 
+    if (appState == AppState.open &&
+        !(_shouldDisplayLocalNotification?.call(message.data) ?? true)) {
+      if (_onOpenNotificationArrive != null) {
+        _onOpenNotificationArrive!(_navigatorKey, message.data);
+      }
+      return;
+    }
+
     _channelId ??= Constants.channelId;
     _channelName ??= Constants.channelName;
     _channelDescription ??= Constants.channelDescription;
@@ -254,6 +267,10 @@ class PushNotificationService {
         );
       }
     }
+
+    styleInformation ??= BigTextStyleInformation(
+      message.notification?.body ?? '',
+    );
 
     final androidSound = message.notification?.android?.sound ?? _customSound;
 
