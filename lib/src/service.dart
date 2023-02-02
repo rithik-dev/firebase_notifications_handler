@@ -74,8 +74,7 @@ class PushNotificationService {
     Map<String, dynamic> payload,
   )? _onOpenNotificationArrive;
 
-  static int _semaphore = 0;
-  static RemoteMessage? _onMessageLastMessage;
+  static final _handledNotifications = <String>{};
 
   /// Initialize the implementation class
   static Future<String?> initialize({
@@ -132,14 +131,9 @@ class PushNotificationService {
 
     /// Registering the listeners
     FirebaseMessaging.onMessage.listen((msg) {
-      if (_onMessageLastMessage?.toMap() == msg.toMap() && _semaphore != 0) {
-        return;
-      }
+      if (_handledNotifications.contains(msg.messageId)) return;
 
-      _semaphore = 1;
-      Future.delayed(
-        const Duration(milliseconds: 500),
-      ).then((_) => _semaphore = 0);
+      if (msg.messageId != null) _handledNotifications.add(msg.messageId!);
 
       _onMessage(msg);
     });
