@@ -86,6 +86,11 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// {@endtemplate}
   final bool handleInitialMessage;
 
+  /// {@template requestPermissionsOnInit}
+  /// Whether to request permissions on widget initialize or not.
+  /// {@endtemplate}
+  final bool requestPermissionsOnInit;
+
   /// {@template shouldHandleLocalNotification}
   /// Whether to handle local notifications.
   /// {@endtemplate}
@@ -196,6 +201,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
     Key? key,
     this.vapidKey,
     this.enableLogs = true,
+    this.requestPermissionsOnInit = true,
     this.onTap,
     this.notificationIcon = '@mipmap/ic_launcher',
     this.onFCMTokenInitialize,
@@ -290,6 +296,7 @@ class _FirebaseNotificationsHandlerState
         notificationIcon: widget.notificationIcon,
         enableLogs: widget.enableLogs,
         onTap: widget.onTap,
+        requestPermissionsOnInit: widget.requestPermissionsOnInit,
         navigatorKey: widget.defaultNavigatorKey,
         customSound: widget.customSound,
         handleInitialMessage: widget.handleInitialMessage,
