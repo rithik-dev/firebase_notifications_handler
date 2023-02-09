@@ -89,7 +89,6 @@ class PushNotificationService {
     GlobalKey<NavigatorState>? navigatorKey,
     String? customSound,
     required bool handleInitialMessage,
-    required bool requestPermissionsOnInit,
     required bool Function(Map)? shouldDisplayLocalNotification,
     required String notificationIcon,
     required String channelId,
@@ -118,7 +117,7 @@ class PushNotificationService {
 
     if (navigatorKey != null) _navigatorKey = navigatorKey;
 
-    if (requestPermissionsOnInit) await _fcm.requestPermission();
+    await _fcm.requestPermission();
 
     _fcmToken = await initializeFCMToken(vapidKey: vapidKey);
 
