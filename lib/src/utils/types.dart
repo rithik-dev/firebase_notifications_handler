@@ -5,15 +5,9 @@ import 'package:firebase_notifications_handler/src/models/notification_on_tap_de
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-typedef OnTapGetter = void Function(
-  // GlobalKey<NavigatorState> navigatorKey,
-  NotificationOnTapDetails details,
-);
+typedef OnTapGetter = void Function(NotificationOnTapDetails details);
 
-typedef OnOpenNotificationArrive = void Function(
-  // GlobalKey<NavigatorState> navigatorKey,
-  Map<dynamic, dynamic> payload,
-);
+typedef OnOpenNotificationArrive = void Function(Map<String, dynamic> payload);
 
 typedef FcmInitializeGetter = void Function(String?);
 typedef FcmUpdateGetter = void Function(String);

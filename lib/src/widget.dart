@@ -17,30 +17,20 @@ import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages
 import 'package:timezone/timezone.dart';
 
+// TODO: add docs to update about the variables that are applicable only for local notifs? i.e. when the app is open
+
 /// Wrap this widget on the [MaterialApp] to enable receiving notifications.
 class FirebaseNotificationsHandler extends StatefulWidget {
+  /// {@template enableLogs}
+  /// Whether to enable logs on certain events like new notification or
+  /// fcmToken updates etc.
+  /// {@endtemplate}
   static bool enableLogs = true;
 
   /// {@template fcmToken}
   /// Firebase messaging token
   /// {@endtemplate}
   static String? get fcmToken => _FirebaseNotificationsHandlerState._fcmToken;
-
-  // /// {@template navigatorKey}
-  // /// Default [GlobalKey] navigator of type [NavigatorState].
-  // ///
-  // /// Can be passed to the material app and can be used in [onTap] callback
-  // /// to get the current navigator state or the current context etc.
-  // ///
-  // /// If you already have a navigator key initiated in the app,
-  // /// pass the same key in the [defaultNavigatorKey].
-  // ///
-  // /// See also:
-  // ///   * [onTap] parameter.
-  // ///   * [defaultNavigatorKey] parameter.
-  // /// {@endtemplate}
-  // static GlobalKey<NavigatorState>? get navigatorKey =>
-  //     _FirebaseNotificationsHandlerState._navigatorKey;
 
   /// {@template openedAppFromNotification}
   /// A boolean that can be used to see whether the app was initially
@@ -52,9 +42,6 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// On web, a [vapidKey] is required to fetch the default FCM token for the device.
   /// The fcm token can be accessed from the [onFcmTokenInitialize] or [onFcmTokenUpdate] callbacks.
   final String? vapidKey;
-
-  // add notes that payload is modified before, and then should handle notif is called etc..
-  final BoolGetter? shouldHandleNotification;
 
   /// {@template handleInitialMessage}
   ///
@@ -69,42 +56,46 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// {@endtemplate}
   final bool handleInitialMessage;
 
+  /// {@template requestPermissionsOnInit}
+  /// Whether to request permissions on initialization.
+  /// {@endtemplate}
   final bool requestPermissionsOnInit;
 
+  /// {@template androidConfig}
+  /// Android specific configuration.
+  /// {@endtemplate}
   final AndroidNotificationsConfig? androidConfig;
+
+  /// {@template iosConfig}
+  /// iOS specific configuration.
+  /// {@endtemplate}
   final IosNotificationsConfig? iosConfig;
 
-  // /// {@template enableLogs}
-  // /// Whether to enable logs on certain events like new notification or
-  // /// [fcmToken] updates etc.
-  // /// {@endtemplate}
-  // final bool enableLogs;
-
-  // /// If you have a navigator key initialized in your app, then pass the
-  // /// key here, this will be sent back in the onTap callback which can be
-  // /// used to see the currentState of the navigator, current context etc.
-  // ///
-  // /// If yoy don't have a key already initialized, you can use
-  // /// the getter [navigatorKey]. Don't forget to pass the key in the
-  // /// [MaterialApp]'s navigatorKey parameter to register it for your app.
-  // final GlobalKey<NavigatorState>? defaultNavigatorKey;
-
-  // final BoolGetter? shouldForceReInitializeLocalNotifications;
-
   /// {@template notificationIdCallback}
-  /// Can be passed to modify the id used by the local notification when app is in foreground
+  /// Can be passed to modify the id used by the local
+  /// notification when app is in foreground
   /// {@endtemplate}
   final NotificationIdGetter? notificationIdGetter;
 
-  // add notes that payload is modified before, and then should handle notif is called etc..
+  /// {@template shouldHandleNotification}
+  /// Can be passed to determine whether the notification should be handled or not.
+  ///
+  /// If [messageModifier] is not null, then the message is first modified
+  /// and then this callback is called, with the modified message.
+  /// {@endtemplate}
+  final BoolGetter? shouldHandleNotification;
+
+  /// {@template messageModifier}
+  /// Can be passed to modify the [RemoteMessage] before it is handled.
+  /// {@endtemplate}
   final RemoteMessageGetter? messageModifier;
 
-  /// {@template onFCMTokenInitialize}
+  /// {@template onFcmTokenInitialize}
   /// This callback is triggered when the [fcmToken] initializes.
   /// {@endtemplate}
   final FcmInitializeGetter? onFcmTokenInitialize;
 
-  /// {@template onFCMTokenUpdate}
+  /// {@template onFcmTokenUpdate}
   /// This callback is triggered when the [fcmToken] updates.
   /// {@endtemplate}
   final FcmUpdateGetter? onFcmTokenUpdate;
@@ -121,18 +112,8 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   final OnOpenNotificationArrive? onOpenNotificationArrive;
 
   /// {@template onTap}
-  /// This callback is triggered when the notification is tapped.
-  /// It provides 3 values namely:
-  ///
-  ///   * [navigatorKey] which can be used to push
-  /// or pop routes by extracting the [navigatorKey.currentContext] or
-  /// the [navigatorKey.currentState] of the navigator.
-  ///
-  ///   * [AppState] is an enum which provides the app state when the
-  ///   notification arrived.
-  ///
-  ///   * [payload] is the payload passed to the notification in the 'data'
-  ///   parameter when creating the notification.
+  /// This callback provides an instance of [NotificationOnTapDetails]
+  /// which provides essential information about the notification.
   /// {@endtemplate}
   final OnTapGetter? onTap;
 
@@ -142,15 +123,12 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   const FirebaseNotificationsHandler({
     Key? key,
     this.vapidKey,
-    // this.enableLogs = _enableLogsDefault,
     this.onTap,
     this.onFcmTokenInitialize,
     this.messageModifier,
     this.shouldHandleNotification,
-    // this.shouldForceReInitializeLocalNotifications,
     this.onFcmTokenUpdate,
     this.onOpenNotificationArrive,
-    // this.defaultNavigatorKey,
     this.androidConfig,
     this.iosConfig,
     this.notificationIdGetter,
@@ -161,10 +139,10 @@ class FirebaseNotificationsHandler extends StatefulWidget {
 
   static final requestPermission =
       _FirebaseNotificationsHandlerState._fcm.requestPermission;
-  static const initializeFCMToken =
-      _FirebaseNotificationsHandlerState.initializeFCMToken;
-  static final onFCMTokenRefresh =
-      _FirebaseNotificationsHandlerState.onFCMTokenRefresh;
+  static const initializeFcmToken =
+      _FirebaseNotificationsHandlerState.initializeFcmToken;
+  static final onFcmTokenRefresh =
+      _FirebaseNotificationsHandlerState.onFcmTokenRefresh;
   static const sendLocalNotification =
       _FirebaseNotificationsHandlerState.sendLocalNotification;
 
@@ -187,7 +165,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// other than 'Content-Type' and 'Authorization'.
   ///
   /// [notificationMeta] : Additional content that you might want to pass
-  /// in the "notification" attribute, apart from title, body, image.
+  /// in the 'notification' attribute, apart from title, body, image.
   static Future<http.Response> sendFcmNotification({
     required String cloudMessagingServerKey,
     required String title,
@@ -207,17 +185,17 @@ class FirebaseNotificationsHandler extends StatefulWidget {
       },
       body: jsonEncode({
         if (fcmTokens.length == 1)
-          "to": fcmTokens.first
+          'to': fcmTokens.first
         else
-          "registration_ids": fcmTokens,
-        "notification": {
-          "title": title,
-          "body": body,
-          "image": imageUrl,
+          'registration_ids': fcmTokens,
+        'notification': {
+          'title': title,
+          'body': body,
+          'image': imageUrl,
           ...?notificationMeta,
         },
-        "data": {
-          "click_action": "FLUTTER_NOTIFICATION_CLICK",
+        'data': {
+          'click_action': 'FLUTTER_NOTIFICATION_CLICK',
           ...?payload,
         },
       }),
@@ -225,14 +203,13 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   }
 
   @override
-  // ignore: library_private_types_in_public_api
-  _FirebaseNotificationsHandlerState createState() =>
+  State<FirebaseNotificationsHandler> createState() =>
       _FirebaseNotificationsHandlerState();
 }
 
 class _FirebaseNotificationsHandlerState
     extends State<FirebaseNotificationsHandler> {
-  static Stream<String> get onFCMTokenRefresh => _fcm.onTokenRefresh;
+  static Stream<String> get onFcmTokenRefresh => _fcm.onTokenRefresh;
 
   /// Internal [FirebaseMessaging] instance
   static final _fcm = FirebaseMessaging.instance;
@@ -305,7 +282,7 @@ class _FirebaseNotificationsHandlerState
     }
   }
 
-  static Future<String?> initializeFCMToken({
+  static Future<String?> initializeFcmToken({
     String? vapidKey,
     bool logsEnabled = true,
   }) async {
@@ -319,16 +296,10 @@ class _FirebaseNotificationsHandlerState
     }
 
     if (!isInitialized) {
-      // FIXME
-      // if (_navigatorKey?.currentContext != null) {
-      _onFCMTokenInitialize?.call(
-        /*_navigatorKey!.currentContext!, */
-        _fcmToken,
-      );
-      // }
+      _onFCMTokenInitialize?.call(_fcmToken);
       if (logsEnabled) {
         log<FirebaseNotificationsHandler>(
-          msg: "FCM Token Initialized: $_fcmToken",
+          msg: 'FCM Token Initialized: $_fcmToken',
         );
       }
     }
@@ -337,13 +308,10 @@ class _FirebaseNotificationsHandlerState
       if (_fcmToken == token) return;
 
       _fcmToken = token;
-      // FIXME
-      // if (_navigatorKey?.currentContext != null) {
-      _onFCMTokenUpdate?.call(/*_navigatorKey!.currentContext!, */ token);
-      // }
+      _onFCMTokenUpdate?.call(token);
       if (logsEnabled) {
         log<FirebaseNotificationsHandler>(
-          msg: "FCM Token Updated: $_fcmToken",
+          msg: 'FCM Token Updated: $_fcmToken',
         );
       }
     });
@@ -391,18 +359,16 @@ class _FirebaseNotificationsHandlerState
 
           // TODO: add support for notification actions?
 
-          final payload = details.payload;
+          final payload = details.payload == null
+              ? <String, dynamic>{}
+              : jsonDecode(details.payload!).cast<String, dynamic>();
 
-          // FIXME
-          // if (_navigatorKey != null) {
           _onTap?.call(
-            // _navigatorKey!,
             NotificationOnTapDetails(
               appState: AppState.open,
-              payload: payload == null ? {} : jsonDecode(payload),
+              payload: payload,
             ),
           );
-          // }
         },
       );
     } catch (e, s) {
@@ -432,7 +398,6 @@ class _FirebaseNotificationsHandlerState
       shouldIgnoreNotification = true;
     }
 
-    // if (shouldLog) {
     String logMsg = '''\n
     ************************************************************************ 
       NEW NOTIFICATION   ${shouldIgnoreNotification ? '[IGNORED]' : ''}
@@ -453,7 +418,6 @@ class _FirebaseNotificationsHandlerState
 ''';
 
     log<FirebaseNotificationsHandler>(msg: logMsg);
-    // }
 
     if (shouldIgnoreNotification) return;
 
@@ -535,16 +499,9 @@ class _FirebaseNotificationsHandlerState
 
       final currAndroidAppIcon = _androidConfig!.appIconGetter(message);
 
-      bool shouldForceInit =
-          /*_shouldForceReInitLocalNotifications?.call(message) ?? */ false;
-
-      if (!shouldForceInit) {
-        shouldForceInit =
-            currAndroidAppIcon != AndroidNotificationsConfig.defaultAppIcon;
-      }
-
       await _initializeLocalNotifications(
-        forceInit: shouldForceInit,
+        forceInit:
+            currAndroidAppIcon != AndroidNotificationsConfig.defaultAppIcon,
         androidNotificationIcon: currAndroidAppIcon,
       );
 
@@ -557,20 +514,19 @@ class _FirebaseNotificationsHandlerState
         notificationDetails: notificationPlatformSpecifics,
       );
 
-      _onOpenNotificationArrive?.call(/*_navigatorKey!, */ message.data);
+      _onOpenNotificationArrive?.call(message.data);
     }
 
-    /// if AppState is open, do not handle onTap here because it will
-    /// trigger as soon as notification arrives, instead handle in
-    /// initialize method in onSelectNotification callback.
+    // if AppState is open, do not handle onTap here because it will
+    // trigger as soon as notification arrives, instead handle in
+    // initialize method in onSelectNotification callback.
     else {
-      // FIXME:
-      // if (_navigatorKey != null) {
       _onTap?.call(
-        /*_navigatorKey!, */
-        NotificationOnTapDetails(appState: appState, payload: message.data),
+        NotificationOnTapDetails(
+          appState: appState,
+          payload: message.data,
+        ),
       );
-      // }
     }
   }
 
@@ -578,15 +534,10 @@ class _FirebaseNotificationsHandlerState
 
   static bool _openedAppFromNotification = false;
 
-  // static bool? _enableLogs;
-
-  // static GlobalKey<NavigatorState>? _navigatorKey;
   static AndroidNotificationsConfig? _androidConfig;
   static IosNotificationsConfig? _iosConfig;
 
   static BoolGetter? _shouldHandleNotification;
-
-  // static BoolGetter? _shouldForceReInitLocalNotifications;
 
   static NotificationIdGetter? _notificationIdGetter;
 
@@ -598,13 +549,9 @@ class _FirebaseNotificationsHandlerState
   static OnOpenNotificationArrive? _onOpenNotificationArrive;
 
   void _initVariables() {
-    // _enableLogs = widget.enableLogs;
     _onTap = widget.onTap;
-    // _navigatorKey = widget.defaultNavigatorKey ?? GlobalKey<NavigatorState>();
 
     _shouldHandleNotification = widget.shouldHandleNotification;
-    // _shouldForceReInitLocalNotifications =
-    //     widget.shouldForceReInitializeLocalNotifications;
 
     _messageModifier = widget.messageModifier;
 
@@ -627,7 +574,7 @@ class _FirebaseNotificationsHandlerState
     () async {
       if (widget.requestPermissionsOnInit) await _fcm.requestPermission();
 
-      _fcmToken = await initializeFCMToken(vapidKey: widget.vapidKey);
+      _fcmToken = await initializeFcmToken(vapidKey: widget.vapidKey);
 
       if (widget.handleInitialMessage) {
         Future<void> handleFcmInitialMsg() async {
@@ -649,7 +596,7 @@ class _FirebaseNotificationsHandlerState
               _onBackgroundMessage(
                 RemoteMessage(
                   messageId: details?.notificationResponse?.id?.toString(),
-                  data: {
+                  data: <String, dynamic>{
                     if (details?.notificationResponse?.payload != null)
                       ...jsonDecode(details!.notificationResponse!.payload!),
                   },

@@ -8,6 +8,8 @@
 * removed enable logs param
 * rename onFCMTokenInitialize to onFcmTokenInitialize
 * rename onFCMTokenUpdate to onFcmTokenUpdate
+* renamed initializeFCMToken to initializeFcmToken
+* renamed onFCMTokenRefresh to onFcmTokenRefresh
 
 ## [1.1.0] - 25/10/2022
 
