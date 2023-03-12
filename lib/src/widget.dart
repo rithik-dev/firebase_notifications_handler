@@ -56,10 +56,10 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// {@endtemplate}
   final bool handleInitialMessage;
 
-  /// {@template requestPermissionsOnInit}
+  /// {@template requestPermissionsOnInitialize}
   /// Whether to request permissions on initialization.
   /// {@endtemplate}
-  final bool requestPermissionsOnInit;
+  final bool requestPermissionsOnInitialize;
 
   /// {@template androidConfig}
   /// Android specific configuration.
@@ -133,7 +133,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
     this.iosConfig,
     this.notificationIdGetter,
     this.handleInitialMessage = true,
-    this.requestPermissionsOnInit = true,
+    this.requestPermissionsOnInitialize = true,
     required this.child,
   }) : super(key: key);
 
@@ -141,8 +141,6 @@ class FirebaseNotificationsHandler extends StatefulWidget {
       _FirebaseNotificationsHandlerState._fcm.requestPermission;
   static const initializeFcmToken =
       _FirebaseNotificationsHandlerState.initializeFcmToken;
-  static final onFcmTokenRefresh =
-      _FirebaseNotificationsHandlerState.onFcmTokenRefresh;
   static const sendLocalNotification =
       _FirebaseNotificationsHandlerState.sendLocalNotification;
 
@@ -209,8 +207,6 @@ class FirebaseNotificationsHandler extends StatefulWidget {
 
 class _FirebaseNotificationsHandlerState
     extends State<FirebaseNotificationsHandler> {
-  static Stream<String> get onFcmTokenRefresh => _fcm.onTokenRefresh;
-
   /// Internal [FirebaseMessaging] instance
   static final _fcm = FirebaseMessaging.instance;
 
@@ -282,10 +278,7 @@ class _FirebaseNotificationsHandlerState
     }
   }
 
-  static Future<String?> initializeFcmToken({
-    String? vapidKey,
-    bool logsEnabled = true,
-  }) async {
+  static Future<String?> initializeFcmToken({String? vapidKey}) async {
     final isInitialized = _fcmToken != null;
 
     try {
@@ -297,7 +290,7 @@ class _FirebaseNotificationsHandlerState
 
     if (!isInitialized) {
       _onFCMTokenInitialize?.call(_fcmToken);
-      if (logsEnabled) {
+      if (FirebaseNotificationsHandler.enableLogs) {
         log<FirebaseNotificationsHandler>(
           msg: 'FCM Token Initialized: $_fcmToken',
         );
@@ -309,7 +302,7 @@ class _FirebaseNotificationsHandlerState
 
       _fcmToken = token;
       _onFCMTokenUpdate?.call(token);
-      if (logsEnabled) {
+      if (FirebaseNotificationsHandler.enableLogs) {
         log<FirebaseNotificationsHandler>(
           msg: 'FCM Token Updated: $_fcmToken',
         );
@@ -530,7 +523,7 @@ class _FirebaseNotificationsHandlerState
     }
   }
 
-  static const _handledNotifications = <String>{};
+  static final _handledNotifications = <String>{};
 
   static bool _openedAppFromNotification = false;
 
@@ -569,7 +562,7 @@ class _FirebaseNotificationsHandlerState
     _initVariables();
 
     () async {
-      if (widget.requestPermissionsOnInit) await _fcm.requestPermission();
+      if (widget.requestPermissionsOnInitialize) await _fcm.requestPermission();
 
       _fcmToken = await initializeFcmToken(vapidKey: widget.vapidKey);
 
@@ -612,10 +605,9 @@ class _FirebaseNotificationsHandlerState
       /// _handledNotifications used to prevent
       /// multiple calls to the same notification.
       void onMessageListener(RemoteMessage msg) {
-        // TODO: test this.
         if (msg.messageId == null) return;
 
-        if (!_handledNotifications.contains(msg.messageId)) return;
+        if (_handledNotifications.contains(msg.messageId)) return;
 
         _handledNotifications.add(msg.messageId!);
 

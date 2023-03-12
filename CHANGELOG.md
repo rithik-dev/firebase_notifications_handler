@@ -9,7 +9,8 @@
 * rename onFCMTokenInitialize to onFcmTokenInitialize
 * rename onFCMTokenUpdate to onFcmTokenUpdate
 * renamed initializeFCMToken to initializeFcmToken
-* renamed onFCMTokenRefresh to onFcmTokenRefresh
+* Removed onFCMTokenRefresh
+* renamed requestPermissionsOnInit to requestPermissionsOnInitialize
 
 ## [1.1.0] - 25/10/2022
 
