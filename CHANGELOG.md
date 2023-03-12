@@ -10,6 +10,7 @@
 * rename onFCMTokenUpdate to onFcmTokenUpdate
 * renamed initializeFCMToken to initializeFcmToken
 * Removed onFCMTokenRefresh
+* Renamed AppState.closed to AppState.terminated
 * renamed requestPermissionsOnInit to requestPermissionsOnInitialize
 
 ## [1.1.0] - 25/10/2022

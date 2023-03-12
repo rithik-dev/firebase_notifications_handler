@@ -566,6 +566,8 @@ class _FirebaseNotificationsHandlerState
 
       _fcmToken = await initializeFcmToken(vapidKey: widget.vapidKey);
 
+      await _initializeLocalNotifications();
+
       if (widget.handleInitialMessage) {
         Future<void> handleFcmInitialMsg() async {
           final bgMessage = await _fcm.getInitialMessage();
