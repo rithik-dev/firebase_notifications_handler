@@ -25,7 +25,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// Whether to enable logs on certain events like new notification or
   /// fcmToken updates etc.
   /// {@endtemplate}
-  static bool enableLogs = true;
+  static bool enableLogs = !kReleaseMode;
 
   /// {@template fcmToken}
   /// Firebase messaging token
@@ -172,9 +172,9 @@ class FirebaseNotificationsHandler extends StatefulWidget {
     required List<String> fcmTokens,
     String? body,
     String? imageUrl,
-    Map? payload,
-    Map? additionalHeaders,
-    Map? notificationMeta,
+    Map<String, dynamic>? payload,
+    Map<String, dynamic>? additionalHeaders,
+    Map<String, dynamic>? notificationMeta,
   }) async {
     return await http.post(
       Uri.parse('https://fcm.googleapis.com/fcm/send'),
@@ -224,7 +224,7 @@ class _FirebaseNotificationsHandlerState
     required NotificationDetails notificationDetails,
     String? title,
     String? body,
-    Map? payload,
+    Map<String, dynamic>? payload,
     TZDateTime? scheduledDateTime,
     bool shouldForceInitNotifications = false,
     UILocalNotificationDateInterpretation?
@@ -549,19 +549,16 @@ class _FirebaseNotificationsHandlerState
   static OnOpenNotificationArrive? _onOpenNotificationArrive;
 
   void _initVariables() {
-    _onTap = widget.onTap;
-
-    _shouldHandleNotification = widget.shouldHandleNotification;
-
-    _messageModifier = widget.messageModifier;
-
     _onFCMTokenInitialize = widget.onFcmTokenInitialize;
     _onFCMTokenUpdate = widget.onFcmTokenUpdate;
 
     _androidConfig = widget.androidConfig ?? AndroidNotificationsConfig();
     _iosConfig = widget.iosConfig ?? IosNotificationsConfig();
 
+    _onTap = widget.onTap;
     _onOpenNotificationArrive = widget.onOpenNotificationArrive;
+    _messageModifier = widget.messageModifier;
+    _shouldHandleNotification = widget.shouldHandleNotification;
 
     _notificationIdGetter =
         widget.notificationIdGetter ?? (_) => DateTime.now().hashCode;
