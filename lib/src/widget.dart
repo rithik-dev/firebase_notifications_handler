@@ -530,7 +530,7 @@ class _FirebaseNotificationsHandlerState
     }
   }
 
-  static const _handledNotifications = <String>{};
+  static final _handledNotifications = <String>{};
 
   static bool _openedAppFromNotification = false;
 
@@ -612,10 +612,9 @@ class _FirebaseNotificationsHandlerState
       /// _handledNotifications used to prevent
       /// multiple calls to the same notification.
       void onMessageListener(RemoteMessage msg) {
-        // TODO: test this.
         if (msg.messageId == null) return;
 
-        if (!_handledNotifications.contains(msg.messageId)) return;
+        if (_handledNotifications.contains(msg.messageId)) return;
 
         _handledNotifications.add(msg.messageId!);
 
