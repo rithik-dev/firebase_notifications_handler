@@ -1,3 +1,14 @@
+## [2.0.0]
+
+* **BREAKING CHANGES**
+  breaking: no navigator key in onOpenNotifArrive ,onTap
+  no context in token init or update
+  renamed closed to terminated
+* onTap now gives an object of NotificationOnTapDetails
+* removed enable logs param
+* rename onFCMTokenInitialize to onFcmTokenInitialize
+* rename onFCMTokenUpdate to onFcmTokenUpdate
+
 ## [1.1.0] - 25/10/2022
 
 * Updated example app

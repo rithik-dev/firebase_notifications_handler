@@ -24,22 +24,27 @@ class _MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FirebaseNotificationsHandler(
-      defaultNavigatorKey: Globals.navigatorKey,
-      onOpenNotificationArrive: (_, payload) {
+      onOpenNotificationArrive: (payload) {
         log(
           id,
           msg: "Notification received while app is open with payload $payload",
         );
       },
-      onTap: (navigatorState, appState, payload) {
+      onTap: (details) {
+        // final context = Globals.navigatorKey.currentContext;
+        // can use context
+
+        final payload = details.payload;
+        final appState = details.appState;
+
         showSnackBar('appState: $appState\npayload: $payload');
         log(
           id,
           msg: "Notification tapped with $appState & payload $payload",
         );
       },
-      onFCMTokenInitialize: (_, token) => Globals.fcmToken = token,
-      onFCMTokenUpdate: (_, token) => Globals.fcmToken = token,
+      onFcmTokenInitialize: (token) => Globals.fcmToken = token,
+      onFcmTokenUpdate: (token) => Globals.fcmToken = token,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'FirebaseNotificationsHandler Demo',

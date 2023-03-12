@@ -20,7 +20,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
-    await FirebaseNotificationsHandler.sendNotification(
+    await FirebaseNotificationsHandler.sendFcmNotification(
       cloudMessagingServerKey: Constants.cloudMessagingServerKey,
       title: 'AppLifecycleState',
       body: state.toString(),
@@ -83,7 +83,7 @@ class _SendSampleNotification extends StatelessWidget {
   }) : super(key: key);
 
   Future<void> _sendNotification() async {
-    await FirebaseNotificationsHandler.sendNotification(
+    await FirebaseNotificationsHandler.sendFcmNotification(
       cloudMessagingServerKey: Constants.cloudMessagingServerKey,
       fcmTokens: [Globals.fcmToken!],
       title: notificationTitle!,
