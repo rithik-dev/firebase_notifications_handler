@@ -22,25 +22,35 @@ import 'package:timezone/timezone.dart';
 /// Wrap this widget on the [MaterialApp] to enable receiving notifications.
 class FirebaseNotificationsHandler extends StatefulWidget {
   /// {@template enableLogs}
+  ///
   /// Whether to enable logs on certain events like new notification or
   /// fcmToken updates etc.
+  ///
   /// {@endtemplate}
   static bool enableLogs = !kReleaseMode;
 
   /// {@template fcmToken}
+  ///
   /// Firebase messaging token
+  ///
   /// {@endtemplate}
   static String? get fcmToken => _FirebaseNotificationsHandlerState._fcmToken;
 
   /// {@template openedAppFromNotification}
+  ///
   /// A boolean that can be used to see whether the app was initially
   /// opened from a notification.
+  ///
   /// {@endtemplate}
   static final openedAppFromNotification =
       _FirebaseNotificationsHandlerState._openedAppFromNotification;
 
+  /// {@template vapidKey}
+  ///
   /// On web, a [vapidKey] is required to fetch the default FCM token for the device.
   /// The fcm token can be accessed from the [onFcmTokenInitialize] or [onFcmTokenUpdate] callbacks.
+  ///
+  /// {@endtemplate}
   final String? vapidKey;
 
   /// {@template handleInitialMessage}
@@ -57,50 +67,67 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   final bool handleInitialMessage;
 
   /// {@template requestPermissionsOnInitialize}
+  ///
   /// Whether to request permissions on initialization.
+  ///
   /// {@endtemplate}
   final bool requestPermissionsOnInitialize;
 
   /// {@template androidConfig}
+  ///
   /// Android specific configuration.
+  ///
   /// {@endtemplate}
   final AndroidNotificationsConfig? androidConfig;
 
   /// {@template iosConfig}
+  ///
   /// iOS specific configuration.
+  ///
   /// {@endtemplate}
   final IosNotificationsConfig? iosConfig;
 
-  /// {@template notificationIdCallback}
+  /// {@template notificationIdGetter}
+  ///
   /// Can be passed to modify the id used by the local
   /// notification when app is in foreground
+  ///
   /// {@endtemplate}
   final NotificationIdGetter? notificationIdGetter;
 
   /// {@template shouldHandleNotification}
+  ///
   /// Can be passed to determine whether the notification should be handled or not.
   ///
   /// If [messageModifier] is not null, then the message is first modified
   /// and then this callback is called, with the modified message.
+  ///
   /// {@endtemplate}
   final BoolGetter? shouldHandleNotification;
 
   /// {@template messageModifier}
+  ///
   /// Can be passed to modify the [RemoteMessage] before it is handled.
+  ///
   /// {@endtemplate}
   final RemoteMessageGetter? messageModifier;
 
   /// {@template onFcmTokenInitialize}
+  ///
   /// This callback is triggered when the [fcmToken] initializes.
+  ///
   /// {@endtemplate}
   final FcmInitializeGetter? onFcmTokenInitialize;
 
   /// {@template onFcmTokenUpdate}
+  ///
   /// This callback is triggered when the [fcmToken] updates.
+  ///
   /// {@endtemplate}
   final FcmUpdateGetter? onFcmTokenUpdate;
 
   /// {@template onOpenNotificationArrive}
+  ///
   /// This callback is triggered when the a new notification arrives
   /// when the app is open i.e. appState is [AppState.open].
   ///
@@ -108,12 +135,15 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   ///
   /// See also:
   ///   * [onTap] parameter.
+  ///
   /// {@endtemplate}
   final OnOpenNotificationArrive? onOpenNotificationArrive;
 
   /// {@template onTap}
+  ///
   /// This callback provides an instance of [NotificationTapDetails]
   /// which provides essential information about the notification.
+  ///
   /// {@endtemplate}
   final OnTapGetter? onTap;
 
@@ -137,10 +167,27 @@ class FirebaseNotificationsHandler extends StatefulWidget {
     required this.child,
   }) : super(key: key);
 
+  /// {@template requestPermission}
+  ///
+  /// Request permission to show notifications.
+  ///
+  /// {@endtemplate}
   static final requestPermission =
       _FirebaseNotificationsHandlerState._fcm.requestPermission;
+
+  /// {@template initializeFcmToken}
+  ///
+  /// Initialize the FCM token.
+  ///
+  /// {@endtemplate}
   static const initializeFcmToken =
       _FirebaseNotificationsHandlerState.initializeFcmToken;
+
+  /// {@template sendLocalNotification}
+  ///
+  /// Send/schedule local notification.
+  ///
+  /// {@endtemplate}
   static const sendLocalNotification =
       _FirebaseNotificationsHandlerState.sendLocalNotification;
 
