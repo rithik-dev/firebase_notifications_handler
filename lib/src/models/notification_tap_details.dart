@@ -1,7 +1,7 @@
 import 'package:firebase_notifications_handler/src/enums/app_state.dart';
 
-class NotificationOnTapDetails {
-  const NotificationOnTapDetails({
+class NotificationTapDetails {
+  const NotificationTapDetails({
     required this.appState,
     required this.payload,
   });

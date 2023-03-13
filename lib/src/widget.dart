@@ -5,7 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_notifications_handler/src/enums/app_state.dart';
 import 'package:firebase_notifications_handler/src/models/android_config.dart';
 import 'package:firebase_notifications_handler/src/models/ios_config.dart';
-import 'package:firebase_notifications_handler/src/models/notification_on_tap_details.dart';
+import 'package:firebase_notifications_handler/src/models/notification_tap_details.dart';
 import 'package:firebase_notifications_handler/src/utils/generics.dart';
 import 'package:firebase_notifications_handler/src/utils/logger.dart';
 import 'package:firebase_notifications_handler/src/utils/types.dart';
@@ -112,7 +112,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   final OnOpenNotificationArrive? onOpenNotificationArrive;
 
   /// {@template onTap}
-  /// This callback provides an instance of [NotificationOnTapDetails]
+  /// This callback provides an instance of [NotificationTapDetails]
   /// which provides essential information about the notification.
   /// {@endtemplate}
   final OnTapGetter? onTap;
@@ -338,6 +338,7 @@ class _FirebaseNotificationsHandlerState
       android: AndroidInitializationSettings(
         androidNotificationIcon ?? AndroidNotificationsConfig.defaultAppIcon,
       ),
+      // FIXME: accept params...
       iOS: const DarwinInitializationSettings(),
     );
 
@@ -357,7 +358,7 @@ class _FirebaseNotificationsHandlerState
               : jsonDecode(details.payload!).cast<String, dynamic>();
 
           _onTap?.call(
-            NotificationOnTapDetails(
+            NotificationTapDetails(
               appState: AppState.open,
               payload: payload,
             ),
@@ -456,10 +457,6 @@ class _FirebaseNotificationsHandlerState
       final notificationImageRes = data[0];
       final notificationIconRes = data[1];
 
-      // TODO: explore other styles
-      // MessagingStyleInformation();
-      // InboxStyleInformation();
-      // MediaStyleInformation();
       if (notificationImageRes != null) {
         androidStyleInformation = BigPictureStyleInformation(
           FilePathAndroidBitmap(notificationImageRes),
@@ -470,7 +467,6 @@ class _FirebaseNotificationsHandlerState
               _androidConfig!.hideExpandedLargeIconGetter(message),
         );
       } else if (message.notification?.body != null) {
-        // FIXME: test this.
         androidStyleInformation =
             BigTextStyleInformation(message.notification!.body!);
       }
@@ -528,7 +524,7 @@ class _FirebaseNotificationsHandlerState
     // initialize method in onSelectNotification callback.
     else {
       _onTap?.call(
-        NotificationOnTapDetails(
+        NotificationTapDetails(
           appState: appState,
           payload: message.data,
         ),

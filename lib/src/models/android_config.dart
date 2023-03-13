@@ -70,6 +70,8 @@ class AndroidNotificationsConfig {
         enableVibrationGetter ?? (_) => defaultEnableVibration;
   }
 
+  /// {@template channelIdGetter}
+  ///
   /// If [message.notification?.android?.channelId] exists in the map,
   /// then it is used, if not then the default value is used, else the value
   /// passed will be used.
@@ -77,37 +79,72 @@ class AndroidNotificationsConfig {
   /// The notification channel's id. Defaults to 'Notifications'.
   ///
   /// Required for Android 8.0 or newer.
+  ///
+  /// {@endtemplate}
   late StringGetter channelIdGetter;
 
-  /// {@template channelName}
+  /// {@template channelNameGetter}
+  ///
   /// The notification channel's name. Defaults to 'Notifications'.
   ///
   /// Required for Android 8.0 or newer.
+  ///
   /// {@endtemplate}
   late StringGetter channelNameGetter;
 
-  /// {@template channelDescription}
+  /// {@template channelDescriptionGetter}
+  ///
   /// The notification channel's description. Defaults to 'Notifications'.
   ///
   /// Required for Android 8.0 or newer.
+  ///
   /// {@endtemplate}
   late StringGetter channelDescriptionGetter;
 
+  /// {@template appIconGetter}
+  ///
+  /// The app icon to display in the notification.
+  ///
+  /// Defaults to '@mipmap/ic_launcher'.
+  ///
+  /// {@endtemplate}
   late StringGetter appIconGetter;
 
+  /// {@template importanceGetter}
+  ///
   /// The importance of the notification.
+  ///
+  /// {@endtemplate}
   late AndroidImportanceGetter importanceGetter;
 
+  /// {@template priorityGetter}
+  ///
   /// The priority of the notification.
+  ///
+  /// {@endtemplate}
   late AndroidPriorityGetter priorityGetter;
 
-  /// {@template customSound}
+  /// {@template imageUrlGetter}
+  ///
+  /// Specifies the url of the image to display in the notification.
+  ///
+  /// {@endtemplate}
+  late NullableStringGetter imageUrlGetter;
+
+  /// {@template soundGetter}
+  ///
+  /// The sound to play for the notification.
+  ///
   /// Pass in the name of the audio file as a string if you
   /// want a custom sound for the notification.
   ///
   /// Android: Add the audio file in android/app/src/main/res/raw/___audio-file-here___
   ///
   /// The string may not have an extension.
+  ///
+  /// The [playSoundGetter] callback should return true for this to work.
+  /// If [playSoundGetter] returns true, but this is not specified then the default
+  /// sound is played.
   ///
   /// Add the default channelId in the AndroidManifest file in your project.
   ///
@@ -116,49 +153,76 @@ class AndroidNotificationsConfig {
   ///      android:value="ID" />
   ///
   /// Pass in the same "ID" in the [channelId] parameter.
-  /// {@endtemplate}
-  late NullableStringGetter imageUrlGetter;
-
-  /// The sound to play for the notification.
-  ///
-  /// The [playSoundGetter] callback should return true for this to work.
-  /// If [playSoundGetter] returns true, but this is not specified then the default
-  /// sound is played.
   ///
   /// For Android 8.0 or newer, this is tied to the specified channel and cannot
   /// be changed after the channel has been created for the first time.
+  ///
+  /// {@endtemplate}
   late NullableStringGetter soundGetter;
 
+  /// {@template smallIconUrlGetter}
+  ///
+  /// Specifies the url of the small icon to display in the notification.
+  ///
+  /// {@endtemplate}
   late NullableStringGetter smallIconUrlGetter;
+
+  /// {@template iconGetter}
+  ///
+  // The icon that should be used when displaying the notification.
+  ///
+  /// {@endtemplate}
   late NullableStringGetter iconGetter;
+
+  /// {@template hideExpandedLargeIconGetter}
+  ///
+  /// Hides the large icon when showing the expanded notification.
+  ///
+  /// {@endtemplate}
   late BoolGetter hideExpandedLargeIconGetter;
 
+  /// {@template playSoundGetter}
+  ///
   /// Indicates if a sound should be played when the notification is displayed.
   ///
   /// For Android 8.0 or newer, this is tied to the specified channel and cannot
   /// be changed after the channel has been created for the first time.
+  ///
+  /// {@endtemplate}
   late BoolGetter playSoundGetter;
 
+  /// {@template enableVibrationGetter}
+  ///
   /// Indicates if vibration should be enabled when the notification is
   /// displayed.
   ///
   /// For Android 8.0 or newer, this is tied to the specified channel and cannot
   /// be changed after the channel has been created for the first time.
+  ///
+  /// {@endtemplate}
   late BoolGetter enableVibrationGetter;
 
+  /// {@template enableLightsGetter}
+  ///
   /// Indicates if lights should be enabled when the notification is displayed.
   ///
   /// For Android 8.0 or newer, this is tied to the specified channel and cannot
   /// be changed after the channel has been created for the first time.
+  ///
+  /// {@endtemplate}
   late BoolGetter enableLightsGetter;
 
-  /// {@template groupKey}
+  /// {@template groupKeyGetter}
+  ///
   /// Specifies the group that this notification belongs to.
   ///
   /// For Android 7.0 or newer.
+  ///
   /// {@endtemplate}
   late NullableStringGetter groupKeyGetter;
 
+  /// {@template tagGetter}
+  ///
   /// The notification tag.
   ///
   /// Showing notification with the same (tag, id) pair as a currently visible
@@ -168,9 +232,15 @@ class AndroidNotificationsConfig {
   /// requested to be shown immediately. This is because the Android
   /// AlarmManager APIs used for scheduling notifications only allow for using
   /// the id to uniquely identify alarms.
+  ///
+  /// {@endtemplate}
   late NullableStringGetter tagGetter;
 
+  /// {@template colorGetter}
+  ///
   /// Specifies the color.
+  ///
+  /// {@endtemplate}
   late NullableColorGetter colorGetter;
 
   AndroidNotificationDetails toSpecifics(
