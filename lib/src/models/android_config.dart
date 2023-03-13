@@ -11,7 +11,6 @@ class AndroidNotificationsConfig {
   static String defaultChannelDescription = 'Notifications';
   static String defaultAppIcon = '@mipmap/ic_launcher';
   static String? defaultSound;
-  static StyleInformation? defaultStyleInformation;
   static Importance defaultImportance = Importance.defaultImportance;
   static Priority defaultPriority = Priority.defaultPriority;
   static String? defaultGroupKey;
@@ -39,7 +38,6 @@ class AndroidNotificationsConfig {
     NullableStringGetter? groupKeyGetter,
     NullableStringGetter? iconGetter,
     NullableStringGetter? smallIconUrlGetter,
-    AndroidStyleInformationGetter? styleInformationGetter,
     BoolGetter? hideExpandedLargeIconGetter,
     BoolGetter? playSoundGetter,
     BoolGetter? enableLightsGetter,
@@ -62,8 +60,6 @@ class AndroidNotificationsConfig {
     this.soundGetter = soundGetter ??
         (msg) => msg.notification?.android?.sound ?? defaultSound;
     this.iconGetter = iconGetter ?? (_) => defaultIcon;
-    this.styleInformationGetter =
-        styleInformationGetter ?? (_) => defaultStyleInformation;
     this.imageUrlGetter = imageUrlGetter ??
         (msg) => msg.notification?.android?.imageUrl ?? defaultImageUrl;
     this.hideExpandedLargeIconGetter =
@@ -109,16 +105,9 @@ class AndroidNotificationsConfig {
   /// Pass in the name of the audio file as a string if you
   /// want a custom sound for the notification.
   ///
-  /// .
-  ///
   /// Android: Add the audio file in android/app/src/main/res/raw/___audio-file-here___
   ///
-  /// iOS: Add the audio file in Runner/Resources/___audio-file-here___
-  ///
-  /// .
-  /// // FIXME: for ios, it is compulsory to add the audio file extension
-  /// The string returned should not have an extension
-  ///
+  /// The string may not have an extension.
   ///
   /// Add the default channelId in the AndroidManifest file in your project.
   ///
@@ -139,8 +128,6 @@ class AndroidNotificationsConfig {
   /// For Android 8.0 or newer, this is tied to the specified channel and cannot
   /// be changed after the channel has been created for the first time.
   late NullableStringGetter soundGetter;
-
-  late AndroidStyleInformationGetter? styleInformationGetter;
 
   late NullableStringGetter smallIconUrlGetter;
   late NullableStringGetter iconGetter;

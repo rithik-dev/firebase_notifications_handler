@@ -21,6 +21,8 @@ typedef NullableColorGetter = Color? Function(RemoteMessage);
 
 typedef AndroidImportanceGetter = Importance Function(RemoteMessage);
 typedef AndroidPriorityGetter = Priority Function(RemoteMessage);
-typedef AndroidStyleInformationGetter = FutureOr<StyleInformation?> Function(
+
+typedef IosDarwinNotificationAttachmentThumbnailClippingRectGetter
+    = DarwinNotificationAttachmentThumbnailClippingRect? Function(
   RemoteMessage,
 );

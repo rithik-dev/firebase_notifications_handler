@@ -370,6 +370,8 @@ class _FirebaseNotificationsHandlerState
     }
   }
 
+  // TODO: add platform checks??
+
   /// [_notificationHandler] implementation
   @pragma('vm:entry-point')
   static Future<void> _notificationHandler(
@@ -415,7 +417,11 @@ class _FirebaseNotificationsHandlerState
     if (shouldIgnoreNotification) return;
 
     if (appState == AppState.open) {
-      StyleInformation? styleInformation;
+      // ByteArrayAndroidBitmap.fromBase64String(
+      //   base64Encode(notificationImageRes.bodyBytes),
+      // ),
+
+      StyleInformation? androidStyleInformation;
 
       final iconUrl = _androidConfig!.smallIconUrlGetter(message);
 
@@ -430,60 +436,67 @@ class _FirebaseNotificationsHandlerState
 
       final notificationId = _notificationIdGetter!(message);
 
-      if (appState == AppState.open) {
-        final data = await Future.wait<String?>([
-          if (imageUrl != null)
-            downloadImage(
-              url: imageUrl,
-              fileName: '_image__${notificationId}_.png',
-            )
-          else
-            Future.value(null),
-          if (iconUrl != null)
-            downloadImage(
-              url: iconUrl,
-              fileName: '_icon__${notificationId}_.png',
-            )
-          else
-            Future.value(null),
-        ]);
+      final data = await Future.wait<String?>([
+        if (imageUrl != null)
+          downloadImage(
+            url: imageUrl,
+            fileName: '_image__${notificationId}_.png',
+          )
+        else
+          Future.value(null),
+        if (imageUrl != null && iconUrl != null)
+          downloadImage(
+            url: iconUrl,
+            fileName: '_icon__${notificationId}_.png',
+          )
+        else
+          Future.value(null),
+      ]);
 
-        final notificationImage = data[0];
-        final notificationIcon = data[1];
+      final notificationImageRes = data[0];
+      final notificationIconRes = data[1];
 
-        // TODO: explore other style infos
-        // BigPictureStyleInformation();
-        // BigTextStyleInformation();
-        // MessagingStyleInformation();
-        // InboxStyleInformation();
-        // MediaStyleInformation();
-
-        if (_androidConfig!.styleInformationGetter == null) {
-          if (notificationImage != null) {
-            styleInformation = BigPictureStyleInformation(
-              FilePathAndroidBitmap(notificationImage),
-              largeIcon: notificationIcon == null
-                  ? null
-                  : FilePathAndroidBitmap(notificationIcon),
-              hideExpandedLargeIcon:
-                  _androidConfig!.hideExpandedLargeIconGetter(message),
-            );
-          } else if (message.notification?.body != null) {
-            // FIXME: test this.
-            styleInformation =
-                BigTextStyleInformation(message.notification!.body!);
-          }
-        } else {
-          styleInformation =
-              await _androidConfig!.styleInformationGetter!(message);
-        }
+      // TODO: explore other styles
+      // MessagingStyleInformation();
+      // InboxStyleInformation();
+      // MediaStyleInformation();
+      if (notificationImageRes != null) {
+        androidStyleInformation = BigPictureStyleInformation(
+          FilePathAndroidBitmap(notificationImageRes),
+          largeIcon: notificationIconRes == null
+              ? null
+              : FilePathAndroidBitmap(notificationIconRes),
+          hideExpandedLargeIcon:
+              _androidConfig!.hideExpandedLargeIconGetter(message),
+        );
+      } else if (message.notification?.body != null) {
+        // FIXME: test this.
+        androidStyleInformation =
+            BigTextStyleInformation(message.notification!.body!);
       }
 
       final androidSpecifics = _androidConfig!.toSpecifics(
         message,
-        styleInformation: styleInformation,
+        styleInformation: androidStyleInformation,
       );
-      final iOsSpecifics = _iosConfig!.toSpecifics(message);
+
+      List<DarwinNotificationAttachment>? attachments;
+
+      if (notificationImageRes != null) {
+        attachments = [
+          DarwinNotificationAttachment(
+            notificationImageRes,
+            hideThumbnail: _iosConfig!.hideThumbnailGetter(message),
+            thumbnailClippingRect:
+                _iosConfig!.thumbnailClippingRectGetter?.call(message),
+          ),
+        ];
+      }
+
+      final iOsSpecifics = _iosConfig!.toSpecifics(
+        message,
+        attachments: attachments,
+      );
 
       final notificationPlatformSpecifics = NotificationDetails(
         android: androidSpecifics,
