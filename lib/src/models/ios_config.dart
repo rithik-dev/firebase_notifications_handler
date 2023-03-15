@@ -33,11 +33,11 @@ class IosNotificationsConfig {
     BoolGetter? hideThumbnailGetter,
     IosNotificationAttachmentClippingRectGetter? thumbnailClippingRectGetter,
   }) {
-    this.soundGetter = soundGetter ??
+    final soundGetterRef = soundGetter ??
         (msg) => msg.notification?.apple?.sound?.name ?? defaultSound;
 
     this.soundGetter = (msg) {
-      final sound = this.soundGetter(msg);
+      final sound = soundGetterRef(msg);
 
       if (sound != null) {
         assert(
