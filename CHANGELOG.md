@@ -1,17 +1,20 @@
 ## [2.0.0]
 
-* **BREAKING CHANGES**
-  breaking: no navigator key in onOpenNotifArrive ,onTap
-  no context in token init or update
-  renamed closed to terminated
-* onTap now gives an object of NotificationOnTapDetails
-* removed enable logs param
-* rename onFCMTokenInitialize to onFcmTokenInitialize
-* rename onFCMTokenUpdate to onFcmTokenUpdate
-* renamed initializeFCMToken to initializeFcmToken
-* Removed onFCMTokenRefresh
-* Renamed AppState.closed to AppState.terminated
-* renamed requestPermissionsOnInit to requestPermissionsOnInitialize
+* **BREAKING:** No navigator key param in handler, and in callbacks onTap, onOpenNotificationArrive
+* **BREAKING:** No context in callbacks onFcmTokenInitialize, onFcmTokenUpdate
+* **BREAKING:** Renamed AppState.closed to AppState.terminated
+* **BREAKING:** onTap now gives an object of NotificationTapDetails
+* **BREAKING:** enableLogs is now available as a static variable in FirebaseNotificationsHandler
+* **BREAKING:** Renamed onFCMTokenInitialize to onFcmTokenInitialize
+* **BREAKING:** Renamed onFCMTokenUpdate to onFcmTokenUpdate
+* **BREAKING:** Renamed initializeFCMToken to initializeFcmToken
+* **BREAKING:** Removed onFCMTokenRefresh
+* **BREAKING:** Renamed requestPermissionsOnInit to requestPermissionsOnInitialize
+* **BREAKING:** Added androidConfig and iosConfig and moved platform specific configs there like channelId, channelName etc. which was in the root before, and these values are getters, which can be modified for every incoming message.
+* Updated example app
+* Updated documentation
+* Updated dependencies to latest release
+* Updated README.md
 
 ## [1.1.0] - 25/10/2022
 
