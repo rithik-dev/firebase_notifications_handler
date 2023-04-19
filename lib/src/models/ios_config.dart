@@ -76,6 +76,7 @@ class IosNotificationsConfig {
   /// The [presentSoundGetter] callback should return true for this to work.
   /// If [presentSoundGetter] returns true, but this is not specified then the default
   /// sound is played.
+  ///
   /// Add the audio file in Runner/Resources/___audio-file-here___
   ///
   /// Make sure to pass the file extension in the string here.

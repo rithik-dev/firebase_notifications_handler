@@ -24,18 +24,39 @@ class _MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FirebaseNotificationsHandler(
+      androidConfig: AndroidNotificationsConfig(
+        channelIdGetter: (msg) =>
+            msg.notification?.android?.channelId ?? 'default',
+      ),
+      iosConfig: IosNotificationsConfig(
+        soundGetter: (_) => 'ios_sound.caf',
+      ),
+      shouldHandleNotification: (msg) {
+        // add some logic and return bool on whether to handle a notif or not
+        return true;
+      },
       onOpenNotificationArrive: (payload) {
+        // final context = Globals.navigatorKey.currentContext!;
+
         log(
           id,
           msg: "Notification received while app is open with payload $payload",
         );
       },
       onTap: (details) {
-        // final context = Globals.navigatorKey.currentContext;
-        // can use context
-
         final payload = details.payload;
         final appState = details.appState;
+
+        /// If you want to push a screen on notification tap
+        ///
+        // Globals.navigatorKey.currentState?.pushNamed(
+        //   payload['screenId'],
+        // );
+        ///
+        /// or
+        ///
+        /// Get current context
+        // final context = Globals.navigatorKey.currentContext!;
 
         showSnackBar('appState: $appState\npayload: $payload');
         log(
