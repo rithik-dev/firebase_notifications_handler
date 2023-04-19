@@ -1,4 +1,4 @@
-## [2.0.0]
+## [2.0.0] - 19/04/2023
 
 * **BREAKING:** No navigator key param in handler, and in callbacks onTap, onOpenNotificationArrive
 * **BREAKING:** No context in callbacks onFcmTokenInitialize, onFcmTokenUpdate
@@ -10,6 +10,7 @@
 * **BREAKING:** Renamed initializeFCMToken to initializeFcmToken
 * **BREAKING:** Removed onFCMTokenRefresh
 * **BREAKING:** Renamed requestPermissionsOnInit to requestPermissionsOnInitialize
+* **BREAKING:** Renamed sendNotification to sendFcmNotification, and introduced a new sendLocalNotification function which can be used to send/schedule local notifications.
 * **BREAKING:** Added androidConfig and iosConfig and moved platform specific configs there like channelId, channelName etc. which was in the root before, and these values are getters, which can be modified for every incoming message.
 * Updated example app
 * Updated documentation

@@ -1,13 +1,24 @@
 # [FirebaseNotificationsHandler](https://pub.dev/packages/firebase_notifications_handler) For Flutter
 [![pub package](https://img.shields.io/pub/v/firebase_notifications_handler.svg)](https://pub.dev/packages/firebase_notifications_handler)
-[![likes](https://badges.bar/firebase_notifications_handler/likes)](https://pub.dev/packages/firebase_notifications_handler/score)
-[![popularity](https://badges.bar/firebase_notifications_handler/popularity)](https://pub.dev/packages/firebase_notifications_handler/score)
-[![pub points](https://badges.bar/firebase_notifications_handler/pub%20points)](https://pub.dev/packages/firebase_notifications_handler/score)
+[![code size](https://img.shields.io/github/languages/code-size/rithik-dev/firebase_notifications_handler)](https://github.com/rithik-dev/firebase_notifications_handler)
+[![likes](https://img.shields.io/pub/likes/firebase_notifications_handler)](https://pub.dev/packages/firebase_notifications_handler/score)
+[![popularity](https://img.shields.io/pub/popularity/firebase_notifications_handler)](https://pub.dev/packages/firebase_notifications_handler/score)
+[![pub points](https://img.shields.io/pub/points/firebase_notifications_handler)](https://pub.dev/packages/firebase_notifications_handler/score)
+[![license MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 
 * Simple notifications handler which provides callbacks like onTap which really make it easy to handle notification taps and a lot more.
 
 ## Screenshots
 <img src="https://user-images.githubusercontent.com/56810766/123861270-9a9e4800-d944-11eb-8c04-8fd3e9557876.png" height=600/>&nbsp;&nbsp;<img src="https://user-images.githubusercontent.com/56810766/123926531-96f0dc80-d9a9-11eb-85e4-eee661baaffd.jpeg" height=600/>&nbsp;&nbsp;<img src="https://user-images.githubusercontent.com/56810766/166269612-d555f82c-1634-4431-8ea4-619120e87815.png" height=600/>&nbsp;&nbsp;<img src="https://user-images.githubusercontent.com/56810766/166288543-5b7a4088-dcc8-4acf-9180-3f98d6b8900f.jpeg" height=600/>
+
+
+## Migration Guide from v1.x to v2.x+
+
+* Numerous parameters were renamed to add clarity and consistency, and some were removed. Refer to the [CHANGELOG.md](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/CHANGELOG.md#200---18032023) for more details.
+* NavigatorKey is no longer accepted/provided in the onTap, onOpenNotificationArrive callbacks. Instead, you'll have to create a key and maintain it in your app. Refer to the [example app](https://github.com/rithik-dev/firebase_notifications_handler/tree/master/example).
+* Moved android-specific config params like channelId, channelName, sound etc. to androidConfig.
+* Moved ios-specific config params like sound etc. to iosConfig.
+* onFCMTokenRefresh is removed. Instead, you can use onFcmTokenUpdate callback. You can always maintain your own stream for tokens in your app if needed.
 
 ## Getting Started
 <b>Step 1</b>: Before you can add Firebase to your app, you need to create a Firebase project to connect to your application.
@@ -109,9 +120,11 @@ self.addEventListener('notificationclick', function (event) {
 ## Custom Sound
 #### Adding custom notification sounds in Android
 - Add the audio file in android/app/src/main/res/raw/___audio_file_here___
+- Add the audio file name in the `soundGetter` parameter in the `AndroidConfig` class.
 
 #### Adding custom notification sounds in iOS
 - Add the audio file in Runner/Resources/___audio_file_here___
+- Add the audio file name in the `soundGetter` parameter in the `IosConfig` class.
 
 ## Usage
 
@@ -148,29 +161,38 @@ class MyApp extends StatelessWidget {
 }
 ```
 
+Disabling logs: You can set the `enableLogs` parameter to false to disable the logs.
+```dart
+FirebaseNotificationsHandler.enableLogs = false;
+```
+
 Although, the widget automatically initializes the fcmToken, but if the FCM token is needed before the widget is built,
-then use the initializeFCMToken() function to initialize the token. Which will return the initialized token.
+then use the `initializeFcmToken()` function to initialize the token. Which will return the initialized token.
 
 Also, keep in mind, when the widget is built, the onFCMTokenInitialize callback will also fire, with the same token.
 
 There are multiple parameters that can be passed to the widget, some of them are shown.
 ```dart
 FirebaseNotificationsHandler(
-    onFCMTokenInitialize: (_, token) => fcmToken = token,
-    onFCMTokenUpdate: (_, token) {
+    onFcmTokenInitialize: (token) => fcmToken = token,
+    onFcmTokenUpdate: (token) {
         fcmToken = token;
         // await User.updateFCM(token);
     },
-    onTap: (navigatorState, appState, payload) {
+    onTap: (details) {
+        final appState = details.appState;
+        final payload = details.payload;
+      
         print("Notification tapped with $appState & payload $payload");
 
-        final context = navigatorState.currentContext!;
-        navigatorState.currentState!.pushNamed('newRouteName');
+        final context = Globals.navigatorState.currentContext!;
+        Globals.navigatorState.currentState!.pushNamed('newRouteName');
         // OR
         Navigator.pushNamed(context, 'newRouteName');
     },
-    channelId: 'ChannelId',
-    enableLogs: true,
+    androidConfig: AndroidConfig(
+        channelIdGetter: (_) =>  'ChannelId',
+    ),
 
     // ... and a lot more
 ),
@@ -185,7 +207,7 @@ You can use the in-built `sendNotification` static method on the `FirebaseNotifi
 to trigger the notification.
 
 ```dart
-await FirebaseNotificationsHandler.sendNotification(
+await FirebaseNotificationsHandler.sendFcmNotification(
   cloudMessagingServerKey: '<YOUR_CLOUD_MESSAGING_SERVER_KEY>',
   title: 'This is a test notification',
   body: 'This describes this notification',
@@ -264,22 +286,48 @@ class _MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FirebaseNotificationsHandler(
-      defaultNavigatorKey: Globals.navigatorKey,
-      onOpenNotificationArrive: (_, payload) {
+      androidConfig: AndroidNotificationsConfig(
+        channelIdGetter: (msg) =>
+            msg.notification?.android?.channelId ?? 'default',
+      ),
+      iosConfig: IosNotificationsConfig(
+        soundGetter: (_) => 'ios_sound.caf',
+      ),
+      shouldHandleNotification: (msg) {
+        // add some logic and return bool on whether to handle a notif or not
+        return true;
+      },
+      onOpenNotificationArrive: (payload) {
+        // final context = Globals.navigatorKey.currentContext!;
+
         log(
           id,
           msg: "Notification received while app is open with payload $payload",
         );
       },
-      onTap: (navigatorState, appState, payload) {
+      onTap: (details) {
+        final payload = details.payload;
+        final appState = details.appState;
+
+        /// If you want to push a screen on notification tap
+        ///
+        // Globals.navigatorKey.currentState?.pushNamed(
+        //   payload['screenId'],
+        // );
+        ///
+        /// or
+        ///
+        /// Get current context
+        // final context = Globals.navigatorKey.currentContext!;
+
         showSnackBar('appState: $appState\npayload: $payload');
         log(
           id,
           msg: "Notification tapped with $appState & payload $payload",
         );
       },
-      onFCMTokenInitialize: (_, token) => Globals.fcmToken = token,
-      onFCMTokenUpdate: (_, token) => Globals.fcmToken = token,
+      onFcmTokenInitialize: (token) => Globals.fcmToken = token,
+      onFcmTokenUpdate: (token) => Globals.fcmToken = token,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'FirebaseNotificationsHandler Demo',
