@@ -673,20 +673,38 @@ class _FirebaseNotificationsHandlerState
 
   static OnOpenNotificationArrive? _onOpenNotificationArrive;
 
-  void _initVariables() {
-    _onFCMTokenInitialize = widget.onFcmTokenInitialize;
-    _onFCMTokenUpdate = widget.onFcmTokenUpdate;
+  void _initVariables({
+    bool reset = false,
+  }) {
+    _onFCMTokenInitialize = reset ? null : widget.onFcmTokenInitialize;
+    _onFCMTokenUpdate = reset ? null : widget.onFcmTokenUpdate;
 
-    _androidConfig = widget.androidConfig ?? AndroidNotificationsConfig();
-    _iosConfig = widget.iosConfig ?? IosNotificationsConfig();
+    _androidConfig =
+        reset ? null : (widget.androidConfig ?? AndroidNotificationsConfig());
+    _iosConfig = reset ? null : (widget.iosConfig ?? IosNotificationsConfig());
 
-    _onTap = widget.onTap;
-    _onOpenNotificationArrive = widget.onOpenNotificationArrive;
-    _messageModifier = widget.messageModifier;
-    _shouldHandleNotification = widget.shouldHandleNotification;
+    _onTap = reset ? null : widget.onTap;
+    _onOpenNotificationArrive = reset ? null : widget.onOpenNotificationArrive;
 
-    _notificationIdGetter =
-        widget.notificationIdGetter ?? (_) => DateTime.now().hashCode;
+    _messageModifier = reset
+        ? null
+        : (widget.messageModifier == null
+            ? null
+            : (msg) {
+                final newMessage = widget.messageModifier!(msg);
+
+                log<FirebaseNotificationsHandler>(
+                  msg: 'Message modified: $newMessage',
+                );
+
+                return newMessage;
+              });
+
+    _shouldHandleNotification = reset ? null : widget.shouldHandleNotification;
+
+    _notificationIdGetter = reset
+        ? null
+        : (widget.notificationIdGetter ?? (_) => DateTime.now().hashCode);
   }
 
   @override
@@ -732,6 +750,12 @@ class _FirebaseNotificationsHandlerState
     }();
 
     super.initState();
+  }
+
+  @override
+  void deactivate() {
+    _initVariables(reset: true);
+    super.deactivate();
   }
 
   @override
