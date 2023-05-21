@@ -58,7 +58,9 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// Whether to check if the application has been opened
   /// from a terminated state via a [RemoteMessage].
   ///
-  /// If false, then [openedAppFromNotification] will always be false.
+  /// If false, then [openedAppFromNotification] will be false, unless
+  /// [FirebaseNotificationsHandler.getInitialMessage] is called, and the
+  /// returned [RemoteMessage] is not null.
   ///
   /// If true, then checks for the initial message, and
   /// if it exists, [onTap] is called with [AppState.terminated].
@@ -167,6 +169,9 @@ class FirebaseNotificationsHandler extends StatefulWidget {
     required this.child,
   }) : super(key: key);
 
+  static FlutterLocalNotificationsPlugin? get flutterLocalNotificationsPlugin =>
+      _FirebaseNotificationsHandlerState._flutterLocalNotificationsPlugin;
+
   /// {@template requestPermission}
   ///
   /// Request permission to show notifications.
@@ -190,6 +195,15 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// {@endtemplate}
   static const sendLocalNotification =
       _FirebaseNotificationsHandlerState.sendLocalNotification;
+
+  /// {@template getInitialMessage}
+  ///
+  /// Get the initial message if the app was opened from a notification tap
+  /// when the app was terminated.
+  ///
+  /// {@endtemplate}
+  static const getInitialMessage =
+      _FirebaseNotificationsHandlerState.getInitialMessage;
 
   /// Trigger FCM notification.
   ///
@@ -465,10 +479,6 @@ class _FirebaseNotificationsHandlerState
     if (shouldIgnoreNotification) return;
 
     if (appState == AppState.open) {
-      // ByteArrayAndroidBitmap.fromBase64String(
-      //   base64Encode(notificationImageRes.bodyBytes),
-      // ),
-
       StyleInformation? androidStyleInformation;
 
       final iconUrl = _androidConfig!.smallIconUrlGetter(message);
@@ -579,6 +589,72 @@ class _FirebaseNotificationsHandlerState
     }
   }
 
+  static Future<RemoteMessage?> getInitialMessage({
+    bool runMessageModifier = true,
+    bool checkShouldHandleNotification = true,
+    bool updateOpenedAppFromNotification = true,
+  }) async {
+    Future<RemoteMessage?> handleFcmInitialMsg() async {
+      final bgMessage = await _fcm.getInitialMessage();
+      if (bgMessage != null) {
+        if (updateOpenedAppFromNotification) _openedAppFromNotification = true;
+        return bgMessage;
+      }
+
+      return null;
+    }
+
+    Future<RemoteMessage?> handleLocalInitialMsg() async {
+      await _initializeLocalNotifications();
+
+      final details = await _flutterLocalNotificationsPlugin
+          ?.getNotificationAppLaunchDetails();
+      if (details?.didNotificationLaunchApp ?? false) {
+        if (updateOpenedAppFromNotification) _openedAppFromNotification = true;
+
+        if (details?.notificationResponse?.notificationResponseType ==
+            NotificationResponseType.selectedNotification) {
+          return RemoteMessage(
+            messageId: details?.notificationResponse?.id?.toString(),
+            data: <String, dynamic>{
+              if (details?.notificationResponse?.payload != null)
+                ...jsonDecode(details!.notificationResponse!.payload!),
+            },
+          );
+        }
+      }
+
+      return null;
+    }
+
+    final res = await Future.wait([
+      handleFcmInitialMsg(),
+      handleLocalInitialMsg(),
+    ]);
+
+    RemoteMessage? initialMessage;
+    initialMessage = res.firstWhere((e) => e != null, orElse: () => null);
+
+    if (initialMessage != null) {
+      if (runMessageModifier && _messageModifier != null) {
+        initialMessage = _messageModifier!(initialMessage);
+      }
+
+      if (checkShouldHandleNotification &&
+          _shouldHandleNotification != null &&
+          !_shouldHandleNotification!(initialMessage)) {
+        log<FirebaseNotificationsHandler>(
+          msg:
+              'Initial message ignored because shouldHandleNotification returned false',
+        );
+
+        return null;
+      }
+    }
+
+    return initialMessage;
+  }
+
   static final _handledNotifications = <String>{};
 
   static bool _openedAppFromNotification = false;
@@ -617,65 +693,42 @@ class _FirebaseNotificationsHandlerState
   void initState() {
     _initVariables();
 
+    /// _handledNotifications used to prevent
+    /// multiple calls to the same notification.
+    void onMessageListener(RemoteMessage msg) {
+      if (msg.messageId == null) return;
+
+      if (_handledNotifications.contains(msg.messageId)) return;
+
+      _handledNotifications.add(msg.messageId!);
+
+      _onMessage(msg);
+    }
+
+    /// Registering the listeners
+    FirebaseMessaging.onMessage.listen(onMessageListener);
+    FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage);
+    FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedApp);
+
     () async {
+      // TODO: accept fn params?
       if (widget.requestPermissionsOnInitialize) await _fcm.requestPermission();
 
-      _fcmToken = await initializeFcmToken(vapidKey: widget.vapidKey);
-
-      await _initializeLocalNotifications();
+      try {
+        _fcmToken = await initializeFcmToken(vapidKey: widget.vapidKey);
+      } catch (e, s) {
+        log<FirebaseNotificationsHandler>(error: e, stackTrace: s);
+      }
 
       if (widget.handleInitialMessage) {
-        Future<void> handleFcmInitialMsg() async {
-          final bgMessage = await _fcm.getInitialMessage();
-          if (bgMessage != null) {
-            _openedAppFromNotification = true;
-            _onBackgroundMessage(bgMessage);
-          }
+        final initialMessage = await getInitialMessage();
+
+        if (initialMessage != null) {
+          _onBackgroundMessage(initialMessage);
         }
-
-        Future<void> handleLocalInitialMsg() async {
-          final details = await _flutterLocalNotificationsPlugin
-              ?.getNotificationAppLaunchDetails();
-          if (details?.didNotificationLaunchApp ?? false) {
-            _openedAppFromNotification = true;
-
-            if (details?.notificationResponse?.notificationResponseType ==
-                NotificationResponseType.selectedNotification) {
-              _onBackgroundMessage(
-                RemoteMessage(
-                  messageId: details?.notificationResponse?.id?.toString(),
-                  data: <String, dynamic>{
-                    if (details?.notificationResponse?.payload != null)
-                      ...jsonDecode(details!.notificationResponse!.payload!),
-                  },
-                ),
-              );
-            }
-          }
-        }
-
-        await Future.wait([
-          handleFcmInitialMsg(),
-          handleLocalInitialMsg(),
-        ]);
+      } else {
+        await _initializeLocalNotifications();
       }
-
-      /// _handledNotifications used to prevent
-      /// multiple calls to the same notification.
-      void onMessageListener(RemoteMessage msg) {
-        if (msg.messageId == null) return;
-
-        if (_handledNotifications.contains(msg.messageId)) return;
-
-        _handledNotifications.add(msg.messageId!);
-
-        _onMessage(msg);
-      }
-
-      /// Registering the listeners
-      FirebaseMessaging.onMessage.listen(onMessageListener);
-      FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage);
-      FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedApp);
     }();
 
     super.initState();
