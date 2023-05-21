@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -276,6 +277,10 @@ class _FirebaseNotificationsHandlerState
 
   static FlutterLocalNotificationsPlugin? _flutterLocalNotificationsPlugin;
 
+  static StreamSubscription<String>? _fcmTokenStreamSubscription;
+  static StreamSubscription<RemoteMessage>? _onMessageSubscription;
+  static StreamSubscription<RemoteMessage>? _onMessageOpenedAppSubscription;
+
   static Future<void> sendLocalNotification(
     int id, {
     required NotificationDetails notificationDetails,
@@ -358,7 +363,7 @@ class _FirebaseNotificationsHandlerState
       }
     }
 
-    _fcm.onTokenRefresh.listen((token) {
+    _fcmTokenStreamSubscription = _fcm.onTokenRefresh.listen((token) {
       if (_fcmToken == token) return;
 
       _fcmToken = token;
@@ -673,38 +678,53 @@ class _FirebaseNotificationsHandlerState
 
   static OnOpenNotificationArrive? _onOpenNotificationArrive;
 
-  void _initVariables({
-    bool reset = false,
-  }) {
-    _onFCMTokenInitialize = reset ? null : widget.onFcmTokenInitialize;
-    _onFCMTokenUpdate = reset ? null : widget.onFcmTokenUpdate;
+  void _initVariables() {
+    _onFCMTokenInitialize = widget.onFcmTokenInitialize;
+    _onFCMTokenUpdate = widget.onFcmTokenUpdate;
 
-    _androidConfig =
-        reset ? null : (widget.androidConfig ?? AndroidNotificationsConfig());
-    _iosConfig = reset ? null : (widget.iosConfig ?? IosNotificationsConfig());
+    _androidConfig = widget.androidConfig ?? AndroidNotificationsConfig();
+    _iosConfig = widget.iosConfig ?? IosNotificationsConfig();
 
-    _onTap = reset ? null : widget.onTap;
-    _onOpenNotificationArrive = reset ? null : widget.onOpenNotificationArrive;
+    _onTap = widget.onTap;
+    _onOpenNotificationArrive = widget.onOpenNotificationArrive;
 
-    _messageModifier = reset
+    _messageModifier = widget.messageModifier == null
         ? null
-        : (widget.messageModifier == null
-            ? null
-            : (msg) {
-                final newMessage = widget.messageModifier!(msg);
+        : (msg) {
+            final newMessage = widget.messageModifier!(msg);
 
-                log<FirebaseNotificationsHandler>(
-                  msg: 'Message modified: $newMessage',
-                );
+            log<FirebaseNotificationsHandler>(
+              msg: 'Message modified: $newMessage',
+            );
 
-                return newMessage;
-              });
+            return newMessage;
+          };
 
-    _shouldHandleNotification = reset ? null : widget.shouldHandleNotification;
+    _shouldHandleNotification = widget.shouldHandleNotification;
 
-    _notificationIdGetter = reset
-        ? null
-        : (widget.notificationIdGetter ?? (_) => DateTime.now().hashCode);
+    _notificationIdGetter =
+        widget.notificationIdGetter ?? (_) => DateTime.now().hashCode;
+  }
+
+  void _deactivate() {
+    _onFCMTokenInitialize = null;
+    _onFCMTokenUpdate = null;
+    _androidConfig = null;
+    _iosConfig = null;
+    _onTap = null;
+    _onOpenNotificationArrive = null;
+    _messageModifier = null;
+    _shouldHandleNotification = null;
+    _notificationIdGetter = null;
+
+    _fcmTokenStreamSubscription?.cancel();
+    _fcmTokenStreamSubscription = null;
+
+    _onMessageSubscription?.cancel();
+    _onMessageSubscription = null;
+
+    _onMessageOpenedAppSubscription?.cancel();
+    _onMessageOpenedAppSubscription = null;
   }
 
   @override
@@ -724,9 +744,11 @@ class _FirebaseNotificationsHandlerState
     }
 
     /// Registering the listeners
-    FirebaseMessaging.onMessage.listen(onMessageListener);
+    _onMessageSubscription =
+        FirebaseMessaging.onMessage.listen(onMessageListener);
     FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage);
-    FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedApp);
+    _onMessageOpenedAppSubscription =
+        FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedApp);
 
     () async {
       // TODO: accept fn params?
@@ -754,7 +776,7 @@ class _FirebaseNotificationsHandlerState
 
   @override
   void deactivate() {
-    _initVariables(reset: true);
+    _deactivate();
     super.deactivate();
   }
 
