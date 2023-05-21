@@ -206,6 +206,24 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   static const getInitialMessage =
       _FirebaseNotificationsHandlerState.getInitialMessage;
 
+  /// {@template notificationTapsSubscription}
+  ///
+  /// Stream of [NotificationTapDetails] which is triggered whenever a
+  /// notification is tapped.
+  ///
+  /// {@endtemplate}
+  static Stream<NotificationTapDetails> get notificationTapsSubscription =>
+      _FirebaseNotificationsHandlerState._notificationTapsSubscription.stream;
+
+  /// {@template notificationArrivesSubscription}
+  ///
+  /// Stream of [Map] which is triggered whenever a
+  /// notification arrives, provided the app is in foreground.
+  ///
+  /// {@endtemplate}
+  static Stream<Map<String, dynamic>> get notificationArrivesSubscription =>
+      _FirebaseNotificationsHandlerState._notificationArriveSubscription.stream;
+
   /// Trigger FCM notification.
   ///
   /// [cloudMessagingServerKey] : The server key from the cloud messaging console.
@@ -278,6 +296,10 @@ class _FirebaseNotificationsHandlerState
   static FlutterLocalNotificationsPlugin? _flutterLocalNotificationsPlugin;
 
   static StreamSubscription<String>? _fcmTokenStreamSubscription;
+  static final _notificationTapsSubscription =
+      StreamController<NotificationTapDetails>.broadcast();
+  static final _notificationArriveSubscription =
+      StreamController<Map<String, dynamic>>.broadcast();
   static StreamSubscription<RemoteMessage>? _onMessageSubscription;
   static StreamSubscription<RemoteMessage>? _onMessageOpenedAppSubscription;
 
@@ -423,12 +445,13 @@ class _FirebaseNotificationsHandlerState
               ? <String, dynamic>{}
               : jsonDecode(details.payload!).cast<String, dynamic>();
 
-          _onTap?.call(
-            NotificationTapDetails(
-              appState: AppState.open,
-              payload: payload,
-            ),
+          final tapDetails = NotificationTapDetails(
+            appState: AppState.open,
+            payload: payload,
           );
+
+          _onTap?.call(tapDetails);
+          _notificationTapsSubscription.add(tapDetails);
         },
       );
     } catch (e, s) {
@@ -579,18 +602,20 @@ class _FirebaseNotificationsHandlerState
       );
 
       _onOpenNotificationArrive?.call(message.data);
+      _notificationArriveSubscription.add(message.data);
     }
 
     // if AppState is open, do not handle onTap here because it will
     // trigger as soon as notification arrives, instead handle in
     // initialize method in onSelectNotification callback.
     else {
-      _onTap?.call(
-        NotificationTapDetails(
-          appState: appState,
-          payload: message.data,
-        ),
+      final tapDetails = NotificationTapDetails(
+        appState: appState,
+        payload: message.data,
       );
+
+      _onTap?.call(tapDetails);
+      _notificationTapsSubscription.add(tapDetails);
     }
   }
 
