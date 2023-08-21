@@ -750,6 +750,8 @@ class _FirebaseNotificationsHandlerState
 
     _onMessageOpenedAppSubscription?.cancel();
     _onMessageOpenedAppSubscription = null;
+
+    _flutterLocalNotificationsPlugin = null;
   }
 
   @override
