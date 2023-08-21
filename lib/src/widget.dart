@@ -732,6 +732,8 @@ class _FirebaseNotificationsHandlerState
   }
 
   void _deactivate() {
+    _fcmToken = null;
+
     _onFCMTokenInitialize = null;
     _onFCMTokenUpdate = null;
     _androidConfig = null;
@@ -750,6 +752,8 @@ class _FirebaseNotificationsHandlerState
 
     _onMessageOpenedAppSubscription?.cancel();
     _onMessageOpenedAppSubscription = null;
+
+    _handledNotifications.clear();
 
     _flutterLocalNotificationsPlugin = null;
   }
