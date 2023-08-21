@@ -170,6 +170,8 @@ class FirebaseNotificationsHandler extends StatefulWidget {
     required this.child,
   }) : super(key: key);
 
+  static bool _initialMessageHandled = false;
+
   static FlutterLocalNotificationsPlugin? get flutterLocalNotificationsPlugin =>
       _FirebaseNotificationsHandlerState._flutterLocalNotificationsPlugin;
 
@@ -624,6 +626,10 @@ class _FirebaseNotificationsHandlerState
     bool checkShouldHandleNotification = true,
     bool updateOpenedAppFromNotification = true,
   }) async {
+    if (FirebaseNotificationsHandler._initialMessageHandled) return null;
+
+    FirebaseNotificationsHandler._initialMessageHandled = true;
+
     Future<RemoteMessage?> handleFcmInitialMsg() async {
       final bgMessage = await _fcm.getInitialMessage();
       if (bgMessage != null) {
@@ -732,6 +738,8 @@ class _FirebaseNotificationsHandlerState
   }
 
   void _deactivate() {
+    _fcmToken = null;
+
     _onFCMTokenInitialize = null;
     _onFCMTokenUpdate = null;
     _androidConfig = null;
@@ -750,6 +758,8 @@ class _FirebaseNotificationsHandlerState
 
     _onMessageOpenedAppSubscription?.cancel();
     _onMessageOpenedAppSubscription = null;
+
+    _handledNotifications.clear();
 
     _flutterLocalNotificationsPlugin = null;
   }
