@@ -787,7 +787,7 @@ class _FirebaseNotificationsHandlerState
     _onMessageOpenedAppSubscription =
         FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedApp);
 
-    () async {
+    (() async {
       // TODO: accept fn params?
       if (widget.requestPermissionsOnInitialize) await _fcm.requestPermission();
 
@@ -806,7 +806,7 @@ class _FirebaseNotificationsHandlerState
       } else {
         await _initializeLocalNotifications();
       }
-    }();
+    })();
 
     super.initState();
   }
