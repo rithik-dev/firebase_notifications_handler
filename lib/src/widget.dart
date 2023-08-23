@@ -170,6 +170,52 @@ class FirebaseNotificationsHandler extends StatefulWidget {
     required this.child,
   }) : super(key: key);
 
+  static void setOnTap(OnTapGetter onTap) =>
+      _FirebaseNotificationsHandlerState._onTap = onTap;
+
+  static void setOnOpenNotificationArrive(
+    OnOpenNotificationArrive onOpenNotificationArrive,
+  ) =>
+      _FirebaseNotificationsHandlerState._onOpenNotificationArrive =
+          onOpenNotificationArrive;
+
+  static void setShouldHandleNotification(
+          BoolGetter shouldHandleNotification) =>
+      _FirebaseNotificationsHandlerState._shouldHandleNotification =
+          shouldHandleNotification;
+
+  static void setOnFcmTokenInitialize(
+    FcmInitializeGetter onFcmTokenInitialize,
+  ) =>
+      _FirebaseNotificationsHandlerState._onFCMTokenInitialize =
+          onFcmTokenInitialize;
+
+  static void setOnFcmTokenUpdate(
+    FcmUpdateGetter onFcmTokenUpdate,
+  ) =>
+      _FirebaseNotificationsHandlerState._onFCMTokenUpdate = onFcmTokenUpdate;
+
+  static void setNotificationIdGetter(
+    NotificationIdGetter notificationIdGetter,
+  ) =>
+      _FirebaseNotificationsHandlerState._notificationIdGetter =
+          notificationIdGetter;
+
+  static void setMessageModifier(
+    RemoteMessageGetter messageModifier,
+  ) =>
+      _FirebaseNotificationsHandlerState._messageModifier = messageModifier;
+
+  static void setAndroidConfig(
+    AndroidNotificationsConfig androidConfig,
+  ) =>
+      _FirebaseNotificationsHandlerState._androidConfig = androidConfig;
+
+  static void setIosConfig(
+    IosNotificationsConfig iosConfig,
+  ) =>
+      _FirebaseNotificationsHandlerState._iosConfig = iosConfig;
+
   // ignore: library_private_types_in_public_api
   static GlobalKey<_FirebaseNotificationsHandlerState> get stateKeyGetter =>
       GlobalKey<_FirebaseNotificationsHandlerState>();
@@ -713,7 +759,7 @@ class _FirebaseNotificationsHandlerState
 
   static OnOpenNotificationArrive? _onOpenNotificationArrive;
 
-  void initVariables() {
+  void _initVariables() {
     _onFCMTokenInitialize = widget.onFcmTokenInitialize;
     _onFCMTokenUpdate = widget.onFcmTokenUpdate;
 
@@ -770,7 +816,7 @@ class _FirebaseNotificationsHandlerState
 
   @override
   void initState() {
-    initVariables();
+    _initVariables();
 
     /// _handledNotifications used to prevent
     /// multiple calls to the same notification.
