@@ -170,49 +170,50 @@ class FirebaseNotificationsHandler extends StatefulWidget {
     required this.child,
   }) : super(key: key);
 
-  static void setOnTap(OnTapGetter onTap) =>
+  static void setOnTap(OnTapGetter? onTap) =>
       _FirebaseNotificationsHandlerState._onTap = onTap;
 
   static void setOnOpenNotificationArrive(
-    OnOpenNotificationArrive onOpenNotificationArrive,
+    OnOpenNotificationArrive? onOpenNotificationArrive,
   ) =>
       _FirebaseNotificationsHandlerState._onOpenNotificationArrive =
           onOpenNotificationArrive;
 
   static void setShouldHandleNotification(
-          BoolGetter shouldHandleNotification) =>
+    BoolGetter? shouldHandleNotification,
+  ) =>
       _FirebaseNotificationsHandlerState._shouldHandleNotification =
           shouldHandleNotification;
 
   static void setOnFcmTokenInitialize(
-    FcmInitializeGetter onFcmTokenInitialize,
+    FcmInitializeGetter? onFcmTokenInitialize,
   ) =>
       _FirebaseNotificationsHandlerState._onFCMTokenInitialize =
           onFcmTokenInitialize;
 
   static void setOnFcmTokenUpdate(
-    FcmUpdateGetter onFcmTokenUpdate,
+    FcmUpdateGetter? onFcmTokenUpdate,
   ) =>
       _FirebaseNotificationsHandlerState._onFCMTokenUpdate = onFcmTokenUpdate;
 
   static void setNotificationIdGetter(
-    NotificationIdGetter notificationIdGetter,
+    NotificationIdGetter? notificationIdGetter,
   ) =>
       _FirebaseNotificationsHandlerState._notificationIdGetter =
           notificationIdGetter;
 
   static void setMessageModifier(
-    RemoteMessageGetter messageModifier,
+    RemoteMessageGetter? messageModifier,
   ) =>
       _FirebaseNotificationsHandlerState._messageModifier = messageModifier;
 
   static void setAndroidConfig(
-    AndroidNotificationsConfig androidConfig,
+    AndroidNotificationsConfig? androidConfig,
   ) =>
       _FirebaseNotificationsHandlerState._androidConfig = androidConfig;
 
   static void setIosConfig(
-    IosNotificationsConfig iosConfig,
+    IosNotificationsConfig? iosConfig,
   ) =>
       _FirebaseNotificationsHandlerState._iosConfig = iosConfig;
 
