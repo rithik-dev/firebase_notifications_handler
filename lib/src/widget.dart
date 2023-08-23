@@ -170,6 +170,10 @@ class FirebaseNotificationsHandler extends StatefulWidget {
     required this.child,
   }) : super(key: key);
 
+  // ignore: library_private_types_in_public_api
+  static GlobalKey<_FirebaseNotificationsHandlerState> get stateKeyGetter =>
+      GlobalKey<_FirebaseNotificationsHandlerState>();
+
   static bool _initialMessageHandled = false;
 
   static FlutterLocalNotificationsPlugin? get flutterLocalNotificationsPlugin =>
@@ -709,7 +713,7 @@ class _FirebaseNotificationsHandlerState
 
   static OnOpenNotificationArrive? _onOpenNotificationArrive;
 
-  void _initVariables() {
+  void initVariables() {
     _onFCMTokenInitialize = widget.onFcmTokenInitialize;
     _onFCMTokenUpdate = widget.onFcmTokenUpdate;
 
@@ -766,7 +770,7 @@ class _FirebaseNotificationsHandlerState
 
   @override
   void initState() {
-    _initVariables();
+    initVariables();
 
     /// _handledNotifications used to prevent
     /// multiple calls to the same notification.
@@ -818,9 +822,5 @@ class _FirebaseNotificationsHandlerState
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (kDebugMode) _initVariables();
-
-    return widget.child;
-  }
+  Widget build(BuildContext context) => widget.child;
 }
