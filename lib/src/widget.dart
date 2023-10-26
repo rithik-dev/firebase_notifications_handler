@@ -250,6 +250,38 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   static const sendLocalNotification =
       _FirebaseNotificationsHandlerState.sendLocalNotification;
 
+  /// Creates a notification channel.
+  ///
+  /// This method is only applicable to Android versions 8.0 or newer.
+  static const createAndroidNotificationChannel =
+      _FirebaseNotificationsHandlerState.createAndroidNotificationChannel;
+
+  /// Creates a notification channel group.
+  ///
+  /// This method is only applicable to Android versions 8.0 or newer.
+  static const createAndroidNotificationChannelGroup =
+      _FirebaseNotificationsHandlerState.createAndroidNotificationChannelGroup;
+
+  /// Deletes the notification channel with the specified [channelId].
+  ///
+  /// This method is only applicable to Android versions 8.0 or newer.
+  static const deleteAndroidNotificationChannel =
+      _FirebaseNotificationsHandlerState.deleteAndroidNotificationChannel;
+
+  /// Deletes the notification channel group with the specified [groupId]
+  /// as well as all of the channels belonging to the group.
+  ///
+  /// This method is only applicable to Android versions 8.0 or newer.
+  static const deleteAndroidNotificationChannelGroup =
+      _FirebaseNotificationsHandlerState.deleteAndroidNotificationChannelGroup;
+
+  /// Returns the list of all notification channels.
+  ///
+  /// This method is only applicable on Android 8.0 or newer. On older versions,
+  /// it will return an empty list.
+  static const getAndroidNotificationChannels =
+      _FirebaseNotificationsHandlerState.getAndroidNotificationChannels;
+
   /// {@template getInitialMessage}
   ///
   /// Get the initial message if the app was opened from a notification tap
@@ -355,6 +387,70 @@ class _FirebaseNotificationsHandlerState
       StreamController<Map<String, dynamic>>.broadcast();
   static StreamSubscription<RemoteMessage>? _onMessageSubscription;
   static StreamSubscription<RemoteMessage>? _onMessageOpenedAppSubscription;
+
+  static Future<void> createAndroidNotificationChannel(
+    AndroidNotificationChannel channel,
+  ) async {
+    if (!Platform.isAndroid) return;
+
+    await _initializeLocalNotifications();
+
+    await _flutterLocalNotificationsPlugin
+        ?.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+  }
+
+  static Future<void> createAndroidNotificationChannelGroup(
+    AndroidNotificationChannelGroup group,
+  ) async {
+    if (!Platform.isAndroid) return;
+
+    await _initializeLocalNotifications();
+
+    await _flutterLocalNotificationsPlugin
+        ?.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannelGroup(group);
+  }
+
+  static Future<void> deleteAndroidNotificationChannel(
+    String channelId,
+  ) async {
+    if (!Platform.isAndroid) return;
+
+    await _initializeLocalNotifications();
+
+    await _flutterLocalNotificationsPlugin
+        ?.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.deleteNotificationChannel(channelId);
+  }
+
+  static Future<void> deleteAndroidNotificationChannelGroup(
+    String groupId,
+  ) async {
+    if (!Platform.isAndroid) return;
+
+    await _initializeLocalNotifications();
+
+    await _flutterLocalNotificationsPlugin
+        ?.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.deleteNotificationChannelGroup(groupId);
+  }
+
+  static Future<List<AndroidNotificationChannel>?>
+      getAndroidNotificationChannels() async {
+    if (!Platform.isAndroid) return null;
+
+    await _initializeLocalNotifications();
+
+    return await _flutterLocalNotificationsPlugin
+        ?.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.getNotificationChannels();
+  }
 
   static Future<void> sendLocalNotification(
     int id, {
