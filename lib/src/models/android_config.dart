@@ -19,7 +19,7 @@ class AndroidNotificationsConfig {
   static String? defaultSmallIcon;
   static Color? defaultColor;
   static String? defaultTag;
-  static bool defaultHideExpandedLargeIcon = false;
+  static bool defaultHideExpandedLargeIcon = true;
   static bool defaultPlaySound = true;
   static bool defaultEnableVibration = true;
   static bool defaultEnableLights = true;
@@ -246,6 +246,7 @@ class AndroidNotificationsConfig {
   AndroidNotificationDetails toSpecifics(
     RemoteMessage message, {
     StyleInformation? styleInformation,
+    AndroidBitmap<Object>? largeIcon,
   }) {
     final androidSound = soundGetter(message);
     return AndroidNotificationDetails(
@@ -255,6 +256,7 @@ class AndroidNotificationsConfig {
       styleInformation: styleInformation,
       importance: importanceGetter(message),
       color: colorGetter(message),
+      largeIcon: largeIcon,
       tag: tagGetter(message),
       priority: priorityGetter(message),
       groupKey: groupKeyGetter(message),
