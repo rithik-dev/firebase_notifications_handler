@@ -658,45 +658,54 @@ class _FirebaseNotificationsHandlerState
     if (appState == AppState.open) {
       StyleInformation? androidStyleInformation;
 
-      final iconUrl = _androidConfig!.smallIconUrlGetter(message);
-
-      String? imageUrl;
-      if (!kIsWeb) {
-        if (Platform.isAndroid) {
-          imageUrl = _androidConfig!.imageUrlGetter(message);
-        } else if (Platform.isIOS) {
-          imageUrl = _iosConfig!.imageUrlGetter(message);
-        }
-      }
-
       final notificationId = _notificationIdGetter!(message);
 
-      final data = await Future.wait<String?>([
-        if (imageUrl != null)
-          downloadImage(
-            url: imageUrl,
-            fileName: '_image__${notificationId}_.png',
-          )
-        else
-          Future.value(null),
-        if (imageUrl != null && iconUrl != null)
-          downloadImage(
-            url: iconUrl,
-            fileName: '_icon__${notificationId}_.png',
-          )
-        else
-          Future.value(null),
+      String? notificationImageRes;
+      String? notificationIconRes;
+
+      Future<void> initNotificationImageRes() async {
+        String? imageUrl;
+
+        if (!kIsWeb) {
+          if (Platform.isAndroid) {
+            imageUrl = _androidConfig!.imageUrlGetter(message);
+          } else if (Platform.isIOS) {
+            imageUrl = _iosConfig!.imageUrlGetter(message);
+          }
+        }
+
+        if (imageUrl == null) return;
+
+        notificationImageRes = await downloadImage(
+          url: imageUrl,
+          fileName: '_image__${notificationId}_.png',
+        );
+      }
+
+      Future<void> initNotificationIconRes() async {
+        final iconUrl = _androidConfig!.smallIconUrlGetter(message);
+
+        if (iconUrl == null) return;
+
+        notificationIconRes = await downloadImage(
+          url: iconUrl,
+          fileName: '_icon__${notificationId}_.png',
+        );
+      }
+
+      await Future.wait([
+        initNotificationImageRes(),
+        initNotificationIconRes(),
       ]);
 
-      final notificationImageRes = data[0];
-      final notificationIconRes = data[1];
+      notificationIconRes ??= notificationImageRes;
 
       if (notificationImageRes != null) {
         androidStyleInformation = BigPictureStyleInformation(
-          FilePathAndroidBitmap(notificationImageRes),
+          FilePathAndroidBitmap(notificationImageRes!),
           largeIcon: notificationIconRes == null
               ? null
-              : FilePathAndroidBitmap(notificationIconRes),
+              : FilePathAndroidBitmap(notificationIconRes!),
           hideExpandedLargeIcon:
               _androidConfig!.hideExpandedLargeIconGetter(message),
         );
@@ -708,6 +717,9 @@ class _FirebaseNotificationsHandlerState
       final androidSpecifics = _androidConfig!.toSpecifics(
         message,
         styleInformation: androidStyleInformation,
+        largeIcon: notificationIconRes == null
+            ? null
+            : FilePathAndroidBitmap(notificationIconRes!),
       );
 
       List<DarwinNotificationAttachment>? attachments;
@@ -715,7 +727,7 @@ class _FirebaseNotificationsHandlerState
       if (notificationImageRes != null) {
         attachments = [
           DarwinNotificationAttachment(
-            notificationImageRes,
+            notificationImageRes!,
             hideThumbnail: _iosConfig!.hideThumbnailGetter(message),
             thumbnailClippingRect:
                 _iosConfig!.thumbnailClippingRectGetter?.call(message),
