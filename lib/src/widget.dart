@@ -13,7 +13,6 @@ import 'package:firebase_notifications_handler/src/utils/types.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:http/http.dart' as http;
 
 // ignore: depend_on_referenced_packages
 import 'package:timezone/timezone.dart';
@@ -153,7 +152,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   final Widget child;
 
   const FirebaseNotificationsHandler({
-    Key? key,
+    super.key,
     this.vapidKey,
     this.onTap,
     this.onFcmTokenInitialize,
@@ -167,7 +166,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
     this.handleInitialMessage = true,
     this.requestPermissionsOnInitialize = true,
     required this.child,
-  }) : super(key: key);
+  });
 
   static void setOnTap(OnTapGetter? onTap) => _FirebaseNotificationsHandlerState._onTap = onTap;
 
@@ -305,58 +304,59 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   static Stream<Map<String, dynamic>> get notificationArrivesSubscription =>
       _FirebaseNotificationsHandlerState._notificationArriveSubscription.stream;
 
-  /// Trigger FCM notification.
-  ///
-  /// [cloudMessagingServerKey] : The server key from the cloud messaging console.
-  /// This key is required to trigger the notification.
-  ///
-  /// [title] : The notification's title.
-  ///
-  /// [body] : The notification's body.
-  ///
-  /// [imageUrl] : The notification's image URL.
-  ///
-  /// [fcmTokens] : List of the registered devices' tokens.
-  ///
-  /// [payload] : Notification payload, is provided in the [onTap] callback.
-  ///
-  /// [additionalHeaders] : Additional headers,
-  /// other than 'Content-Type' and 'Authorization'.
-  ///
-  /// [notificationMeta] : Additional content that you might want to pass
-  /// in the 'notification' attribute, apart from title, body, image.
-  static Future<http.Response> sendFcmNotification({
-    required String cloudMessagingServerKey,
-    required String title,
-    required List<String> fcmTokens,
-    String? body,
-    String? imageUrl,
-    Map<String, dynamic>? payload,
-    Map<String, dynamic>? additionalHeaders,
-    Map<String, dynamic>? notificationMeta,
-  }) async {
-    return await http.post(
-      Uri.parse('https://fcm.googleapis.com/fcm/send'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'key=$cloudMessagingServerKey',
-        ...?additionalHeaders,
-      },
-      body: jsonEncode({
-        if (fcmTokens.length == 1) 'to': fcmTokens.first else 'registration_ids': fcmTokens,
-        'notification': {
-          'title': title,
-          'body': body,
-          'image': imageUrl,
-          ...?notificationMeta,
-        },
-        'data': {
-          'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-          ...?payload,
-        },
-      }),
-    );
-  }
+  // removed as this API is deprecated
+  // /// Trigger FCM notification.
+  // ///
+  // /// [cloudMessagingServerKey] : The server key from the cloud messaging console.
+  // /// This key is required to trigger the notification.
+  // ///
+  // /// [title] : The notification's title.
+  // ///
+  // /// [body] : The notification's body.
+  // ///
+  // /// [imageUrl] : The notification's image URL.
+  // ///
+  // /// [fcmTokens] : List of the registered devices' tokens.
+  // ///
+  // /// [payload] : Notification payload, is provided in the [onTap] callback.
+  // ///
+  // /// [additionalHeaders] : Additional headers,
+  // /// other than 'Content-Type' and 'Authorization'.
+  // ///
+  // /// [notificationMeta] : Additional content that you might want to pass
+  // /// in the 'notification' attribute, apart from title, body, image.
+  // static Future<http.Response> sendFcmNotification({
+  //   required String cloudMessagingServerKey,
+  //   required String title,
+  //   required List<String> fcmTokens,
+  //   String? body,
+  //   String? imageUrl,
+  //   Map<String, dynamic>? payload,
+  //   Map<String, dynamic>? additionalHeaders,
+  //   Map<String, dynamic>? notificationMeta,
+  // }) async {
+  //   return await http.post(
+  //     Uri.parse('https://fcm.googleapis.com/fcm/send'),
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Authorization': 'key=$cloudMessagingServerKey',
+  //       ...?additionalHeaders,
+  //     },
+  //     body: jsonEncode({
+  //       if (fcmTokens.length == 1) 'to': fcmTokens.first else 'registration_ids': fcmTokens,
+  //       'notification': {
+  //         'title': title,
+  //         'body': body,
+  //         'image': imageUrl,
+  //         ...?notificationMeta,
+  //       },
+  //       'data': {
+  //         'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+  //         ...?payload,
+  //       },
+  //     }),
+  //   );
+  // }
 
   @override
   State<FirebaseNotificationsHandler> createState() => _FirebaseNotificationsHandlerState();
@@ -469,7 +469,7 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
     TZDateTime? scheduledDateTime,
     bool shouldForceInitNotifications = false,
     UILocalNotificationDateInterpretation? uiLocalNotificationDateInterpretation,
-    bool? androidAllowWhileIdle,
+    AndroidScheduleMode? androidScheduleMode,
     DateTimeComponents? matchDateTimeComponents,
   }) async {
     await _initializeLocalNotifications(
@@ -497,11 +497,6 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
         'uiLocalNotificationDateInterpretation cannot be null when scheduledDateTime is not null',
       );
 
-      assert(
-        androidAllowWhileIdle != null,
-        'androidAllowWhileIdle cannot be null when scheduledDateTime is not null',
-      );
-
       try {
         await _flutterLocalNotificationsPlugin?.zonedSchedule(
           id,
@@ -510,9 +505,9 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
           scheduledDateTime,
           notificationDetails,
           payload: payloadStr,
+          androidScheduleMode: androidScheduleMode,
           matchDateTimeComponents: matchDateTimeComponents,
           uiLocalNotificationDateInterpretation: uiLocalNotificationDateInterpretation!,
-          androidAllowWhileIdle: androidAllowWhileIdle!,
         );
       } catch (e, s) {
         log<FirebaseNotificationsHandler>(error: e, stackTrace: s);
