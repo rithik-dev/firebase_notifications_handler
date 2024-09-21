@@ -43,31 +43,25 @@ class AndroidNotificationsConfig {
     BoolGetter? enableLightsGetter,
     BoolGetter? enableVibrationGetter,
   }) {
-    this.channelIdGetter = channelIdGetter ??
-        (msg) => msg.notification?.android?.channelId ?? defaultChannelId;
+    this.channelIdGetter =
+        channelIdGetter ?? (msg) => msg.notification?.android?.channelId ?? defaultChannelId;
     this.channelNameGetter = channelNameGetter ?? (_) => defaultChannelName;
-    this.channelDescriptionGetter =
-        channelDescriptionGetter ?? (_) => defaultChannelDescription;
+    this.channelDescriptionGetter = channelDescriptionGetter ?? (_) => defaultChannelDescription;
     this.appIconGetter = appIconGetter ?? (_) => defaultAppIcon;
     this.colorGetter = colorGetter ?? (_) => defaultColor;
     this.groupKeyGetter = groupKeyGetter ?? (_) => defaultGroupKey;
-    this.tagGetter =
-        tagGetter ?? (msg) => msg.notification?.android?.tag ?? defaultTag;
-    this.smallIconUrlGetter = smallIconUrlGetter ??
-        (msg) => msg.notification?.android?.smallIcon ?? defaultSmallIcon;
+    this.tagGetter = tagGetter ?? (msg) => msg.notification?.android?.tag ?? defaultTag;
+    this.smallIconUrlGetter =
+        smallIconUrlGetter ?? (msg) => msg.notification?.android?.smallIcon ?? defaultSmallIcon;
     this.importanceGetter = importanceGetter ?? (_) => defaultImportance;
     this.priorityGetter = priorityGetter ?? (_) => defaultPriority;
-    this.soundGetter = soundGetter ??
-        (msg) => msg.notification?.android?.sound ?? defaultSound;
+    this.soundGetter = soundGetter ?? (msg) => msg.notification?.android?.sound ?? defaultSound;
     this.iconGetter = iconGetter ?? (_) => defaultIcon;
-    this.imageUrlGetter = imageUrlGetter ??
-        (msg) => msg.notification?.android?.imageUrl ?? defaultImageUrl;
-    this.hideExpandedLargeIconGetter =
-        hideExpandedLargeIconGetter ?? (_) => defaultHideExpandedLargeIcon;
+    this.imageUrlGetter = imageUrlGetter ?? (msg) => msg.notification?.android?.imageUrl ?? defaultImageUrl;
+    this.hideExpandedLargeIconGetter = hideExpandedLargeIconGetter ?? (_) => defaultHideExpandedLargeIcon;
     this.playSoundGetter = playSoundGetter ?? (_) => defaultPlaySound;
     this.enableLightsGetter = enableLightsGetter ?? (_) => defaultEnableLights;
-    this.enableVibrationGetter =
-        enableVibrationGetter ?? (_) => defaultEnableVibration;
+    this.enableVibrationGetter = enableVibrationGetter ?? (_) => defaultEnableVibration;
   }
 
   /// {@template channelIdGetter}
@@ -260,9 +254,7 @@ class AndroidNotificationsConfig {
       tag: tagGetter(message),
       priority: priorityGetter(message),
       groupKey: groupKeyGetter(message),
-      sound: androidSound == null
-          ? null
-          : RawResourceAndroidNotificationSound(androidSound),
+      sound: androidSound == null ? null : RawResourceAndroidNotificationSound(androidSound),
       icon: iconGetter(message),
       playSound: playSoundGetter(message),
       enableLights: enableLightsGetter(message),

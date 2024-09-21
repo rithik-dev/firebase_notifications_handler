@@ -16,8 +16,7 @@ class IosNotificationsConfig {
   static bool defaultPresentAlert = true;
   static bool defaultPresentBadge = true;
   static bool defaultHideThumbnail = false;
-  static DarwinNotificationAttachmentThumbnailClippingRect?
-      defaultThumbnailClippingRectGetter;
+  static DarwinNotificationAttachmentThumbnailClippingRect? defaultThumbnailClippingRectGetter;
 
   IosNotificationsConfig({
     NullableStringGetter? soundGetter,
@@ -33,8 +32,7 @@ class IosNotificationsConfig {
     BoolGetter? hideThumbnailGetter,
     IosNotificationAttachmentClippingRectGetter? thumbnailClippingRectGetter,
   }) {
-    final soundGetterRef = soundGetter ??
-        (msg) => msg.notification?.apple?.sound?.name ?? defaultSound;
+    final soundGetterRef = soundGetter ?? (msg) => msg.notification?.apple?.sound?.name ?? defaultSound;
 
     this.soundGetter = (msg) {
       final sound = soundGetterRef(msg);
@@ -49,21 +47,15 @@ class IosNotificationsConfig {
       return sound;
     };
 
-    this.subtitleGetter = subtitleGetter ??
-        (msg) => msg.notification?.apple?.subtitle ?? defaultSubtitle;
-    this.imageUrlGetter = imageUrlGetter ??
-        (msg) => msg.notification?.apple?.imageUrl ?? defaultImageUrl;
+    this.subtitleGetter = subtitleGetter ?? (msg) => msg.notification?.apple?.subtitle ?? defaultSubtitle;
+    this.imageUrlGetter = imageUrlGetter ?? (msg) => msg.notification?.apple?.imageUrl ?? defaultImageUrl;
     this.badgeNumberGetter = badgeNumberGetter ?? (_) => defaultBadgeNumber;
-    this.categoryIdentifierGetter =
-        categoryIdentifierGetter ?? (_) => defaultCategoryIdentifier;
-    this.threadIdentifierGetter =
-        threadIdentifierGetter ?? (_) => defaultThreadIdentifier;
-    this.interruptionLevelGetter =
-        interruptionLevelGetter ?? (_) => defaultInterruptionLevel;
-    this.hideThumbnailGetter =
-        hideThumbnailGetter ?? (_) => defaultHideThumbnail;
-    this.thumbnailClippingRectGetter = thumbnailClippingRectGetter ??
-        (_) => defaultThumbnailClippingRectGetter;
+    this.categoryIdentifierGetter = categoryIdentifierGetter ?? (_) => defaultCategoryIdentifier;
+    this.threadIdentifierGetter = threadIdentifierGetter ?? (_) => defaultThreadIdentifier;
+    this.interruptionLevelGetter = interruptionLevelGetter ?? (_) => defaultInterruptionLevel;
+    this.hideThumbnailGetter = hideThumbnailGetter ?? (_) => defaultHideThumbnail;
+    this.thumbnailClippingRectGetter =
+        thumbnailClippingRectGetter ?? (_) => defaultThumbnailClippingRectGetter;
     this.presentSoundGetter = presentSoundGetter ?? (_) => defaultPresentSound;
     this.presentAlertGetter = presentAlertGetter ?? (_) => defaultPresentAlert;
     this.presentBadgeGetter = presentBadgeGetter ?? (_) => defaultPresentBadge;

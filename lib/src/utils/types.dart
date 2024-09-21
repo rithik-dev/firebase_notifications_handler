@@ -22,7 +22,5 @@ typedef AndroidImportanceGetter = Importance Function(RemoteMessage);
 typedef AndroidPriorityGetter = Priority Function(RemoteMessage);
 
 typedef IosInterruptionLevelGetter = InterruptionLevel? Function(RemoteMessage);
-typedef IosNotificationAttachmentClippingRectGetter
-    = DarwinNotificationAttachmentThumbnailClippingRect? Function(
-  RemoteMessage,
-);
+typedef IosNotificationAttachmentClippingRectGetter = DarwinNotificationAttachmentThumbnailClippingRect?
+    Function(RemoteMessage);

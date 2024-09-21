@@ -43,8 +43,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// opened from a notification.
   ///
   /// {@endtemplate}
-  static final openedAppFromNotification =
-      _FirebaseNotificationsHandlerState._openedAppFromNotification;
+  static final openedAppFromNotification = _FirebaseNotificationsHandlerState._openedAppFromNotification;
 
   /// {@template vapidKey}
   ///
@@ -170,26 +169,22 @@ class FirebaseNotificationsHandler extends StatefulWidget {
     required this.child,
   }) : super(key: key);
 
-  static void setOnTap(OnTapGetter? onTap) =>
-      _FirebaseNotificationsHandlerState._onTap = onTap;
+  static void setOnTap(OnTapGetter? onTap) => _FirebaseNotificationsHandlerState._onTap = onTap;
 
   static void setOnOpenNotificationArrive(
     OnOpenNotificationArrive? onOpenNotificationArrive,
   ) =>
-      _FirebaseNotificationsHandlerState._onOpenNotificationArrive =
-          onOpenNotificationArrive;
+      _FirebaseNotificationsHandlerState._onOpenNotificationArrive = onOpenNotificationArrive;
 
   static void setShouldHandleNotification(
     BoolGetter? shouldHandleNotification,
   ) =>
-      _FirebaseNotificationsHandlerState._shouldHandleNotification =
-          shouldHandleNotification;
+      _FirebaseNotificationsHandlerState._shouldHandleNotification = shouldHandleNotification;
 
   static void setOnFcmTokenInitialize(
     FcmInitializeGetter? onFcmTokenInitialize,
   ) =>
-      _FirebaseNotificationsHandlerState._onFCMTokenInitialize =
-          onFcmTokenInitialize;
+      _FirebaseNotificationsHandlerState._onFCMTokenInitialize = onFcmTokenInitialize;
 
   static void setOnFcmTokenUpdate(
     FcmUpdateGetter? onFcmTokenUpdate,
@@ -199,8 +194,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   static void setNotificationIdGetter(
     NotificationIdGetter? notificationIdGetter,
   ) =>
-      _FirebaseNotificationsHandlerState._notificationIdGetter =
-          notificationIdGetter;
+      _FirebaseNotificationsHandlerState._notificationIdGetter = notificationIdGetter;
 
   static void setMessageModifier(
     RemoteMessageGetter? messageModifier,
@@ -231,24 +225,21 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// Request permission to show notifications.
   ///
   /// {@endtemplate}
-  static final requestPermission =
-      _FirebaseNotificationsHandlerState._fcm.requestPermission;
+  static final requestPermission = _FirebaseNotificationsHandlerState._fcm.requestPermission;
 
   /// {@template initializeFcmToken}
   ///
   /// Initialize the FCM token.
   ///
   /// {@endtemplate}
-  static const initializeFcmToken =
-      _FirebaseNotificationsHandlerState.initializeFcmToken;
+  static const initializeFcmToken = _FirebaseNotificationsHandlerState.initializeFcmToken;
 
   /// {@template sendLocalNotification}
   ///
   /// Send/schedule local notification.
   ///
   /// {@endtemplate}
-  static const sendLocalNotification =
-      _FirebaseNotificationsHandlerState.sendLocalNotification;
+  static const sendLocalNotification = _FirebaseNotificationsHandlerState.sendLocalNotification;
 
   /// Creates a notification channel.
   ///
@@ -294,8 +285,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// when the app was terminated.
   ///
   /// {@endtemplate}
-  static const getInitialMessage =
-      _FirebaseNotificationsHandlerState.getInitialMessage;
+  static const getInitialMessage = _FirebaseNotificationsHandlerState.getInitialMessage;
 
   /// {@template notificationTapsSubscription}
   ///
@@ -353,10 +343,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
         ...?additionalHeaders,
       },
       body: jsonEncode({
-        if (fcmTokens.length == 1)
-          'to': fcmTokens.first
-        else
-          'registration_ids': fcmTokens,
+        if (fcmTokens.length == 1) 'to': fcmTokens.first else 'registration_ids': fcmTokens,
         'notification': {
           'title': title,
           'body': body,
@@ -372,12 +359,10 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   }
 
   @override
-  State<FirebaseNotificationsHandler> createState() =>
-      _FirebaseNotificationsHandlerState();
+  State<FirebaseNotificationsHandler> createState() => _FirebaseNotificationsHandlerState();
 }
 
-class _FirebaseNotificationsHandlerState
-    extends State<FirebaseNotificationsHandler> {
+class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHandler> {
   /// Internal [FirebaseMessaging] instance
   static final _fcm = FirebaseMessaging.instance;
 
@@ -387,10 +372,8 @@ class _FirebaseNotificationsHandlerState
   static FlutterLocalNotificationsPlugin? _flutterLocalNotificationsPlugin;
 
   static StreamSubscription<String>? _fcmTokenStreamSubscription;
-  static final _notificationTapsSubscription =
-      StreamController<NotificationTapDetails>.broadcast();
-  static final _notificationArriveSubscription =
-      StreamController<Map<String, dynamic>>.broadcast();
+  static final _notificationTapsSubscription = StreamController<NotificationTapDetails>.broadcast();
+  static final _notificationArriveSubscription = StreamController<Map<String, dynamic>>.broadcast();
   static StreamSubscription<RemoteMessage>? _onMessageSubscription;
   static StreamSubscription<RemoteMessage>? _onMessageOpenedAppSubscription;
 
@@ -398,8 +381,7 @@ class _FirebaseNotificationsHandlerState
     AndroidNotificationChannel channel,
   ) async {
     await _flutterLocalNotificationsPlugin
-        ?.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+        ?.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
   }
 
@@ -440,8 +422,7 @@ class _FirebaseNotificationsHandlerState
     await _initializeLocalNotifications();
 
     await _flutterLocalNotificationsPlugin
-        ?.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+        ?.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannelGroup(group);
   }
 
@@ -453,8 +434,7 @@ class _FirebaseNotificationsHandlerState
     await _initializeLocalNotifications();
 
     await _flutterLocalNotificationsPlugin
-        ?.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+        ?.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.deleteNotificationChannel(channelId);
   }
 
@@ -466,20 +446,17 @@ class _FirebaseNotificationsHandlerState
     await _initializeLocalNotifications();
 
     await _flutterLocalNotificationsPlugin
-        ?.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+        ?.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.deleteNotificationChannelGroup(groupId);
   }
 
-  static Future<List<AndroidNotificationChannel>?>
-      getAndroidNotificationChannels() async {
+  static Future<List<AndroidNotificationChannel>?> getAndroidNotificationChannels() async {
     if (!Platform.isAndroid) return null;
 
     await _initializeLocalNotifications();
 
     return await _flutterLocalNotificationsPlugin
-        ?.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+        ?.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.getNotificationChannels();
   }
 
@@ -491,8 +468,7 @@ class _FirebaseNotificationsHandlerState
     Map<String, dynamic>? payload,
     TZDateTime? scheduledDateTime,
     bool shouldForceInitNotifications = false,
-    UILocalNotificationDateInterpretation?
-        uiLocalNotificationDateInterpretation,
+    UILocalNotificationDateInterpretation? uiLocalNotificationDateInterpretation,
     bool? androidAllowWhileIdle,
     DateTimeComponents? matchDateTimeComponents,
   }) async {
@@ -535,8 +511,7 @@ class _FirebaseNotificationsHandlerState
           notificationDetails,
           payload: payloadStr,
           matchDateTimeComponents: matchDateTimeComponents,
-          uiLocalNotificationDateInterpretation:
-              uiLocalNotificationDateInterpretation!,
+          uiLocalNotificationDateInterpretation: uiLocalNotificationDateInterpretation!,
           androidAllowWhileIdle: androidAllowWhileIdle!,
         );
       } catch (e, s) {
@@ -614,8 +589,7 @@ class _FirebaseNotificationsHandlerState
       await _flutterLocalNotificationsPlugin!.initialize(
         initializationSettings,
         onDidReceiveNotificationResponse: (details) {
-          if (details.notificationResponseType !=
-              NotificationResponseType.selectedNotification) {
+          if (details.notificationResponseType != NotificationResponseType.selectedNotification) {
             return;
           }
 
@@ -658,8 +632,7 @@ class _FirebaseNotificationsHandlerState
 
     bool shouldIgnoreNotification = false;
 
-    if (_shouldHandleNotification != null &&
-        !_shouldHandleNotification!(message)) {
+    if (_shouldHandleNotification != null && !_shouldHandleNotification!(message)) {
       shouldIgnoreNotification = true;
     }
 
@@ -734,23 +707,17 @@ class _FirebaseNotificationsHandlerState
       if (notificationImageRes != null) {
         androidStyleInformation = BigPictureStyleInformation(
           FilePathAndroidBitmap(notificationImageRes!),
-          largeIcon: notificationIconRes == null
-              ? null
-              : FilePathAndroidBitmap(notificationIconRes!),
-          hideExpandedLargeIcon:
-              _androidConfig!.hideExpandedLargeIconGetter(message),
+          largeIcon: notificationIconRes == null ? null : FilePathAndroidBitmap(notificationIconRes!),
+          hideExpandedLargeIcon: _androidConfig!.hideExpandedLargeIconGetter(message),
         );
       } else if (message.notification?.body != null) {
-        androidStyleInformation =
-            BigTextStyleInformation(message.notification!.body!);
+        androidStyleInformation = BigTextStyleInformation(message.notification!.body!);
       }
 
       final androidSpecifics = _androidConfig!.toSpecifics(
         message,
         styleInformation: androidStyleInformation,
-        largeIcon: notificationIconRes == null
-            ? null
-            : FilePathAndroidBitmap(notificationIconRes!),
+        largeIcon: notificationIconRes == null ? null : FilePathAndroidBitmap(notificationIconRes!),
       );
 
       List<DarwinNotificationAttachment>? attachments;
@@ -760,8 +727,7 @@ class _FirebaseNotificationsHandlerState
           DarwinNotificationAttachment(
             notificationImageRes!,
             hideThumbnail: _iosConfig!.hideThumbnailGetter(message),
-            thumbnailClippingRect:
-                _iosConfig!.thumbnailClippingRectGetter?.call(message),
+            thumbnailClippingRect: _iosConfig!.thumbnailClippingRectGetter?.call(message),
           ),
         ];
       }
@@ -779,8 +745,7 @@ class _FirebaseNotificationsHandlerState
       final currAndroidAppIcon = _androidConfig!.appIconGetter(message);
 
       await _initializeLocalNotifications(
-        forceInit:
-            currAndroidAppIcon != AndroidNotificationsConfig.defaultAppIcon,
+        forceInit: currAndroidAppIcon != AndroidNotificationsConfig.defaultAppIcon,
         androidNotificationIcon: currAndroidAppIcon,
       );
 
@@ -833,8 +798,7 @@ class _FirebaseNotificationsHandlerState
     Future<RemoteMessage?> handleLocalInitialMsg() async {
       await _initializeLocalNotifications();
 
-      final details = await _flutterLocalNotificationsPlugin
-          ?.getNotificationAppLaunchDetails();
+      final details = await _flutterLocalNotificationsPlugin?.getNotificationAppLaunchDetails();
       if (details?.didNotificationLaunchApp ?? false) {
         if (updateOpenedAppFromNotification) _openedAppFromNotification = true;
 
@@ -870,8 +834,7 @@ class _FirebaseNotificationsHandlerState
           _shouldHandleNotification != null &&
           !_shouldHandleNotification!(initialMessage)) {
         log<FirebaseNotificationsHandler>(
-          msg:
-              'Initial message ignored because shouldHandleNotification returned false',
+          msg: 'Initial message ignored because shouldHandleNotification returned false',
         );
 
         return null;
@@ -923,8 +886,7 @@ class _FirebaseNotificationsHandlerState
 
     _shouldHandleNotification = widget.shouldHandleNotification;
 
-    _notificationIdGetter =
-        widget.notificationIdGetter ?? (_) => DateTime.now().hashCode;
+    _notificationIdGetter = widget.notificationIdGetter ?? (_) => DateTime.now().hashCode;
   }
 
   void _deactivate() {
@@ -971,11 +933,9 @@ class _FirebaseNotificationsHandlerState
     }
 
     /// Registering the listeners
-    _onMessageSubscription =
-        FirebaseMessaging.onMessage.listen(onMessageListener);
+    _onMessageSubscription = FirebaseMessaging.onMessage.listen(onMessageListener);
     FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage);
-    _onMessageOpenedAppSubscription =
-        FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedApp);
+    _onMessageOpenedAppSubscription = FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedApp);
 
     (() async {
       // TODO: accept fn params?
