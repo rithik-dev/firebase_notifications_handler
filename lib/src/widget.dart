@@ -256,6 +256,12 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   static const createAndroidNotificationChannel =
       _FirebaseNotificationsHandlerState.createAndroidNotificationChannel;
 
+  /// Creates the provided notification channels.
+  ///
+  /// This method is only applicable to Android versions 8.0 or newer.
+  static const createAndroidNotificationChannels =
+      _FirebaseNotificationsHandlerState.createAndroidNotificationChannels;
+
   /// Creates a notification channel group.
   ///
   /// This method is only applicable to Android versions 8.0 or newer.
@@ -388,6 +394,15 @@ class _FirebaseNotificationsHandlerState
   static StreamSubscription<RemoteMessage>? _onMessageSubscription;
   static StreamSubscription<RemoteMessage>? _onMessageOpenedAppSubscription;
 
+  static Future<void> _createAndroidNotificationChannel(
+    AndroidNotificationChannel channel,
+  ) async {
+    await _flutterLocalNotificationsPlugin
+        ?.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+  }
+
   static Future<void> createAndroidNotificationChannel(
     AndroidNotificationChannel channel,
   ) async {
@@ -395,10 +410,26 @@ class _FirebaseNotificationsHandlerState
 
     await _initializeLocalNotifications();
 
-    await _flutterLocalNotificationsPlugin
-        ?.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
+    await _createAndroidNotificationChannel(channel);
+  }
+
+  static Future<void> createAndroidNotificationChannels(
+    List<AndroidNotificationChannel> channels,
+  ) async {
+    if (!Platform.isAndroid) return;
+
+    await _initializeLocalNotifications();
+
+    final currChannels = await getAndroidNotificationChannels();
+
+    final currChannelIds = currChannels?.map((e) => e.id).toSet() ?? {};
+
+    final futures = channels
+        .where((channel) => !currChannelIds.contains(channel.id))
+        .map((channel) => _createAndroidNotificationChannel(channel))
+        .toList();
+
+    await Future.wait(futures);
   }
 
   static Future<void> createAndroidNotificationChannelGroup(
