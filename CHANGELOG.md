@@ -1,6 +1,7 @@
 ## [2.0.0+1] - 23/09/2024
 
 * Formatted files
+* Updated scripts in pubspec.yaml
 
 ## [2.0.0] - 23/09/2024
 
