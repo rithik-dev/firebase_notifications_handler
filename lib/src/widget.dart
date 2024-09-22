@@ -274,6 +274,12 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   static const createAndroidNotificationChannel =
       _FirebaseNotificationsHandlerState.createAndroidNotificationChannel;
 
+  /// Deletes the notification channel and creates a new one.
+  ///
+  /// This method is only applicable to Android versions 8.0 or newer.
+  static const deleteAndCreateAndroidNotificationChannel =
+      _FirebaseNotificationsHandlerState.deleteAndCreateAndroidNotificationChannel;
+
   /// Creates the provided notification channels.
   ///
   /// This method is only applicable to Android versions 8.0 or newer.
@@ -421,11 +427,26 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
         ?.createNotificationChannel(channel);
   }
 
+  static Future<void> _deleteAndroidNotificationChannel(String channelId) async {
+    await _flutterLocalNotificationsPlugin
+        ?.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.deleteNotificationChannel(channelId);
+  }
+
   static Future<void> createAndroidNotificationChannel(AndroidNotificationChannel channel) async {
     if (!Platform.isAndroid) return;
 
     await _initializeLocalNotifications();
 
+    await _createAndroidNotificationChannel(channel);
+  }
+
+  static Future<void> deleteAndCreateAndroidNotificationChannel(AndroidNotificationChannel channel) async {
+    if (!Platform.isAndroid) return;
+
+    await _initializeLocalNotifications();
+
+    await _deleteAndroidNotificationChannel(channel.id);
     await _createAndroidNotificationChannel(channel);
   }
 
@@ -461,26 +482,18 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
 
     await _initializeLocalNotifications();
 
-    await _flutterLocalNotificationsPlugin
-        ?.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-        ?.deleteNotificationChannel(channelId);
+    await _deleteAndroidNotificationChannel(channelId);
   }
 
   static Future<void> deleteAllAndroidNotificationChannels() async {
     if (!Platform.isAndroid) return;
-
-    Future<void> deleter(String id) async {
-      await _flutterLocalNotificationsPlugin
-          ?.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-          ?.deleteNotificationChannel(id);
-    }
 
     await _initializeLocalNotifications();
 
     final currChannels = await getAndroidNotificationChannels();
     final currChannelIds = currChannels?.map((e) => e.id).toSet() ?? {};
 
-    final futures = currChannelIds.map(deleter);
+    final futures = currChannelIds.map(_deleteAndroidNotificationChannel);
     await Future.wait(futures);
   }
 

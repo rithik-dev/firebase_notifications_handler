@@ -254,7 +254,7 @@ FirebaseNotificationsHandler.createAndroidNotificationChannel(
   ),
 );
 ```
-###### PS: You cannot modify a channel's sound after it's created. Only way is to either use a new channel id or delete an existing channel using `FirebaseNotificationsHandler.deleteAndroidNotificationChannel(String channelId);` and creating a new one with the new sound.
+###### PS: You cannot modify a channel's sound after it's created. Only way is to either use a new channel id or delete an existing channel using `FirebaseNotificationsHandler.deleteAndroidNotificationChannel(String channelId);` and creating a new one with the new sound. Or try uninstalling the app and creating the channel again.
 
 
 #### Notification image not showing if app in background or terminated even when passed on Android device:
