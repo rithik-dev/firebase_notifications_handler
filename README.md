@@ -126,9 +126,13 @@ self.addEventListener('notificationclick', function (event) {
 - Add the audio file in android/app/src/main/res/raw/___audio_file_here___
 - Add the audio file name in the `soundGetter` parameter in the `AndroidConfig` class.
 
+Add a [keep.xml](https://github.com/rithik-dev/firebase_notifications_handler/tree/master/example/android/app/src/main/res/raw/keep.xml) file in the raw folder for Android, as during compilation, flutter strips off the raw folder, and the custom sounds won't work in release mode
+
 #### Adding custom notification sounds in iOS
 - Add the audio file in Runner/Resources/___audio_file_here___
 - Add the audio file name in the `soundGetter` parameter in the `IosConfig` class.
+
+
 
 ## Usage
 
@@ -259,6 +263,9 @@ FirebaseNotificationsHandler.createAndroidNotificationChannel(
 
 #### Notification image not showing if app in background or terminated even when passed on Android device:
 ###### The max size for a notification to be displayed by firebase on an Android device is 1MB. So, if an image exceeds this size, it is not shown in the notification. However, if the app is in foreground, then there is no size limitation as then it's handled by local notifications.
+
+#### Custom sounds in Android work in debug mode but not in release mode
+###### Flutter strips off the `raw` folder during compiling build for release mode. We can add a file [keep.xml](https://github.com/rithik-dev/firebase_notifications_handler/tree/master/example/android/app/src/main/res/raw/keep.xml) in the raw folder, which tells flutter to not strip off the raw folder, and hence fixing the issue.
 
 ## Sample Usage
 ```dart
