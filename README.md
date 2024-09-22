@@ -248,11 +248,14 @@ FirebaseNotificationsHandler.createAndroidNotificationChannel(
   const AndroidNotificationChannel(
     'Notifications',
     'Notifications',
+    playSound: true,
     importance: Importance.high,
-    sound: RawResourceAndroidNotificationSound('notification'),
+    sound: RawResourceAndroidNotificationSound('custom_sound'),
   ),
 );
 ```
+###### PS: You cannot modify a channel's sound after it's created. Only way is to either use a new channel id or delete an existing channel using `FirebaseNotificationsHandler.deleteAndroidNotificationChannel(String channelId);` and creating a new one with the new sound.
+
 
 #### Notification image not showing if app in background or terminated even when passed on Android device:
 ###### The max size for a notification to be displayed by firebase on an Android device is 1MB. So, if an image exceeds this size, it is not shown in the notification. However, if the app is in foreground, then there is no size limitation as then it's handled by local notifications.
