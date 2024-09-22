@@ -1,18 +1,30 @@
-## [2.0.0] - 19/04/2023
+## [2.0.0] - 23/09/2024
 
 * **BREAKING:** No navigator key param in handler, and in callbacks onTap, onOpenNotificationArrive
 * **BREAKING:** No context in callbacks onFcmTokenInitialize, onFcmTokenUpdate
 * **BREAKING:** Renamed AppState.closed to AppState.terminated
-* **BREAKING:** onTap now gives an object of NotificationTapDetails
+* **BREAKING:** onTap now gives an object of NotificationInfo
 * **BREAKING:** enableLogs is now available as a static variable in FirebaseNotificationsHandler
 * **BREAKING:** Renamed onFCMTokenInitialize to onFcmTokenInitialize
 * **BREAKING:** Renamed onFCMTokenUpdate to onFcmTokenUpdate
 * **BREAKING:** Renamed initializeFCMToken to initializeFcmToken
 * **BREAKING:** Removed onFCMTokenRefresh
 * **BREAKING:** Renamed requestPermissionsOnInit to requestPermissionsOnInitialize
-* **BREAKING:** Renamed sendNotification to sendFcmNotification, and introduced a new sendLocalNotification function which can be used to send/schedule local notifications.
-* **BREAKING:** Added androidConfig and iosConfig and moved platform specific configs there like channelId, channelName etc. which was in the root before, and these values are getters, which can be modified for every incoming message.
-* Updated example app
+* **BREAKING:** Removed sendFcmNotification as API has been deprecated to send notifications from client side.
+* Introduced a new sendLocalNotification function which can be used to send/schedule local notifications.
+* **BREAKING:** Added androidConfig and iosConfig in  and moved platform specific configs there like channelId, channelName etc. which was in the root before, and these values are getters, which can be modified for every incoming message.
+* **BREAKING:** Renamed `NotificationTapDetails` to `NotificationInfo`. NotificationInfo now also holds `firebaseMessage`.
+* **BREAKING:** Callbacks onTap and onOpenNotificationArrive callbacks now give `NotificationInfo` param which contains info about the notification.
+* Added notificationTapsSubscription, notificationArrivesSubscription streams
+* Added android notification channel create, read, delete methods
+* Added `permissionGetter` function to override permission request getter.
+* Added `shouldHandleNotification` callback.
+* Added `messageModifier` callback.
+* Added `stateKeyGetter` getter to generate widget key, allowing to call internal methods using keys.
+* Added logs in debug mode.
+* Fixed issues with images not showing in notifications.
+* Added `getInitialMessage` callback.
+* Updated example app with latest SDKs
 * Updated documentation
 * Updated dependencies to latest release
 * Added issue tracker link

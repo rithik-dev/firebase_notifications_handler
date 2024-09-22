@@ -2,8 +2,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_notifications_handler/src/utils/types.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-// TODO: update docs to mention about the default fields
-
 class IosNotificationsConfig {
   IosNotificationsConfig({
     NullableStringGetter? soundGetter,

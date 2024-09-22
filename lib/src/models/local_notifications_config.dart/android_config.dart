@@ -3,8 +3,6 @@ import 'dart:ui';
 import 'package:firebase_notifications_handler/firebase_notifications_handler.dart';
 import 'package:firebase_notifications_handler/src/utils/types.dart';
 
-// TODO: update docs to mention about the default fields
-
 class AndroidNotificationsConfig {
   AndroidNotificationsConfig({
     StringGetter? channelIdGetter,

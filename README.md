@@ -15,6 +15,7 @@
 ## Migration Guide from v1.x to v2.x+
 
 * Numerous parameters were renamed to add clarity and consistency, and some were removed. Refer to the [CHANGELOG.md](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/CHANGELOG.md#200---18032023) for more details.
+* Removed Constants class and added LocalNotificationsConfiguration class which holds android and ios specific configs for local notifications, and takes default values from firebase message, but these parameters can be overwritten by passing in values in the function getters.
 * NavigatorKey is no longer accepted/provided in the onTap, onOpenNotificationArrive callbacks. Instead, you'll have to create a key and maintain it in your app. Refer to the [example app](https://github.com/rithik-dev/firebase_notifications_handler/tree/master/example).
 * Moved android-specific local notifications config params like channelId, channelName, sound etc. to localNotificationsConfiguration.androidConfig.
 * Moved ios-specific local notifications config params like sound etc. to localNotificationsConfiguration.iosConfig.
@@ -262,7 +263,7 @@ FirebaseNotificationsHandler.createAndroidNotificationChannel(
 
 
 #### Notification image not showing if app in background or terminated even when passed on Android device:
-###### The max size for a notification to be displayed by firebase on an Android device is 1MB. So, if an image exceeds this size, it is not shown in the notification. However, if the app is in foreground, then there is no size limitation as then it's handled by local notifications.
+###### The max size for a notification to be displayed by firebase on an Android device is 1MB ([Source](https://firebase.google.com/docs/cloud-messaging/android/send-image#:~:text=Images%20for%20notifications%20are%20limited,by%20native%20Android%20image%20support.)). So, if an image exceeds this size, it is not shown in the notification. However, if the app is in foreground, then there is no size limitation as then it's handled by local notifications.
 
 #### Custom sounds in Android work in debug mode but not in release mode
 ###### Flutter strips off the `raw` folder during compiling build for release mode. We can add a file [keep.xml](https://github.com/rithik-dev/firebase_notifications_handler/tree/master/example/android/app/src/main/res/raw/keep.xml) in the raw folder, which tells flutter to not strip off the raw folder, and hence fixing the issue.

@@ -18,8 +18,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // ignore: depend_on_referenced_packages
 import 'package:timezone/timezone.dart';
 
-// TODO: add docs to update about the variables that are applicable only for local notifs? i.e. when the app is open
-
 /// Wrap this widget on the [MaterialApp] to enable receiving notifications.
 class FirebaseNotificationsHandler extends StatefulWidget {
   /// {@template enableLogs}
@@ -681,8 +679,6 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
       rethrow;
     }
   }
-
-  // TODO: add platform checks??
 
   /// [_notificationHandler] implementation
   @pragma('vm:entry-point')
