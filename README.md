@@ -228,6 +228,35 @@ You should now have the project id, client email and the private key from the js
 Now copy the fcm token from the running example app, and pass it to the [index.ts](https://github.com/rithik-dev/notification-sender/blob/main/src/index.ts) file in the `fcm_tokens` array,
 and run `npm start`.
 
+## Debugging common issues
+#### Notification not showing as a pop up on Android device: 
+###### On Android devices, a notification channel by default when a notification arrives, but that might not have the priority set to high. The notification only shows up as a popup if the channel you're sending it to has priority set as "high". We can solve this issue by creating a notification channel on app start using:
+```dart
+FirebaseNotificationsHandler.createAndroidNotificationChannel(
+  const AndroidNotificationChannel(
+    'Notifications',
+    'Notifications',
+    importance: Importance.high,
+  ),
+);
+```
+
+#### Custom sound not playing when notification received on Android device:
+###### On Android devices, a notification channel by default when a notification arrives, but that won't have the sound set to it by default. The sound will only play if the channel was creating while specifying the custom sound you want to play for that channel. We can solve this issue by creating a notification channel on app start and passing in the sound using:
+```dart
+FirebaseNotificationsHandler.createAndroidNotificationChannel(
+  const AndroidNotificationChannel(
+    'Notifications',
+    'Notifications',
+    importance: Importance.high,
+    sound: RawResourceAndroidNotificationSound('notification'),
+  ),
+);
+```
+
+#### Notification image not showing if app in background or terminated even when passed on Android device:
+###### The max size for a notification to be displayed by firebase on an Android device is 1MB. So, if an image exceeds this size, it is not shown in the notification. However, if the app is in foreground, then there is no size limitation as then it's handled by local notifications.
+
 ## Sample Usage
 ```dart
 import 'package:firebase_core/firebase_core.dart';
