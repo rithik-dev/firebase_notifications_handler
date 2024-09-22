@@ -292,6 +292,12 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   static const deleteAndroidNotificationChannel =
       _FirebaseNotificationsHandlerState.deleteAndroidNotificationChannel;
 
+  /// Deletes all notification channels
+  ///
+  /// This method is only applicable to Android versions 8.0 or newer.
+  static const deleteAllAndroidNotificationChannels =
+      _FirebaseNotificationsHandlerState.deleteAllAndroidNotificationChannels;
+
   /// Deletes the notification channel group with the specified [groupId]
   /// as well as all of the channels belonging to the group.
   ///
@@ -409,17 +415,13 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
   static StreamSubscription<RemoteMessage>? _onMessageSubscription;
   static StreamSubscription<RemoteMessage>? _onMessageOpenedAppSubscription;
 
-  static Future<void> _createAndroidNotificationChannel(
-    AndroidNotificationChannel channel,
-  ) async {
+  static Future<void> _createAndroidNotificationChannel(AndroidNotificationChannel channel) async {
     await _flutterLocalNotificationsPlugin
         ?.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
   }
 
-  static Future<void> createAndroidNotificationChannel(
-    AndroidNotificationChannel channel,
-  ) async {
+  static Future<void> createAndroidNotificationChannel(AndroidNotificationChannel channel) async {
     if (!Platform.isAndroid) return;
 
     await _initializeLocalNotifications();
@@ -427,9 +429,7 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
     await _createAndroidNotificationChannel(channel);
   }
 
-  static Future<void> createAndroidNotificationChannels(
-    List<AndroidNotificationChannel> channels,
-  ) async {
+  static Future<void> createAndroidNotificationChannels(List<AndroidNotificationChannel> channels) async {
     if (!Platform.isAndroid) return;
 
     await _initializeLocalNotifications();
@@ -446,9 +446,7 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
     await Future.wait(futures);
   }
 
-  static Future<void> createAndroidNotificationChannelGroup(
-    AndroidNotificationChannelGroup group,
-  ) async {
+  static Future<void> createAndroidNotificationChannelGroup(AndroidNotificationChannelGroup group) async {
     if (!Platform.isAndroid) return;
 
     await _initializeLocalNotifications();
@@ -458,9 +456,7 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
         ?.createNotificationChannelGroup(group);
   }
 
-  static Future<void> deleteAndroidNotificationChannel(
-    String channelId,
-  ) async {
+  static Future<void> deleteAndroidNotificationChannel(String channelId) async {
     if (!Platform.isAndroid) return;
 
     await _initializeLocalNotifications();
@@ -470,9 +466,25 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
         ?.deleteNotificationChannel(channelId);
   }
 
-  static Future<void> deleteAndroidNotificationChannelGroup(
-    String groupId,
-  ) async {
+  static Future<void> deleteAllAndroidNotificationChannels() async {
+    if (!Platform.isAndroid) return;
+
+    Future<void> deleter(String id) async {
+      await _flutterLocalNotificationsPlugin
+          ?.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+          ?.deleteNotificationChannel(id);
+    }
+
+    await _initializeLocalNotifications();
+
+    final currChannels = await getAndroidNotificationChannels();
+    final currChannelIds = currChannels?.map((e) => e.id).toSet() ?? {};
+
+    final futures = currChannelIds.map(deleter);
+    await Future.wait(futures);
+  }
+
+  static Future<void> deleteAndroidNotificationChannelGroup(String groupId) async {
     if (!Platform.isAndroid) return;
 
     await _initializeLocalNotifications();
@@ -597,8 +609,6 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
   /// [_onMessageOpenedApp] callback for the notification
   static Future<void> _onMessageOpenedApp(RemoteMessage message) =>
       _notificationHandler(message, appState: AppState.background);
-
-  // TODO: check show notifs as popup and req. permission
 
   /// [_initializeLocalNotifications] function to initialize the local
   /// notifications to show a notification when the app is in foreground.
