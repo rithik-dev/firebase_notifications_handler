@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:easy_container/easy_container.dart';
 import 'package:firebase_notifications_handler/firebase_notifications_handler.dart';
+import 'package:flutter/gestures.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:notifications_handler_demo/utils/globals.dart';
 import 'package:notifications_handler_demo/utils/helpers.dart';
 import 'package:notifications_handler_demo/widgets/custom_loader.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class HomeScreen extends StatefulWidget {
   static const id = 'HomeScreen';
@@ -19,6 +21,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  static const _projectLink = 'https://pub.dev/packages/firebase_notifications_handler';
+
   final _notificationTaps = <NotificationInfo>[];
   final _notificationArrives = <NotificationInfo>[];
 
@@ -35,6 +39,8 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {});
   }
 
+  final _linkTapRecognizer = TapGestureRecognizer();
+
   @override
   void initState() {
     super.initState();
@@ -50,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _notificationTapsSubscription.cancel();
     _notificationArriveSubscription.cancel();
+    _linkTapRecognizer.dispose();
     super.dispose();
   }
 
@@ -96,13 +103,21 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const SizedBox(height: 15),
-            //
-            Text(
-              'Please refer to the docs at https://pub.dev/packages/firebase_notifications_handler to see how to send notifications',
+            Text.rich(
+              TextSpan(
+                children: [
+                  const TextSpan(text: 'Please refer to the docs at '),
+                  TextSpan(
+                    text: _projectLink,
+                    style: const TextStyle(color: Colors.blue),
+                    recognizer: _linkTapRecognizer..onTap = () => launchUrlString(_projectLink),
+                  ),
+                  const TextSpan(text: ' to see how to send notifications'),
+                ],
+              ),
               style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(height: 15),
-
             Row(
               children: [
                 Expanded(
