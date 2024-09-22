@@ -50,7 +50,7 @@ class AppTheme {
         secondary: accentColor,
         onSecondary: onAccentColor ?? textColor,
       ),
-      toggleableActiveColor: accentColor,
+      // toggleableActiveColor: accentColor,
       // textSelectionTheme: TextSelectionThemeData(
       //   cursorColor: accentColor,
       //   selectionColor: accentColor?.withOpacity(0.75),
@@ -85,8 +85,7 @@ class AppTheme {
       // ),
       pageTransitionsTheme: PageTransitionsTheme(
         builders: <TargetPlatform, PageTransitionsBuilder>{
-          for (final targetValue in TargetPlatform.values)
-            targetValue: const _SlideLeftTransitionsBuilder(),
+          for (final targetValue in TargetPlatform.values) targetValue: const _SlideLeftTransitionsBuilder(),
         },
       ),
     );

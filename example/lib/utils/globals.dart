@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Globals {
   const Globals._();
 
-  static String? fcmToken;
+  static ValueNotifier<String?> fcmTokenNotifier = ValueNotifier(null);
 
   static final navigatorKey = GlobalKey<NavigatorState>();
 

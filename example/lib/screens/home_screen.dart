@@ -1,142 +1,198 @@
+import 'dart:async';
+
 import 'package:easy_container/easy_container.dart';
 import 'package:firebase_notifications_handler/firebase_notifications_handler.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:notifications_handler_demo/utils/constants.dart';
 import 'package:notifications_handler_demo/utils/globals.dart';
 import 'package:notifications_handler_demo/utils/helpers.dart';
+import 'package:notifications_handler_demo/widgets/custom_loader.dart';
 
 class HomeScreen extends StatefulWidget {
   static const id = 'HomeScreen';
 
-  const HomeScreen({
-    Key? key,
-  }) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
-    await FirebaseNotificationsHandler.sendFcmNotification(
-      cloudMessagingServerKey: Constants.cloudMessagingServerKey,
-      title: 'AppLifecycleState',
-      body: state.toString(),
-      fcmTokens: [Globals.fcmToken!],
-    );
-    super.didChangeAppLifecycleState(state);
+class _HomeScreenState extends State<HomeScreen> {
+  final _notificationTaps = <NotificationInfo>[];
+  final _notificationArrives = <NotificationInfo>[];
+
+  late StreamSubscription<NotificationInfo> _notificationArriveSubscription;
+  late StreamSubscription<NotificationInfo> _notificationTapsSubscription;
+
+  void _addNotificationTap(NotificationInfo notificationTap) {
+    _notificationTaps.insert(0, notificationTap);
+    setState(() {});
   }
 
-  bool showNotificationsOnLifecycleChange = false;
+  void _addNotificationArrive(NotificationInfo notificationArrive) {
+    _notificationArrives.insert(0, notificationArrive);
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _notificationTapsSubscription =
+        FirebaseNotificationsHandler.notificationTapsSubscription.listen(_addNotificationTap);
+
+    _notificationArriveSubscription =
+        FirebaseNotificationsHandler.notificationArrivesSubscription.listen(_addNotificationArrive);
+  }
+
+  @override
+  void dispose() {
+    _notificationTapsSubscription.cancel();
+    _notificationArriveSubscription.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         body: ListView(
-          padding: const EdgeInsets.all(15),
+          padding: const EdgeInsets.all(10),
           children: [
-            if (Globals.fcmToken != null) Text(Globals.fcmToken!),
-            const SizedBox(height: 15),
             EasyContainer(
-              onTap: () async {
-                Clipboard.setData(ClipboardData(text: Globals.fcmToken));
-              },
-              child: const Text('Copy FCM Token'),
-            ),
-            const SizedBox(height: 15),
-            EasyContainer(
-              child: SwitchListTile(
-                title: const Text(
-                  'Send notifications on app lifecycle change!',
-                ),
-                onChanged: (value) {
-                  setState(() => showNotificationsOnLifecycleChange = value);
-                  if (showNotificationsOnLifecycleChange) {
-                    WidgetsBinding.instance.addObserver(this);
-                  } else {
-                    WidgetsBinding.instance.removeObserver(this);
-                  }
+              child: ValueListenableBuilder(
+                valueListenable: Globals.fcmTokenNotifier,
+                builder: (context, value, _) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'FCM Token',
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                          ),
+                          if (value != null) ...{
+                            const SizedBox(width: 10),
+                            IconButton(
+                              onPressed: () async {
+                                await Clipboard.setData(ClipboardData(text: value));
+                                showSnackBar('FCM token copied to clipboard!');
+                              },
+                              icon: const Icon(Icons.copy),
+                            ),
+                          },
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      if (value != null) Text(value) else const CustomLoader(),
+                      const SizedBox(height: 5),
+                    ],
+                  );
                 },
-                value: showNotificationsOnLifecycleChange,
               ),
             ),
             const SizedBox(height: 15),
-            _SendSampleNotification(),
+            //
+            Text(
+              'Please refer to the docs at https://pub.dev/packages/firebase_notifications_handler to see how to send notifications',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 15),
+
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Notification Taps History',
+                    textAlign: TextAlign.start,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
+                if (_notificationTaps.isNotEmpty) ...{
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      _notificationTaps.clear();
+                      setState(() {});
+                    },
+                    child: const Text('Clear'),
+                  ),
+                },
+              ],
+            ),
+            if (_notificationTaps.isEmpty)
+              const Center(child: Text('No Items'))
+            else
+              ..._notificationTaps.map((notificationTap) {
+                return EasyContainer(
+                  child: _buildNotificationInfo(notificationTap),
+                );
+              }),
+            const SizedBox(height: 15),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Notification Arrive History',
+                    textAlign: TextAlign.start,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
+                if (_notificationArrives.isNotEmpty) ...{
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      _notificationArrives.clear();
+                      setState(() {});
+                    },
+                    child: const Text('Clear'),
+                  ),
+                },
+              ],
+            ),
+            if (_notificationArrives.isEmpty)
+              const Center(child: Text('No Items'))
+            else
+              ..._notificationArrives.map((notificationArrive) {
+                return EasyContainer(
+                  child: _buildNotificationInfo(notificationArrive),
+                );
+              })
           ],
         ),
       ),
     );
   }
-}
 
-// ignore: must_be_immutable
-class _SendSampleNotification extends StatelessWidget {
-  String? notificationTitle;
-  String? notificationBody;
-  String? notificationImageUrl;
-
-  _SendSampleNotification({
-    Key? key,
-  }) : super(key: key);
-
-  Future<void> _sendNotification() async {
-    await FirebaseNotificationsHandler.sendFcmNotification(
-      cloudMessagingServerKey: Constants.cloudMessagingServerKey,
-      fcmTokens: [Globals.fcmToken!],
-      title: notificationTitle!,
-      body: notificationBody,
-      imageUrl:
-          isNullOrBlank(notificationImageUrl) ? null : notificationImageUrl,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return EasyContainer(
-      child: Column(
-        children: [
-          const Text('Send sample FCM notification'),
-          TextFormField(
-            decoration: const InputDecoration(labelText: 'Title'),
-            onChanged: (v) => notificationTitle = v,
-          ),
-          TextFormField(
-            decoration: const InputDecoration(labelText: 'Body'),
-            onChanged: (v) => notificationBody = v,
-          ),
-          TextFormField(
-            decoration: const InputDecoration(labelText: 'Image URL'),
-            onChanged: (v) => notificationImageUrl = v,
-          ),
-          const SizedBox(height: 15),
-          EasyContainer(
-            onTap: () async {
-              if (isNullOrBlank(notificationTitle)) {
-                return showSnackBar('Title cannot be empty!');
-              }
-
-              await _sendNotification();
-            },
-            color: Theme.of(context).colorScheme.primary,
-            child: const Text('Send Notification'),
-          ),
-          EasyContainer(
-            onTap: () async {
-              if (isNullOrBlank(notificationTitle)) {
-                return showSnackBar('Title cannot be empty!');
-              }
-
-              await Future.delayed(const Duration(seconds: 5));
-              await _sendNotification();
-            },
-            color: Theme.of(context).colorScheme.primary,
-            child: const Text('Send Notification after 5s'),
-          ),
-        ],
-      ),
+  Widget _buildNotificationInfo(NotificationInfo notificationInfo) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          'Title: ${notificationInfo.firebaseMessage.notification?.title!}',
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+        Text(
+          'Body: ${notificationInfo.firebaseMessage.notification?.body!}',
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+        Text(
+          'Sent Time: ${notificationInfo.firebaseMessage.sentTime}',
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+        Text(
+          'App State: ${notificationInfo.appState.name}',
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+        Text(
+          'Payload: ${notificationInfo.payload}',
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+      ],
     );
   }
 }
