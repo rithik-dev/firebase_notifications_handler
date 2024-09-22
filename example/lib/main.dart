@@ -24,7 +24,8 @@ class _MainApp extends StatelessWidget {
     return FirebaseNotificationsHandler(
       localNotificationsConfiguration: LocalNotificationsConfiguration(
         androidConfig: AndroidNotificationsConfig(
-          channelIdGetter: (msg) => msg.notification?.android?.channelId ?? 'default',
+          channelIdGetter: (msg) =>
+              msg.notification?.android?.channelId ?? 'default',
         ),
         iosConfig: IosNotificationsConfig(
           soundGetter: (_) => 'ios_sound.caf',
@@ -37,7 +38,8 @@ class _MainApp extends StatelessWidget {
       onOpenNotificationArrive: (info) {
         log(
           id,
-          msg: "Notification received while app is open with payload ${info.payload}",
+          msg:
+              "Notification received while app is open with payload ${info.payload}",
         );
       },
       onTap: (info) {

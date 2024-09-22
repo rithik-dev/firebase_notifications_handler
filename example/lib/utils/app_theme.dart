@@ -85,7 +85,8 @@ class AppTheme {
       // ),
       pageTransitionsTheme: PageTransitionsTheme(
         builders: <TargetPlatform, PageTransitionsBuilder>{
-          for (final targetValue in TargetPlatform.values) targetValue: const _SlideLeftTransitionsBuilder(),
+          for (final targetValue in TargetPlatform.values)
+            targetValue: const _SlideLeftTransitionsBuilder(),
         },
       ),
     );
