@@ -296,4 +296,32 @@ class AndroidNotificationsConfig {
       // TODO: add other params
     );
   }
+
+  AndroidNotificationChannel toNotificationChannel(
+    RemoteMessage message, {
+    StyleInformation? styleInformation,
+    AndroidBitmap<Object>? largeIcon,
+  }) {
+    final androidSpecifics = toSpecifics(
+      message,
+      styleInformation: styleInformation,
+      largeIcon: largeIcon,
+    );
+
+    return AndroidNotificationChannel(
+      androidSpecifics.channelId,
+      androidSpecifics.channelName,
+      description: androidSpecifics.channelDescription,
+      importance: androidSpecifics.importance,
+      enableLights: androidSpecifics.enableLights,
+      enableVibration: androidSpecifics.enableVibration,
+      vibrationPattern: androidSpecifics.vibrationPattern,
+      ledColor: androidSpecifics.ledColor,
+      playSound: androidSpecifics.playSound,
+      audioAttributesUsage: androidSpecifics.audioAttributesUsage,
+      sound: androidSpecifics.sound,
+      groupId: androidSpecifics.groupKey,
+      showBadge: androidSpecifics.channelShowBadge,
+    );
+  }
 }

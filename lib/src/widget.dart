@@ -780,15 +780,6 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
         styleInformation: androidStyleInformation,
       );
 
-      final notificationChannel = _androidConfig!.toNotificationChannel(
-        message,
-        largeIcon: largeIcon,
-        styleInformation: androidStyleInformation,
-      );
-
-      // creating android channel
-      await createAndroidNotificationChannel(notificationChannel);
-
       List<DarwinNotificationAttachment>? attachments;
 
       if (notificationImageRes != null) {
