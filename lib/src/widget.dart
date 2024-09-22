@@ -679,8 +679,6 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
   }) async {
     final receivedMsg = message;
 
-    // FIXME: create android channel ??
-
     if (_messageModifier != null) {
       message = _messageModifier!(message);
     }
@@ -774,11 +772,22 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
         androidStyleInformation = BigTextStyleInformation(message.notification!.body!);
       }
 
+      final largeIcon = notificationIconRes == null ? null : FilePathAndroidBitmap(notificationIconRes!);
+
       final androidSpecifics = _androidConfig!.toSpecifics(
         message,
+        largeIcon: largeIcon,
         styleInformation: androidStyleInformation,
-        largeIcon: notificationIconRes == null ? null : FilePathAndroidBitmap(notificationIconRes!),
       );
+
+      final notificationChannel = _androidConfig!.toNotificationChannel(
+        message,
+        largeIcon: largeIcon,
+        styleInformation: androidStyleInformation,
+      );
+
+      // creating android channel
+      await createAndroidNotificationChannel(notificationChannel);
 
       List<DarwinNotificationAttachment>? attachments;
 
@@ -789,6 +798,7 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
             hideThumbnail: _iosConfig!.hideThumbnailGetter(message),
             thumbnailClippingRect: _iosConfig!.thumbnailClippingRectGetter?.call(message),
           ),
+          // TODO: add support for multiple attachments
         ];
       }
 
