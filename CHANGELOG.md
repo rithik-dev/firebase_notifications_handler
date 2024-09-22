@@ -1,3 +1,7 @@
+## [2.0.0+1] - 23/09/2024
+
+* Formatted files
+
 ## [2.0.0] - 23/09/2024
 
 * **BREAKING:** No navigator key param in handler, and in callbacks onTap, onOpenNotificationArrive
