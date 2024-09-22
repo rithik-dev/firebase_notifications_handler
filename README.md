@@ -1,9 +1,9 @@
 # [FirebaseNotificationsHandler](https://pub.dev/packages/firebase_notifications_handler) For Flutter
 [![pub package](https://img.shields.io/pub/v/firebase_notifications_handler.svg)](https://pub.dev/packages/firebase_notifications_handler)
-[![code size](https://img.shields.io/github/languages/code-size/rithik-dev/firebase_notifications_handler)](https://github.com/rithik-dev/firebase_notifications_handler)
 [![likes](https://img.shields.io/pub/likes/firebase_notifications_handler)](https://pub.dev/packages/firebase_notifications_handler/score)
 [![popularity](https://img.shields.io/pub/popularity/firebase_notifications_handler)](https://pub.dev/packages/firebase_notifications_handler/score)
 [![pub points](https://img.shields.io/pub/points/firebase_notifications_handler)](https://pub.dev/packages/firebase_notifications_handler/score)
+[![code size](https://img.shields.io/github/languages/code-size/rithik-dev/firebase_notifications_handler)](https://github.com/rithik-dev/firebase_notifications_handler)
 [![license MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 
 * Simple notifications handler which provides callbacks like onTap which really make it easy to handle notification taps and a lot more.

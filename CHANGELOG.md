@@ -15,7 +15,8 @@
 * Updated example app
 * Updated documentation
 * Updated dependencies to latest release
-* Updated README.md
+* Added issue tracker link
+* Updated README.md and badges
 
 ## [1.1.0] - 25/10/2022
 
