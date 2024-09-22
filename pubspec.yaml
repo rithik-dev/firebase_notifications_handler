@@ -9,9 +9,8 @@ environment:
   flutter: ">=2.5.0"
 
 scripts:
-  publish_dry_run: flutter pub publish --dry-run
+  pre_publish: dart format .; flutter pub publish --dry-run
   publish_skip_validation: flutter pub publish --skip-validation
-  publish_force: flutter pub publish --force
   publish: flutter pub publish
 
 dependencies:
