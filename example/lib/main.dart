@@ -17,29 +17,51 @@ void main() async {
 class _MainApp extends StatelessWidget {
   static const id = '_MainApp';
 
-  const _MainApp({
-    Key? key,
-  }) : super(key: key);
+  const _MainApp();
 
   @override
   Widget build(BuildContext context) {
     return FirebaseNotificationsHandler(
-      defaultNavigatorKey: Globals.navigatorKey,
-      onOpenNotificationArrive: (_, payload) {
+      localNotificationsConfiguration: LocalNotificationsConfiguration(
+        androidConfig: AndroidNotificationsConfig(
+          channelIdGetter: (msg) => msg.notification?.android?.channelId ?? 'default',
+        ),
+        iosConfig: IosNotificationsConfig(
+          soundGetter: (_) => 'ios_sound.caf',
+        ),
+      ),
+      shouldHandleNotification: (msg) {
+        // add some logic and return bool on whether to handle a notif or not
+        return true;
+      },
+      onOpenNotificationArrive: (info) {
         log(
           id,
-          msg: "Notification received while app is open with payload $payload",
+          msg: "Notification received while app is open with payload ${info.payload}",
         );
       },
-      onTap: (navigatorState, appState, payload) {
-        showSnackBar('appState: $appState\npayload: $payload');
+      onTap: (info) {
+        final payload = info.payload;
+        final appState = info.appState;
+
+        /// If you want to push a screen on notification tap
+        ///
+        // Globals.navigatorKey.currentState?.pushNamed(
+        //   payload['screenId'],
+        // );
+        ///
+        /// or
+        ///
+        /// Get current context
+        // final context = Globals.navigatorKey.currentContext!;
+
         log(
           id,
           msg: "Notification tapped with $appState & payload $payload",
         );
       },
-      onFCMTokenInitialize: (_, token) => Globals.fcmToken = token,
-      onFCMTokenUpdate: (_, token) => Globals.fcmToken = token,
+      onFcmTokenInitialize: (token) => Globals.fcmTokenNotifier.value = token,
+      onFcmTokenUpdate: (token) => Globals.fcmTokenNotifier.value = token,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'FirebaseNotificationsHandler Demo',
