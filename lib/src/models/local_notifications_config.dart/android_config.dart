@@ -6,24 +6,6 @@ import 'package:firebase_notifications_handler/src/utils/types.dart';
 // TODO: update docs to mention about the default fields
 
 class AndroidNotificationsConfig {
-  static String defaultChannelId = 'Notifications';
-  static String defaultChannelName = 'Notifications';
-  static String defaultChannelDescription = 'Notifications';
-  static String defaultAppIcon = '@mipmap/ic_launcher';
-  static String? defaultSound;
-  static Importance defaultImportance = Importance.defaultImportance;
-  static Priority defaultPriority = Priority.defaultPriority;
-  static String? defaultGroupKey;
-  static String? defaultIcon;
-  static String? defaultImageUrl;
-  static String? defaultSmallIcon;
-  static Color? defaultColor;
-  static String? defaultTag;
-  static bool defaultHideExpandedLargeIcon = true;
-  static bool defaultPlaySound = true;
-  static bool defaultEnableVibration = true;
-  static bool defaultEnableLights = true;
-
   AndroidNotificationsConfig({
     StringGetter? channelIdGetter,
     StringGetter? channelNameGetter,
@@ -75,7 +57,7 @@ class AndroidNotificationsConfig {
   /// Required for Android 8.0 or newer.
   ///
   /// {@endtemplate}
-  late StringGetter channelIdGetter;
+  static String defaultChannelId = 'Notifications';
 
   /// {@template channelNameGetter}
   ///
@@ -84,7 +66,7 @@ class AndroidNotificationsConfig {
   /// Required for Android 8.0 or newer.
   ///
   /// {@endtemplate}
-  late StringGetter channelNameGetter;
+  static String defaultChannelName = 'Notifications';
 
   /// {@template channelDescriptionGetter}
   ///
@@ -93,7 +75,7 @@ class AndroidNotificationsConfig {
   /// Required for Android 8.0 or newer.
   ///
   /// {@endtemplate}
-  late StringGetter channelDescriptionGetter;
+  static String defaultChannelDescription = 'Notifications';
 
   /// {@template appIconGetter}
   ///
@@ -102,28 +84,7 @@ class AndroidNotificationsConfig {
   /// Defaults to '@mipmap/ic_launcher'.
   ///
   /// {@endtemplate}
-  late StringGetter appIconGetter;
-
-  /// {@template importanceGetter}
-  ///
-  /// The importance of the notification.
-  ///
-  /// {@endtemplate}
-  late AndroidImportanceGetter importanceGetter;
-
-  /// {@template priorityGetter}
-  ///
-  /// The priority of the notification.
-  ///
-  /// {@endtemplate}
-  late AndroidPriorityGetter priorityGetter;
-
-  /// {@template imageUrlGetter}
-  ///
-  /// Specifies the url of the image to display in the notification.
-  ///
-  /// {@endtemplate}
-  late NullableStringGetter imageUrlGetter;
+  static String defaultAppIcon = '@mipmap/ic_launcher';
 
   /// {@template soundGetter}
   ///
@@ -152,59 +113,21 @@ class AndroidNotificationsConfig {
   /// be changed after the channel has been created for the first time.
   ///
   /// {@endtemplate}
-  late NullableStringGetter soundGetter;
+  static String? defaultSound;
 
-  /// {@template smallIconUrlGetter}
+  /// {@template importanceGetter}
   ///
-  /// Specifies the url of the small icon to display in the notification.
+  /// The importance of the notification.
   ///
   /// {@endtemplate}
-  late NullableStringGetter smallIconUrlGetter;
+  static Importance defaultImportance = Importance.defaultImportance;
 
-  /// {@template iconGetter}
+  /// {@template priorityGetter}
   ///
-  // The icon that should be used when displaying the notification.
+  /// The priority of the notification.
   ///
   /// {@endtemplate}
-  late NullableStringGetter iconGetter;
-
-  /// {@template hideExpandedLargeIconGetter}
-  ///
-  /// Hides the large icon when showing the expanded notification.
-  ///
-  /// {@endtemplate}
-  late BoolGetter hideExpandedLargeIconGetter;
-
-  /// {@template playSoundGetter}
-  ///
-  /// Indicates if a sound should be played when the notification is displayed.
-  ///
-  /// For Android 8.0 or newer, this is tied to the specified channel and cannot
-  /// be changed after the channel has been created for the first time.
-  ///
-  /// {@endtemplate}
-  late BoolGetter playSoundGetter;
-
-  /// {@template enableVibrationGetter}
-  ///
-  /// Indicates if vibration should be enabled when the notification is
-  /// displayed.
-  ///
-  /// For Android 8.0 or newer, this is tied to the specified channel and cannot
-  /// be changed after the channel has been created for the first time.
-  ///
-  /// {@endtemplate}
-  late BoolGetter enableVibrationGetter;
-
-  /// {@template enableLightsGetter}
-  ///
-  /// Indicates if lights should be enabled when the notification is displayed.
-  ///
-  /// For Android 8.0 or newer, this is tied to the specified channel and cannot
-  /// be changed after the channel has been created for the first time.
-  ///
-  /// {@endtemplate}
-  late BoolGetter enableLightsGetter;
+  static Priority defaultPriority = Priority.defaultPriority;
 
   /// {@template groupKeyGetter}
   ///
@@ -213,7 +136,35 @@ class AndroidNotificationsConfig {
   /// For Android 7.0 or newer.
   ///
   /// {@endtemplate}
-  late NullableStringGetter groupKeyGetter;
+  static String? defaultGroupKey;
+
+  /// {@template iconGetter}
+  ///
+  // The icon that should be used when displaying the notification.
+  ///
+  /// {@endtemplate}
+  static String? defaultIcon;
+
+  /// {@template imageUrlGetter}
+  ///
+  /// Specifies the url of the image to display in the notification.
+  ///
+  /// {@endtemplate}
+  static String? defaultImageUrl;
+
+  /// {@template smallIconUrlGetter}
+  ///
+  /// Specifies the url of the small icon to display in the notification.
+  ///
+  /// {@endtemplate}
+  static String? defaultSmallIcon;
+
+  /// {@template colorGetter}
+  ///
+  /// Specifies the color.
+  ///
+  /// {@endtemplate}
+  static Color? defaultColor;
 
   /// {@template tagGetter}
   ///
@@ -228,14 +179,96 @@ class AndroidNotificationsConfig {
   /// the id to uniquely identify alarms.
   ///
   /// {@endtemplate}
-  late NullableStringGetter tagGetter;
+  static String? defaultTag;
 
-  /// {@template colorGetter}
+  /// {@template hideExpandedLargeIconGetter}
   ///
-  /// Specifies the color.
+  /// Hides the large icon when showing the expanded notification.
   ///
   /// {@endtemplate}
+  static bool defaultHideExpandedLargeIcon = true;
+
+  /// {@template playSoundGetter}
+  ///
+  /// Indicates if a sound should be played when the notification is displayed.
+  ///
+  /// For Android 8.0 or newer, this is tied to the specified channel and cannot
+  /// be changed after the channel has been created for the first time.
+  ///
+  /// {@endtemplate}
+  static bool defaultPlaySound = true;
+
+  /// {@template enableVibrationGetter}
+  ///
+  /// Indicates if vibration should be enabled when the notification is
+  /// displayed.
+  ///
+  /// For Android 8.0 or newer, this is tied to the specified channel and cannot
+  /// be changed after the channel has been created for the first time.
+  ///
+  /// {@endtemplate}
+  static bool defaultEnableVibration = true;
+
+  /// {@template enableLightsGetter}
+  ///
+  /// Indicates if lights should be enabled when the notification is displayed.
+  ///
+  /// For Android 8.0 or newer, this is tied to the specified channel and cannot
+  /// be changed after the channel has been created for the first time.
+  ///
+  /// {@endtemplate}
+  static bool defaultEnableLights = true;
+
+  /// {@macro channelIdGetter}
+  late StringGetter channelIdGetter;
+
+  /// {@macro channelNameGetter}
+  late StringGetter channelNameGetter;
+
+  /// {@macro channelDescriptionGetter}
+  late StringGetter channelDescriptionGetter;
+
+  /// {@macro appIconGetter}
+  late StringGetter appIconGetter;
+
+  /// {@macro soundGetter}
+  late NullableStringGetter soundGetter;
+
+  /// {@macro importanceGetter}
+  late AndroidImportanceGetter importanceGetter;
+
+  /// {@macro priorityGetter}
+  late AndroidPriorityGetter priorityGetter;
+
+  /// {@macro groupKeyGetter}
+  late NullableStringGetter groupKeyGetter;
+
+  /// {@macro iconGetter}
+  late NullableStringGetter iconGetter;
+
+  /// {@macro imageUrlGetter}
+  late NullableStringGetter imageUrlGetter;
+
+  /// {@macro smallIconUrlGetter}
+  late NullableStringGetter smallIconUrlGetter;
+
+  /// {@macro colorGetter}
   late NullableColorGetter colorGetter;
+
+  /// {@macro tagGetter}
+  late NullableStringGetter tagGetter;
+
+  /// {@macro hideExpandedLargeIconGetter}
+  late BoolGetter hideExpandedLargeIconGetter;
+
+  /// {@macro playSoundGetter}
+  late BoolGetter playSoundGetter;
+
+  /// {@macro enableVibrationGetter}
+  late BoolGetter enableVibrationGetter;
+
+  /// {@macro enableLightsGetter}
+  late BoolGetter enableLightsGetter;
 
   AndroidNotificationDetails toSpecifics(
     RemoteMessage message, {
@@ -259,6 +292,8 @@ class AndroidNotificationsConfig {
       playSound: playSoundGetter(message),
       enableLights: enableLightsGetter(message),
       enableVibration: enableVibrationGetter(message),
+
+      // TODO: add other params
     );
   }
 }

@@ -1,11 +1,11 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:firebase_notifications_handler/src/models/notification_tap_details.dart';
+import 'package:firebase_notifications_handler/src/models/notification_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-typedef OnTapGetter = void Function(NotificationTapDetails details);
+typedef OnTapGetter = void Function(NotificationInfo details);
 
-typedef OnOpenNotificationArrive = void Function(Map<String, dynamic> payload);
+typedef OnOpenNotificationArrive = void Function(NotificationInfo);
 
 typedef FcmInitializeGetter = void Function(String?);
 typedef FcmUpdateGetter = void Function(String);

@@ -5,19 +5,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // TODO: update docs to mention about the default fields
 
 class IosNotificationsConfig {
-  static String? defaultSound;
-  static String? defaultSubtitle;
-  static String? defaultImageUrl;
-  static int? defaultBadgeNumber;
-  static String? defaultCategoryIdentifier;
-  static String? defaultThreadIdentifier;
-  static InterruptionLevel? defaultInterruptionLevel;
-  static bool defaultPresentSound = true;
-  static bool defaultPresentAlert = true;
-  static bool defaultPresentBadge = true;
-  static bool defaultHideThumbnail = false;
-  static DarwinNotificationAttachmentThumbnailClippingRect? defaultThumbnailClippingRectGetter;
-
   IosNotificationsConfig({
     NullableStringGetter? soundGetter,
     NullableStringGetter? subtitleGetter,
@@ -29,6 +16,8 @@ class IosNotificationsConfig {
     BoolGetter? presentSoundGetter,
     BoolGetter? presentAlertGetter,
     BoolGetter? presentBadgeGetter,
+    BoolGetter? presentBannerGetter,
+    BoolGetter? presentListGetter,
     BoolGetter? hideThumbnailGetter,
     IosNotificationAttachmentClippingRectGetter? thumbnailClippingRectGetter,
   }) {
@@ -59,6 +48,8 @@ class IosNotificationsConfig {
     this.presentSoundGetter = presentSoundGetter ?? (_) => defaultPresentSound;
     this.presentAlertGetter = presentAlertGetter ?? (_) => defaultPresentAlert;
     this.presentBadgeGetter = presentBadgeGetter ?? (_) => defaultPresentBadge;
+    this.presentBannerGetter = presentBannerGetter ?? (_) => defaultPresentBanner;
+    this.presentListGetter = presentListGetter ?? (_) => defaultPresentList;
   }
 
   /// {@template soundGetter}
@@ -75,14 +66,24 @@ class IosNotificationsConfig {
   /// Extension is required for audio files on iOS
   ///
   /// {@endtemplate}
-  late NullableStringGetter soundGetter;
+  static String? defaultSound;
+
+  /// {@template subtitleGetter}
+  ///
+  /// Specifies the secondary description.
+  ///
+  /// On iOS, this property is only applicable to iOS 10 or newer.
+  /// On macOS, this This property is only applicable to macOS 10.14 or newer.
+  ///
+  /// {@endtemplate}
+  static String? defaultSubtitle;
 
   /// {@template imageUrlGetter}
   ///
   /// Specifies the url of the image to display in the notification.
   ///
   /// {@endtemplate}
-  late NullableStringGetter imageUrlGetter;
+  static String? defaultImageUrl;
 
   /// {@template badgeNumberGetter}
   ///
@@ -94,7 +95,7 @@ class IosNotificationsConfig {
   /// Specify `null` to leave the current badge unchanged.
   ///
   /// {@endtemplate}
-  late NullableIntGetter badgeNumberGetter;
+  static int? defaultBadgeNumber;
 
   /// {@template categoryIdentifierGetter}
   ///
@@ -107,7 +108,7 @@ class IosNotificationsConfig {
   /// On macOS, this is only applicable to macOS 10.14 or newer.
   ///
   /// {@endtemplate}
-  late NullableStringGetter categoryIdentifierGetter;
+  static String? defaultCategoryIdentifier;
 
   /// {@template threadIdentifierGetter}
   ///
@@ -118,7 +119,7 @@ class IosNotificationsConfig {
   /// On macOS, this This property is only applicable to macOS 10.14 or newer.
   ///
   /// {@endtemplate}
-  late NullableStringGetter threadIdentifierGetter;
+  static String? defaultThreadIdentifier;
 
   /// {@template interruptionLevelGetter}
   ///
@@ -129,17 +130,7 @@ class IosNotificationsConfig {
   /// https://developer.apple.com/documentation/usernotifications/unnotificationcontent/3747256-interruptionlevel
   ///
   /// {@endtemplate}
-  late IosInterruptionLevelGetter interruptionLevelGetter;
-
-  /// {@template subtitleGetter}
-  ///
-  /// Specifies the secondary description.
-  ///
-  /// On iOS, this property is only applicable to iOS 10 or newer.
-  /// On macOS, this This property is only applicable to macOS 10.14 or newer.
-  ///
-  /// {@endtemplate}
-  late NullableStringGetter subtitleGetter;
+  static InterruptionLevel? defaultInterruptionLevel;
 
   /// {@template presentSoundGetter}
   ///
@@ -149,7 +140,7 @@ class IosNotificationsConfig {
   /// This property is only applicable to iOS 10 or newer.
   ///
   /// {@endtemplate}
-  late BoolGetter presentSoundGetter;
+  static bool defaultPresentSound = true;
 
   /// {@template presentAlertGetter}
   ///
@@ -160,7 +151,7 @@ class IosNotificationsConfig {
   /// On macOS, this This property is only applicable to macOS 10.14 or newer.
   ///
   /// {@endtemplate}
-  late BoolGetter presentAlertGetter;
+  static bool defaultPresentAlert = true;
 
   /// {@template presentBadgeGetter}
   ///
@@ -171,20 +162,127 @@ class IosNotificationsConfig {
   /// On macOS, this This property is only applicable to macOS 10.14 or newer.
   ///
   /// {@endtemplate}
-  late BoolGetter presentBadgeGetter;
+  static bool defaultPresentBadge = true;
 
   /// {@template hideThumbnailGetter}
   ///
   /// Should the attachment be considered for the notification thumbnail?
   ///
   /// {@endtemplate}
-  late BoolGetter hideThumbnailGetter;
+  static bool defaultHideThumbnail = false;
+
+  /// {@template presentListGetter}
+  ///
+  /// Configures the default setting on if the notification should be
+  /// in the notification centre when notification is triggered while app is in
+  /// the foreground.
+  ///
+  /// Corresponds to https://developer.apple.com/documentation/usernotifications/unnotificationpresentationoptions/3564813-list
+  ///
+  /// Default value is true.
+  ///
+  /// On iOS, this property is only applicable to iOS 14 or newer.
+  /// On macOS, this property is only applicable to macOS 11 or newer.
+  ///
+  /// {@endtemplate}
+  static bool defaultPresentList = true;
+
+  /// {@template presentBannerGetter}
+  ///
+  /// Configures the default setting on if the notification should be
+  /// presented as a banner when a notification is triggered while app is in
+  /// the foreground.
+  ///
+  /// Corresponds to https://developer.apple.com/documentation/usernotifications/unnotificationpresentationoptions/3564812-banner
+  ///
+  /// Default value is true.
+  ///
+  /// On iOS, this property is only applicable to iOS 14 or newer.
+  /// On macOS, this property is only applicable to macOS 11 or newer.
+  ///
+  /// {@endtemplate}
+  static bool defaultPresentBanner = true;
+
+  /// Request permission to display an alert.
+  ///
+  /// Default value is true.
+  static bool requestAlertPermission = true;
+
+  /// Request permission to play a sound.
+  ///
+  /// Default value is true.
+  static bool requestSoundPermission = true;
+
+  /// Request permission to badge app icon.
+  ///
+  /// Default value is true.
+  static bool requestBadgePermission = true;
+
+  /// Request permission to send provisional notification for iOS 12+
+  ///
+  /// Subject to specific approval from Apple: https://developer.apple.com/documentation/usernotifications/asking_permission_to_use_notifications#3544375
+  ///
+  /// Default value is false.
+  ///
+  /// On iOS, this property is only applicable to iOS 12 or newer.
+  /// On macOS, this property is only applicable to macOS 10.14 or newer.
+  static bool requestProvisionalPermission = false;
+
+  /// Request permission to show critical notifications.
+  ///
+  /// Subject to specific approval from Apple:
+  /// https://developer.apple.com/contact/request/notifications-critical-alerts-entitlement/
+  ///
+  /// Default value is 'false'.
+  static bool requestCriticalPermission = false;
 
   /// {@template thumbnailClippingRectGetter}
   ///
   /// The clipping rectangle for the thumbnail image.
   ///
   /// {@endtemplate}
+  static DarwinNotificationAttachmentThumbnailClippingRect? defaultThumbnailClippingRectGetter;
+
+  /// {@macro soundGetter}
+  late NullableStringGetter soundGetter;
+
+  /// {@macro subtitleGetter}
+  late NullableStringGetter subtitleGetter;
+
+  /// {@macro imageUrlGetter}
+  late NullableStringGetter imageUrlGetter;
+
+  /// {@macro badgeNumberGetter}
+  late NullableIntGetter badgeNumberGetter;
+
+  /// {@macro categoryIdentifierGetter}
+  late NullableStringGetter categoryIdentifierGetter;
+
+  /// {@macro threadIdentifierGetter}
+  late NullableStringGetter threadIdentifierGetter;
+
+  /// {@macro interruptionLevelGetter}
+  late IosInterruptionLevelGetter interruptionLevelGetter;
+
+  /// {@macro presentSoundGetter}
+  late BoolGetter presentSoundGetter;
+
+  /// {@macro presentAlertGetter}
+  late BoolGetter presentAlertGetter;
+
+  /// {@macro presentBadgeGetter}
+  late BoolGetter presentBadgeGetter;
+
+  /// {@macro hideThumbnailGetter}
+  late BoolGetter hideThumbnailGetter;
+
+  /// {@macro presentListGetter}
+  late BoolGetter presentListGetter;
+
+  /// {@macro presentBannerGetter}
+  late BoolGetter presentBannerGetter;
+
+  /// {@macro thumbnailClippingRectGetter}
   late IosNotificationAttachmentClippingRectGetter? thumbnailClippingRectGetter;
 
   DarwinNotificationDetails toSpecifics(
@@ -202,6 +300,8 @@ class IosNotificationsConfig {
       presentSound: presentSoundGetter(message),
       presentAlert: presentAlertGetter(message),
       presentBadge: presentBadgeGetter(message),
+      presentBanner: presentBannerGetter(message),
+      presentList: presentListGetter(message),
     );
   }
 }

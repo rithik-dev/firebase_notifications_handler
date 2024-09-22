@@ -4,9 +4,10 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_notifications_handler/src/enums/app_state.dart';
-import 'package:firebase_notifications_handler/src/models/android_config.dart';
-import 'package:firebase_notifications_handler/src/models/ios_config.dart';
-import 'package:firebase_notifications_handler/src/models/notification_tap_details.dart';
+import 'package:firebase_notifications_handler/src/models/local_notifications_config.dart/android_config.dart';
+import 'package:firebase_notifications_handler/src/models/local_notifications_config.dart/ios_config.dart';
+import 'package:firebase_notifications_handler/src/models/local_notifications_config.dart/local_notifications_configuration.dart';
+import 'package:firebase_notifications_handler/src/models/notification_info.dart';
 import 'package:firebase_notifications_handler/src/utils/generics.dart';
 import 'package:firebase_notifications_handler/src/utils/logger.dart';
 import 'package:firebase_notifications_handler/src/utils/types.dart';
@@ -74,34 +75,40 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// {@endtemplate}
   final bool requestPermissionsOnInitialize;
 
-  /// {@template androidConfig}
+  /// {@template permissionGetter}
   ///
-  /// Android specific configuration.
+  /// A function that can be used to request permissions during initialization.
+  ///
+  /// If [requestPermissionsOnInitialize] is set to true, this function will be called instead of
+  /// the default `fcm.requestPermissions`.
+  ///
+  /// - If a [permissionGetter] function is provided and is not null, `fcm.requestPermissions` will be
+  /// bypassed.
+  /// - If [permissionGetter] is null and [requestPermissionsOnInitialize] is true, the default
+  /// `fcm.requestPermissions` will be called.
   ///
   /// {@endtemplate}
-  final AndroidNotificationsConfig? androidConfig;
+  final Future<void> Function(FirebaseMessaging)? permissionGetter;
 
-  /// {@template iosConfig}
+  /// {@template localNotificationsConfiguration}
   ///
-  /// iOS specific configuration.
-  ///
-  /// {@endtemplate}
-  final IosNotificationsConfig? iosConfig;
-
-  /// {@template notificationIdGetter}
-  ///
-  /// Can be passed to modify the id used by the local
-  /// notification when app is in foreground
+  /// Configuration for local notifications.
   ///
   /// {@endtemplate}
-  final NotificationIdGetter? notificationIdGetter;
+  final LocalNotificationsConfiguration localNotificationsConfiguration;
 
   /// {@template shouldHandleNotification}
   ///
-  /// Can be passed to determine whether the notification should be handled or not.
+  /// Can be passed to determine whether the local notification should be handled or not.
   ///
   /// If [messageModifier] is not null, then the message is first modified
   /// and then this callback is called, with the modified message.
+  ///
+  /// If [shouldHandleNotification] returns false, and it's a local notification i.e. notification
+  /// was received if app is in foreground, then the notification will not be shown.
+  ///
+  /// If [shouldHandleNotification] returns false, and if the notification was received when the app was in background or terminated,
+  /// then the notification will show up in the notification panel, but callbacks like [onTap] will not be called.
   ///
   /// {@endtemplate}
   final BoolGetter? shouldHandleNotification;
@@ -109,6 +116,25 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   /// {@template messageModifier}
   ///
   /// Can be passed to modify the [RemoteMessage] before it is handled.
+  ///
+  /// If [messageModifier] is null, then the message is not modified.
+  ///
+  /// If the app is in background or is terminated when the notification is received,
+  /// the [RemoteMessage] is handled by Firebase directly, and any modifications
+  /// made by [messageModifier] won't affect the notification shown in the device's notification panel.
+  /// However, after tapping the notification, the [RemoteMessage] object will reflect the modified values, and
+  /// callbacks like [onTap] will receive the modified [RemoteMessage].
+  ///
+  /// For example, if you receive a notification with title "A" when app is terminated, and the message
+  /// modifier is set to modify title from "A" to "B" the notification title,
+  /// then the notification in the device's notification will not modify the title, so it will show "A".
+  /// However, if you tap the notification, callbacks like [onTap] will receive
+  /// the modified [RemoteMessage] object with title "B".
+  ///
+  /// If the app is in foreground when the notification is received, the contents of the notification like the title and body will be modified,
+  /// and the notification in the device notification panel will also be modified.
+  ///
+  /// Given that, this could ideally be used to modify the payload based on some condition specific to your app.
   ///
   /// {@endtemplate}
   final RemoteMessageGetter? messageModifier;
@@ -134,6 +160,9 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   ///
   /// When the notification is tapped on, [onTap] is called.
   ///
+  /// This callback provides an instance of [NotificationInfo]
+  /// which provides essential information about the notification.
+  ///
   /// See also:
   ///   * [onTap] parameter.
   ///
@@ -142,7 +171,7 @@ class FirebaseNotificationsHandler extends StatefulWidget {
 
   /// {@template onTap}
   ///
-  /// This callback provides an instance of [NotificationTapDetails]
+  /// This callback provides an instance of [NotificationInfo]
   /// which provides essential information about the notification.
   ///
   /// {@endtemplate}
@@ -160,11 +189,10 @@ class FirebaseNotificationsHandler extends StatefulWidget {
     this.shouldHandleNotification,
     this.onFcmTokenUpdate,
     this.onOpenNotificationArrive,
-    this.androidConfig,
-    this.iosConfig,
-    this.notificationIdGetter,
     this.handleInitialMessage = true,
     this.requestPermissionsOnInitialize = true,
+    this.permissionGetter,
+    this.localNotificationsConfiguration = const LocalNotificationsConfiguration(),
     required this.child,
   });
 
@@ -278,6 +306,10 @@ class FirebaseNotificationsHandler extends StatefulWidget {
   static const getAndroidNotificationChannels =
       _FirebaseNotificationsHandlerState.getAndroidNotificationChannels;
 
+  /// Re-initializes local notifications.
+  static const reInitializeLocalNotifications =
+      _FirebaseNotificationsHandlerState.reInitializeLocalNotifications;
+
   /// {@template getInitialMessage}
   ///
   /// Get the initial message if the app was opened from a notification tap
@@ -288,20 +320,20 @@ class FirebaseNotificationsHandler extends StatefulWidget {
 
   /// {@template notificationTapsSubscription}
   ///
-  /// Stream of [NotificationTapDetails] which is triggered whenever a
+  /// Stream of [NotificationInfo] which is triggered whenever a
   /// notification is tapped.
   ///
   /// {@endtemplate}
-  static Stream<NotificationTapDetails> get notificationTapsSubscription =>
+  static Stream<NotificationInfo> get notificationTapsSubscription =>
       _FirebaseNotificationsHandlerState._notificationTapsSubscription.stream;
 
   /// {@template notificationArrivesSubscription}
   ///
-  /// Stream of [Map] which is triggered whenever a
+  /// Stream of [NotificationInfo] which is triggered whenever a
   /// notification arrives, provided the app is in foreground.
   ///
   /// {@endtemplate}
-  static Stream<Map<String, dynamic>> get notificationArrivesSubscription =>
+  static Stream<NotificationInfo> get notificationArrivesSubscription =>
       _FirebaseNotificationsHandlerState._notificationArriveSubscription.stream;
 
   // removed as this API is deprecated
@@ -372,8 +404,8 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
   static FlutterLocalNotificationsPlugin? _flutterLocalNotificationsPlugin;
 
   static StreamSubscription<String>? _fcmTokenStreamSubscription;
-  static final _notificationTapsSubscription = StreamController<NotificationTapDetails>.broadcast();
-  static final _notificationArriveSubscription = StreamController<Map<String, dynamic>>.broadcast();
+  static final _notificationTapsSubscription = StreamController<NotificationInfo>.broadcast();
+  static final _notificationArriveSubscription = StreamController<NotificationInfo>.broadcast();
   static StreamSubscription<RemoteMessage>? _onMessageSubscription;
   static StreamSubscription<RemoteMessage>? _onMessageOpenedAppSubscription;
 
@@ -460,6 +492,10 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
         ?.getNotificationChannels();
   }
 
+  static Future<void> reInitializeLocalNotifications() async {
+    await _initializeLocalNotifications(forceInit: true);
+  }
+
   static Future<void> sendLocalNotification(
     int id, {
     required NotificationDetails notificationDetails,
@@ -498,7 +534,7 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
       );
 
       try {
-        await _flutterLocalNotificationsPlugin?.zonedSchedule(
+        await _flutterLocalNotificationsPlugin!.zonedSchedule(
           id,
           title,
           body,
@@ -576,8 +612,22 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
       android: AndroidInitializationSettings(
         androidNotificationIcon ?? AndroidNotificationsConfig.defaultAppIcon,
       ),
-      // FIXME: accept params...
-      iOS: const DarwinInitializationSettings(),
+      iOS: DarwinInitializationSettings(
+        defaultPresentAlert: IosNotificationsConfig.defaultPresentAlert,
+        defaultPresentBadge: IosNotificationsConfig.defaultPresentBadge,
+        defaultPresentSound: IosNotificationsConfig.defaultPresentSound,
+        defaultPresentBanner: IosNotificationsConfig.defaultPresentBanner,
+        defaultPresentList: IosNotificationsConfig.defaultPresentList,
+        requestAlertPermission: IosNotificationsConfig.requestAlertPermission,
+        requestBadgePermission: IosNotificationsConfig.requestBadgePermission,
+        requestSoundPermission: IosNotificationsConfig.requestSoundPermission,
+        requestProvisionalPermission: IosNotificationsConfig.requestProvisionalPermission,
+        requestCriticalPermission: IosNotificationsConfig.requestCriticalPermission,
+        // TODO: test this callback
+        // onDidReceiveLocalNotification: (int id, String? title, String? body, String? payload) {},
+        // TODO: add support for categories
+        // notificationCategories: [],
+      ),
     );
 
     try {
@@ -590,13 +640,9 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
 
           // TODO: add support for notification actions?
 
-          final payload = details.payload == null
-              ? <String, dynamic>{}
-              : jsonDecode(details.payload!).cast<String, dynamic>();
-
-          final tapDetails = NotificationTapDetails(
+          final tapDetails = NotificationInfo(
             appState: AppState.open,
-            payload: payload,
+            firebaseMessage: RemoteMessage.fromMap(jsonDecode(details.payload!)),
           );
 
           _onTap?.call(tapDetails);
@@ -653,6 +699,11 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
     log<FirebaseNotificationsHandler>(msg: logMsg);
 
     if (shouldIgnoreNotification) return;
+
+    final notifInfo = NotificationInfo(
+      appState: appState,
+      firebaseMessage: message,
+    );
 
     if (appState == AppState.open) {
       StyleInformation? androidStyleInformation;
@@ -748,26 +799,21 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
         notificationId,
         title: message.notification?.title,
         body: message.notification?.body,
-        payload: message.data,
+        payload: message.toMap(),
         shouldForceInitNotifications: false,
         notificationDetails: notificationPlatformSpecifics,
       );
 
-      _onOpenNotificationArrive?.call(message.data);
-      _notificationArriveSubscription.add(message.data);
+      _onOpenNotificationArrive?.call(notifInfo);
+      _notificationArriveSubscription.add(notifInfo);
     }
 
     // if AppState is open, do not handle onTap here because it will
     // trigger as soon as notification arrives, instead handle in
     // initialize method in onSelectNotification callback.
     else {
-      final tapDetails = NotificationTapDetails(
-        appState: appState,
-        payload: message.data,
-      );
-
-      _onTap?.call(tapDetails);
-      _notificationTapsSubscription.add(tapDetails);
+      _onTap?.call(notifInfo);
+      _notificationTapsSubscription.add(notifInfo);
     }
   }
 
@@ -799,13 +845,7 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
 
         if (details?.notificationResponse?.notificationResponseType ==
             NotificationResponseType.selectedNotification) {
-          return RemoteMessage(
-            messageId: details?.notificationResponse?.id?.toString(),
-            data: <String, dynamic>{
-              if (details?.notificationResponse?.payload != null)
-                ...jsonDecode(details!.notificationResponse!.payload!),
-            },
-          );
+          return RemoteMessage.fromMap(jsonDecode(details!.notificationResponse!.payload!));
         }
       }
 
@@ -861,8 +901,8 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
     _onFCMTokenInitialize = widget.onFcmTokenInitialize;
     _onFCMTokenUpdate = widget.onFcmTokenUpdate;
 
-    _androidConfig = widget.androidConfig ?? AndroidNotificationsConfig();
-    _iosConfig = widget.iosConfig ?? IosNotificationsConfig();
+    _androidConfig = widget.localNotificationsConfiguration.androidConfig ?? AndroidNotificationsConfig();
+    _iosConfig = widget.localNotificationsConfiguration.iosConfig ?? IosNotificationsConfig();
 
     _onTap = widget.onTap;
     _onOpenNotificationArrive = widget.onOpenNotificationArrive;
@@ -881,7 +921,8 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
 
     _shouldHandleNotification = widget.shouldHandleNotification;
 
-    _notificationIdGetter = widget.notificationIdGetter ?? (_) => DateTime.now().hashCode;
+    _notificationIdGetter =
+        widget.localNotificationsConfiguration.notificationIdGetter ?? (_) => DateTime.now().hashCode;
   }
 
   void _deactivate() {
@@ -933,8 +974,9 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
     _onMessageOpenedAppSubscription = FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedApp);
 
     (() async {
-      // TODO: accept fn params?
-      if (widget.requestPermissionsOnInitialize) await _fcm.requestPermission();
+      if (widget.requestPermissionsOnInitialize) {
+        await (widget.permissionGetter?.call(_fcm) ?? _fcm.requestPermission());
+      }
 
       try {
         _fcmToken = await initializeFcmToken(vapidKey: widget.vapidKey);

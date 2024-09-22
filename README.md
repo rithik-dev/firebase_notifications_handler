@@ -16,9 +16,13 @@
 
 * Numerous parameters were renamed to add clarity and consistency, and some were removed. Refer to the [CHANGELOG.md](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/CHANGELOG.md#200---18032023) for more details.
 * NavigatorKey is no longer accepted/provided in the onTap, onOpenNotificationArrive callbacks. Instead, you'll have to create a key and maintain it in your app. Refer to the [example app](https://github.com/rithik-dev/firebase_notifications_handler/tree/master/example).
-* Moved android-specific config params like channelId, channelName, sound etc. to androidConfig.
-* Moved ios-specific config params like sound etc. to iosConfig.
+* Moved android-specific local notifications config params like channelId, channelName, sound etc. to localNotificationsConfiguration.androidConfig.
+* Moved ios-specific local notifications config params like sound etc. to localNotificationsConfiguration.iosConfig.
 * onFCMTokenRefresh is removed. Instead, you can use onFcmTokenUpdate callback. You can always maintain your own stream for tokens in your app if needed.
+* NotificationTapDetails class is now called NotificationInfo, and NotificationInfo now also holds the firebase message as a parameter.
+* onOpenNotificationArrive now provides an object of NotificationInfo instead of just the payload. The payload can be accessed simply by using `payload` property of this class.
+* notificationArrivesSubscription now returns a Stream of NotificationInfo objects instead of just the payload.
+* notificationIdGetter moved to localNotificationsConfiguration.notificationIdGetter
 
 ## Getting Started
 <b>Step 1</b>: Before you can add Firebase to your app, you need to create a Firebase project to connect to your application.
@@ -190,10 +194,11 @@ FirebaseNotificationsHandler(
         // OR
         Navigator.pushNamed(context, 'newRouteName');
     },
-    androidConfig: AndroidConfig(
-        channelIdGetter: (_) =>  'ChannelId',
+    localNotificationsConfiguration: LocalNotificationsConfiguration(
+        androidConfig: AndroidNotificationsConfig(
+          channelIdGetter: (msg) => msg.notification?.android?.channelId ?? 'default',
+        ),
     ),
-
     // ... and a lot more
 ),
 ```
@@ -201,62 +206,27 @@ FirebaseNotificationsHandler(
 You can check the remaining parameters [here](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/lib/src/widget.dart).
 They are fully documented and won't face an issue while using them
 
-## Trigger FCM Notification
+## Steps to test the example app
 
-You can use the in-built `sendNotification` static method on the `FirebaseNotificationsHandler` widget
-to trigger the notification.
+To test the example app, clone the project and replace the [firebase_options.dart](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/example/lib/firebase_options.dart) with your firebase project.
 
-```dart
-await FirebaseNotificationsHandler.sendFcmNotification(
-  cloudMessagingServerKey: '<YOUR_CLOUD_MESSAGING_SERVER_KEY>',
-  title: 'This is a test notification',
-  body: 'This describes this notification',
-  fcmTokens: [
-    'fcmDeviceToken1',
-    'fcmDeviceToken2',
-  ],
-  payload: {
-    'key': 'value',
-  },
-);
-```
+Then, build an apk and run it. The app is set to receive notifications.
 
-# OR
+### To Send Notifications
 
-## Send notification using REST API
+#### Using Firebase Console
+Open the [Firebase Console](https://console.firebase.google.com/), and then go to Build > Messaging from the left panel. Choose Create first campaign, and then Firebase notification message,
+put in the title, body and image (if any), and then press Send test message, paste the FCM token which you can get by running the example app and copy it from there, and then send the notification.
 
-To send FCM notification using REST API:
+#### Using Node Project
+To send notifications using a node project, clone this [notification-sender](https://github.com/rithik-dev/notification-sender) project,
 
-Make a `POST` request @[`https://fcm.googleapis.com/fcm/send`](https://fcm.googleapis.com/fcm/send)
+Download the service account key file by visiting the [Google Cloud Service Accounts Panel](https://console.cloud.google.com/iam-admin/serviceaccounts/) and select the correct project, and add a new key or use an existing one if you already have.
 
-Also, add 2 headers:
-```
-Content-Type: application/json
-Authorization: key=<SERVER_KEY_FROM_FIREBASE_CLOUD_MESSAGING>
-```
+You should now have the project id, client email and the private key from the json key file, and create a .env file in the [root folder](https://github.com/rithik-dev/notification-sender/tree/main). Add keys `FIREBASE_PROJECT_ID`, `CLIENT_EMAIL` and `PRIVATE_KEY` in the .env file.
 
-You can find the server key from the cloud messaging settings in the firebase console.
-
-The body is framed as follows:
-```json
-{
-      "to": "<FCM_TOKEN_HERE>",
-      "registration_ids": [],
-
-      "notification": {
-            "title": "Title here",
-            "body": "Body here",
-            "image": "Image url here"
-      },
-      "data": {
-            "click_action":"FLUTTER_NOTIFICATION_CLICK"
-      }
-}
-```
-You can pass all the fcm tokens in the "registration_ids" list if there are multiple users
-or only pass one fcm token in the "to" parameter for single user.
-
-Add all the rest of the payload data in "data" field which will be provided in the `onTap` callback.
+Now copy the fcm token from the running example app, and pass it to the [index.ts](https://github.com/rithik-dev/notification-sender/blob/main/src/index.ts) file in the `fcm_tokens` array,
+and run `npm start`.
 
 ## Sample Usage
 ```dart
@@ -279,35 +249,34 @@ void main() async {
 class _MainApp extends StatelessWidget {
   static const id = '_MainApp';
 
-  const _MainApp({
-    Key? key,
-  }) : super(key: key);
+  const _MainApp();
 
   @override
   Widget build(BuildContext context) {
     return FirebaseNotificationsHandler(
-      androidConfig: AndroidNotificationsConfig(
-        channelIdGetter: (msg) =>
-            msg.notification?.android?.channelId ?? 'default',
-      ),
-      iosConfig: IosNotificationsConfig(
-        soundGetter: (_) => 'ios_sound.caf',
+      localNotificationsConfiguration: LocalNotificationsConfiguration(
+        androidConfig: AndroidNotificationsConfig(
+          channelIdGetter: (msg) => msg.notification?.android?.channelId ?? 'default',
+        ),
+        iosConfig: IosNotificationsConfig(
+          soundGetter: (_) => 'ios_sound.caf',
+        ),
       ),
       shouldHandleNotification: (msg) {
         // add some logic and return bool on whether to handle a notif or not
         return true;
       },
-      onOpenNotificationArrive: (payload) {
+      onOpenNotificationArrive: (info) {
         // final context = Globals.navigatorKey.currentContext!;
 
         log(
           id,
-          msg: "Notification received while app is open with payload $payload",
+          msg: "Notification received while app is open with payload ${info.payload}",
         );
       },
-      onTap: (details) {
-        final payload = details.payload;
-        final appState = details.appState;
+      onTap: (info) {
+        final payload = info.payload;
+        final appState = info.appState;
 
         /// If you want to push a screen on notification tap
         ///
@@ -320,14 +289,13 @@ class _MainApp extends StatelessWidget {
         /// Get current context
         // final context = Globals.navigatorKey.currentContext!;
 
-        showSnackBar('appState: $appState\npayload: $payload');
         log(
           id,
           msg: "Notification tapped with $appState & payload $payload",
         );
       },
-      onFcmTokenInitialize: (token) => Globals.fcmToken = token,
-      onFcmTokenUpdate: (token) => Globals.fcmToken = token,
+      onFcmTokenInitialize: (token) => Globals.fcmTokenNotifier.value = token,
+      onFcmTokenUpdate: (token) => Globals.fcmTokenNotifier.value = token,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'FirebaseNotificationsHandler Demo',
