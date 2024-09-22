@@ -598,6 +598,8 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
   static Future<void> _onMessageOpenedApp(RemoteMessage message) =>
       _notificationHandler(message, appState: AppState.background);
 
+  // TODO: check show notifs as popup and req. permission
+
   /// [_initializeLocalNotifications] function to initialize the local
   /// notifications to show a notification when the app is in foreground.
   static Future<void> _initializeLocalNotifications({
@@ -633,6 +635,8 @@ class _FirebaseNotificationsHandlerState extends State<FirebaseNotificationsHand
     try {
       await _flutterLocalNotificationsPlugin!.initialize(
         initializationSettings,
+        // TODO: onDidReceiveBackgroundNotificationResponse
+        // onDidReceiveBackgroundNotificationResponse: ,
         onDidReceiveNotificationResponse: (details) {
           if (details.notificationResponseType != NotificationResponseType.selectedNotification) {
             return;

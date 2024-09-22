@@ -9,7 +9,7 @@ class NotificationInfo {
   /// The app state when the notification was received.
   final AppState appState;
 
-  /// The firebase notification object if notification tapped was handled by firebase i.e. if app is not in foreground.
+  /// The firebase notification object.
   final RemoteMessage firebaseMessage;
 
   /// The payload of the notification.
