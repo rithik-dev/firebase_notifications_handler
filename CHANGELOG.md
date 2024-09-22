@@ -15,15 +15,14 @@
 * **BREAKING:** Added androidConfig and iosConfig in  and moved platform specific configs there like channelId, channelName etc. which was in the root before, and these values are getters, which can be modified for every incoming message.
 * **BREAKING:** Renamed `NotificationTapDetails` to `NotificationInfo`. NotificationInfo now also holds `firebaseMessage`.
 * **BREAKING:** Callbacks onTap and onOpenNotificationArrive callbacks now give `NotificationInfo` param which contains info about the notification.
-* Added notificationTapsSubscription, notificationArrivesSubscription streams
-* Added android notification channel create, read, delete methods
+* Added notificationTapsSubscription, notificationArrivesSubscription streams.
+* Added android notification channel create, read, delete methods.
 * Added `permissionGetter` function to override permission request getter.
-* Added `shouldHandleNotification` callback.
-* Added `messageModifier` callback.
+* Added notification handling / modifying callbacks like `shouldHandleNotification`, `messageModifier` etc.
 * Added `stateKeyGetter` getter to generate widget key, allowing to call internal methods using keys.
+* Added `getInitialMessage` callback to get initial notification details if app was opened from a notification.
 * Added logs in debug mode.
 * Fixed issues with images not showing in notifications.
-* Added `getInitialMessage` callback.
 * Updated example app with latest SDKs
 * Updated documentation
 * Updated dependencies to latest release

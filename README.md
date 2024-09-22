@@ -7,17 +7,18 @@
 [![license MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 
 * Simple notifications handler which provides callbacks like onTap which really make it easy to handle notification taps and a lot more.
+* The package already handles local notifications so notifications are rendered in every case without any additional setup, however overrides are available if required.
 
 ## Screenshots
-<img src="https://user-images.githubusercontent.com/56810766/123861270-9a9e4800-d944-11eb-8c04-8fd3e9557876.png" height=600/>&nbsp;&nbsp;<img src="https://user-images.githubusercontent.com/56810766/123926531-96f0dc80-d9a9-11eb-85e4-eee661baaffd.jpeg" height=600/>&nbsp;&nbsp;<img src="https://user-images.githubusercontent.com/56810766/166269612-d555f82c-1634-4431-8ea4-619120e87815.png" height=600/>&nbsp;&nbsp;<img src="https://user-images.githubusercontent.com/56810766/166288543-5b7a4088-dcc8-4acf-9180-3f98d6b8900f.jpeg" height=600/>
+<img src="https://github.com/user-attachments/assets/6a55461d-0abb-4275-bc0d-389b3fb81644" height=500/>&nbsp;&nbsp;<img src="https://github.com/user-attachments/assets/f85f3012-7566-4692-bc5e-6ce47f1681b4" height=500/>&nbsp;&nbsp;<img src="https://github.com/user-attachments/assets/f2794bb4-2f93-4dd1-9aab-d9f393917606" height=200/>&nbsp;&nbsp;<img src="https://user-images.githubusercontent.com/56810766/123861270-9a9e4800-d944-11eb-8c04-8fd3e9557876.png" height=600/>&nbsp;&nbsp;<img src="https://user-images.githubusercontent.com/56810766/123926531-96f0dc80-d9a9-11eb-85e4-eee661baaffd.jpeg" height=600/>&nbsp;&nbsp;<img src="https://user-images.githubusercontent.com/56810766/166269612-d555f82c-1634-4431-8ea4-619120e87815.png" height=600/>
 
 
-## Migration Guide from v1.x to v2.x+
+## Migration Guide from v1.x to v2.x+ ([Full Changelog](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/CHANGELOG.md#200---23092024))
 
 * Numerous parameters were renamed to add clarity and consistency, and some were removed. Refer to the [CHANGELOG.md](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/CHANGELOG.md#200---18032023) for more details.
 * Removed Constants class and added LocalNotificationsConfiguration class which holds android and ios specific configs for local notifications, and takes default values from firebase message, but these parameters can be overwritten by passing in values in the function getters.
 * NavigatorKey is no longer accepted/provided in the onTap, onOpenNotificationArrive callbacks. Instead, you'll have to create a key and maintain it in your app. Refer to the [example app](https://github.com/rithik-dev/firebase_notifications_handler/tree/master/example).
-* Moved android-specific local notifications config params like channelId, channelName, sound etc. to localNotificationsConfiguration.androidConfig.
+* Moved android-specific local notifications config params like channelId, channelName, sound etc. from Constants to localNotificationsConfiguration.androidConfig.
 * Moved ios-specific local notifications config params like sound etc. to localNotificationsConfiguration.iosConfig.
 * onFCMTokenRefresh is removed. Instead, you can use onFcmTokenUpdate callback. You can always maintain your own stream for tokens in your app if needed.
 * NotificationTapDetails class is now called NotificationInfo, and NotificationInfo now also holds the firebase message as a parameter.
