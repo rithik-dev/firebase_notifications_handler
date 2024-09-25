@@ -29,7 +29,7 @@ The package uses a widget-based approach, and exposes a widget to handle the not
   - [Adding custom sound files in platform-specific folders](#adding-custom-sound-files-in-platform-specific-folders)  
     - [Android](#android-1)
     - [iOS](#ios-1)
-- **[💡 Solutions to commonly faced issues](#-solutions-to-commonly-faced-issues)**  
+- **[💡 Solutions to common issues](#-solutions-to-common-issues)**  
   - [Notification not showing as a pop up on Android device](#notification-not-showing-as-a-pop-up-on-android-device)
   - [Custom sound not playing when notification received on Android device](#custom-sound-not-playing-when-notification-received-on-android-device)
   - [Notification image not showing if app in background or terminated even when passed on Android device](#notification-image-not-showing-if-app-in-background-or-terminated-even-when-passed-on-android-device)
@@ -215,7 +215,7 @@ FirebaseNotificationsHandler(
 
     log(
         id,
-        msg: 'Notification tapped with $appState & payload $payload. Firebase messag: $firebaseMessage'',
+        msg: 'Notification tapped with $appState & payload $payload. Firebase message: $firebaseMessage',
     );
   },
   onFcmTokenInitialize: (token) => Globals.fcmTokenNotifier.value = token,
@@ -284,7 +284,7 @@ FirebaseNotificationsHandler.createAndroidNotificationChannels([
 
 ---
 
-# 💡 Solutions to commonly faced issues
+# 💡 Solutions to common issues
 ## Notification not showing as a pop up on Android device: 
 On Android devices, a notification channel by default when a notification arrives, but that might not have the priority set to high. The notification only shows up as a popup if the channel you're sending it to has priority set as "high". We can solve this issue by creating a notification channel on app start using:
 ```dart
