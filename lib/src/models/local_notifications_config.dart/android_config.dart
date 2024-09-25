@@ -56,30 +56,31 @@ class AndroidNotificationsConfig {
   /// then it is used, if not then the default value is used, else the value
   /// passed will be used.
   ///
-  /// The notification channel's id. Defaults to 'Notifications'.
+  /// The notification channel's id. Defaults to 'default'.
   ///
   /// Required for Android 8.0 or newer.
   ///
   /// {@endtemplate}
-  static String defaultChannelId = 'Notifications';
+  static String defaultChannelId = 'default';
 
   /// {@template channelNameGetter}
   ///
-  /// The notification channel's name. Defaults to 'Notifications'.
+  /// The notification channel's name. Defaults to 'Default'.
   ///
   /// Required for Android 8.0 or newer.
   ///
   /// {@endtemplate}
-  static String defaultChannelName = 'Notifications';
+  static String defaultChannelName = 'Default';
 
   /// {@template channelDescriptionGetter}
   ///
-  /// The notification channel's description. Defaults to 'Notifications'.
+  /// The notification channel's description. Defaults to 'Default channel for all notifications'.
   ///
   /// Required for Android 8.0 or newer.
   ///
   /// {@endtemplate}
-  static String defaultChannelDescription = 'Notifications';
+  static String defaultChannelDescription =
+      'Default channel for all notifications';
 
   /// {@template appIconGetter}
   ///
