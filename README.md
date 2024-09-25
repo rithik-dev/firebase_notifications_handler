@@ -63,8 +63,6 @@ The package uses a widget-based approach, and exposes a widget to handle the not
 
 ---
 
-# FIXME: changelog link
-
 # 🛫 Migration Guides
 
 ## Migration Guide from v1.x to v2.x+ ([Full Changelog](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/CHANGELOG.md#200---23092024))
@@ -187,16 +185,16 @@ Although, the widget automatically initializes the FCM token, but if the FCM tok
 FirebaseNotificationsHandler(
   localNotificationsConfiguration: LocalNotificationsConfiguration(
     androidConfig: AndroidNotificationsConfig(
-        // ...
+      // ...
     ),
     iosConfig: IosNotificationsConfig(
-        // ...
+      // ...
     ),
   ),
   onOpenNotificationArrive: (info) {
     log(
-        id,
-        msg: 'Notification received while app is open with payload ${info.payload}',
+      id,
+      msg: 'Notification received while app is open with payload ${info.payload}',
     );
   },
   onTap: (info) {
@@ -214,8 +212,8 @@ FirebaseNotificationsHandler(
     // final context = Globals.navigatorKey.currentContext!;
 
     log(
-        id,
-        msg: 'Notification tapped with $appState & payload $payload. Firebase message: $firebaseMessage',
+      id,
+      msg: 'Notification tapped with $appState & payload $payload. Firebase message: $firebaseMessage',
     );
   },
   onFcmTokenInitialize: (token) => Globals.fcmTokenNotifier.value = token,
