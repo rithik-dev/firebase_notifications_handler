@@ -1,9 +1,9 @@
-## [2.0.0+1]
+# [2.0.0+1]
 
 * Formatted files
 * Updated scripts in pubspec.yaml
 
-## [2.0.0]
+# [2.0.0]
 
 * **BREAKING:** No navigator key param in handler, and in callbacks onTap, onOpenNotificationArrive
 * **BREAKING:** No context in callbacks onFcmTokenInitialize, onFcmTokenUpdate
@@ -34,17 +34,17 @@
 * Added issue tracker link
 * Updated README.md and badges
 
-## [1.1.0]
+# [1.1.0]
 
 * Updated example app
 * Updated documentation
 * Updated some dependencies to latest release
 
-## [1.0.9]
+# [1.0.9]
 
 * Updated dependencies
 
-## [1.0.8]
+# [1.0.8]
 
 * Updated dependencies
 * Fixed linter warnings
@@ -52,85 +52,85 @@
 * Exported firebase_messaging package
 * Updated README.md
 
-## [1.0.7]
+# [1.0.7]
 
 * Updated example app to a fully functional app...
 * Updated dependencies
 * Updated README.md
 
-## [1.0.6]
+# [1.0.6]
 
 * Fixed sendNotification bug
 
-## [1.0.5]
+# [1.0.5]
 
 * Fixed null check error in main widget.
 * Updated README.md
 
-## [1.0.4]
+# [1.0.4]
 
 * Updated payload type.
 * Added notificationMeta in sendNotification.
 
-## [1.0.3]
+# [1.0.3]
 
 * Minor fix in sendNotification.
 * Updated example app
 * Updated README.md
 
-## [1.0.2]
+# [1.0.2]
 
 * Added sendNotification function to trigger FCM notification.
 * Updated dependencies
 * Updated README.md
 
-## [1.0.1]
+# [1.0.1]
 
 * Updated license
 * Updated README.md
 
-## [1.0.0]
+# [1.0.0]
 
 * Added linter and updated code accordingly
 * Updated example app
 * Updated dependencies
 * Updated README.md
 
-## [0.0.8]
+# [0.0.8]
 
 * Exposed initializeFCMToken & onFCMTokenRefresh callbacks
 * Updated dependencies
 * Updated example app
 * Updated README.md
 
-## [0.0.7]
+# [0.0.7]
 
 * Updated README.md
 
-## [0.0.6]
+# [0.0.6]
 
 * Updated README.md
 
-## [0.0.5]
+# [0.0.5]
 
 * Added custom sound support for iOS
 * Added images support in notifications
 * Updated dependencies
 * Updated README.md
 
-## [0.0.4]
+# [0.0.4]
 
 * Updated README.md
 
-## [0.0.3]
+# [0.0.3]
 
 * Bug fix
 
-## [0.0.2]
+# [0.0.2]
 
 * Updated README.md
 
-## [0.0.1]
+# [0.0.1]
 
 * Simple notifications handler which provides callbacks like onTap which really make it easy to
   handle notification taps and a lot more.
