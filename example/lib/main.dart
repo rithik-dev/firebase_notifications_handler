@@ -24,12 +24,11 @@ class _MainApp extends StatelessWidget {
     return FirebaseNotificationsHandler(
       localNotificationsConfiguration: LocalNotificationsConfiguration(
         androidConfig: AndroidNotificationsConfig(
-          channelIdGetter: (msg) =>
-              msg.notification?.android?.channelId ?? 'default',
-        ),
+            // ...
+            ),
         iosConfig: IosNotificationsConfig(
-          soundGetter: (_) => 'ios_sound.caf',
-        ),
+            // ...
+            ),
       ),
       shouldHandleNotification: (msg) {
         // add some logic and return bool on whether to handle a notif or not
@@ -39,12 +38,13 @@ class _MainApp extends StatelessWidget {
         log(
           id,
           msg:
-              "Notification received while app is open with payload ${info.payload}",
+              'Notification received while app is open with payload ${info.payload}',
         );
       },
       onTap: (info) {
         final payload = info.payload;
         final appState = info.appState;
+        final firebaseMessage = info.firebaseMessage;
 
         /// If you want to push a screen on notification tap
         ///
@@ -59,11 +59,13 @@ class _MainApp extends StatelessWidget {
 
         log(
           id,
-          msg: "Notification tapped with $appState & payload $payload",
+          msg:
+              'Notification tapped with $appState & payload $payload. Firebase messag: $firebaseMessage',
         );
       },
       onFcmTokenInitialize: (token) => Globals.fcmTokenNotifier.value = token,
       onFcmTokenUpdate: (token) => Globals.fcmTokenNotifier.value = token,
+      // ...
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'FirebaseNotificationsHandler Demo',

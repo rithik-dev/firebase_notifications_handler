@@ -46,15 +46,41 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    FirebaseNotificationsHandler.createAndroidNotificationChannel(
+    FirebaseNotificationsHandler.createAndroidNotificationChannels([
+      // create default notification channel
+      AndroidNotificationChannel(
+        AndroidNotificationsConfig.defaultChannelId,
+        AndroidNotificationsConfig.defaultChannelName,
+        description: AndroidNotificationsConfig.defaultChannelDescription,
+        importance: Importance.max,
+        playSound: true,
+        sound: const RawResourceAndroidNotificationSound('pop'),
+      ),
       const AndroidNotificationChannel(
-        'Notifications',
-        'Notifications',
+        'promotions',
+        'Promotions',
+        description: 'Notification channel for promotions',
         playSound: true,
         importance: Importance.max,
-        sound: RawResourceAndroidNotificationSound('custom_sound'),
+        sound: RawResourceAndroidNotificationSound('chime'),
       ),
-    );
+      const AndroidNotificationChannel(
+        'order-updates',
+        'Order Updates',
+        description: 'Notification channel for order updates',
+        playSound: true,
+        importance: Importance.max,
+        sound: RawResourceAndroidNotificationSound('elevator'),
+      ),
+      const AndroidNotificationChannel(
+        'messages',
+        'Messages',
+        description: 'Notification channel for messages',
+        playSound: true,
+        importance: Importance.max,
+        sound: RawResourceAndroidNotificationSound('bell'),
+      ),
+    ]);
 
     _notificationTapsSubscription = FirebaseNotificationsHandler
         .notificationTapsSubscription
