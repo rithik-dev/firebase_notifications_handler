@@ -19,7 +19,7 @@ The package uses a widget-based approach, and exposes a widget to handle the not
 - **[📷 Screenshots](#-screenshots)**
 - **[✨ Features](#-features)**
 - **[🛫 Migration Guides](#-migration-guides)**  
-  - [Migration Guide from v1.x to v2.x+](#migration-guide-from-v1x-to-v2x-full-changelog)
+  - [Migration Guide from v1.x to v2.x+](#migration-guide-from-v1x-to-v2x)
 - **[🚀 Getting Started](#-getting-started)**
 - **[🛠️ Platform-specific Setup](#%EF%B8%8F-platform-specific-setup)**  
   - [Android](#android)
@@ -65,18 +65,53 @@ The package uses a widget-based approach, and exposes a widget to handle the not
 
 # 🛫 Migration Guides
 
-## Migration Guide from v1.x to v2.x+ ([Full Changelog](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/CHANGELOG.md#200))
+## Migration Guide from v1.x to v2.x+
 
-* Numerous parameters were renamed to add clarity and consistency, and some were removed. Refer to the [CHANGELOG.md](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/CHANGELOG.md#200---18032023) for more details.
-* Removed Constants class and added LocalNotificationsConfiguration class which holds android and ios specific configs for local notifications, and takes default values from firebase message, but these parameters can be overwritten by passing in values in the function getters.
-* NavigatorKey is no longer accepted/provided in the onTap, onOpenNotificationArrive callbacks. Instead, you'll have to create a key and maintain it in your app. Refer to the [example app](https://github.com/rithik-dev/firebase_notifications_handler/tree/master/example).
-* Moved android-specific local notifications config params like channelId, channelName, sound etc. from Constants to localNotificationsConfiguration.androidConfig.
-* Moved ios-specific local notifications config params like sound etc. to localNotificationsConfiguration.iosConfig.
-* onFCMTokenRefresh is removed. Instead, you can use onFcmTokenUpdate callback. You can always maintain your own stream for tokens in your app if needed.
-* NotificationTapDetails class is now called NotificationInfo, and NotificationInfo now also holds the firebase message as a parameter.
-* onOpenNotificationArrive now provides an object of NotificationInfo instead of just the payload. The payload can be accessed simply by using `payload` property of this class.
-* notificationArrivesSubscription now returns a Stream of NotificationInfo objects instead of just the payload.
-* notificationIdGetter moved to localNotificationsConfiguration.notificationIdGetter
+### 1. Renaming of Parameters and Callbacks
+Several parameters and callbacks were renamed for clarity and consistency:
+- `NotificationTapDetails` is now `NotificationInfo`.
+- `onFCMTokenInitialize` is now `onFcmTokenInitialize`.
+- `onFCMTokenUpdate` is now `onFcmTokenUpdate`.
+- `initializeFCMToken` is now `initializeFcmToken`.
+- `requestPermissionsOnInit` is now `requestPermissionsOnInitialize`.
+- `AppState.closed` is now `AppState.terminated`.
+
+### 2. Context and Navigator Key Removal
+- **Navigator Key**: The `navigatorKey` parameter is no longer available in `onTap` and `onOpenNotificationArrive`. You’ll need to manage your own navigator key in your app. See the [example](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/example) app for more details on handling navigation.
+- **Context**: Callbacks such as `onFcmTokenInitialize` and `onFcmTokenUpdate` no longer accept `context`. Ensure that any context-dependent logic is refactored.
+
+### 3. Handling of Notifications
+- **NotificationInfo**: The class `NotificationTapDetails` has been renamed to `NotificationInfo`. This class now includes the `firebaseMessage` parameter, providing more comprehensive information.
+- `onTap` and `onOpenNotificationArrive` now return a `NotificationInfo` object, replacing the previous payload. The payload can still be accessed using the `payload` property of `NotificationInfo`.
+- The `notificationArrivesSubscription` stream now returns `NotificationInfo` instead of just the payload.
+
+### 4. Local Notifications Configuration
+The configuration of local notifications has been refactored to use platform-specific getters in `LocalNotificationsConfiguration`:
+- Android-specific parameters like `channelId`, `channelName`, and `sound` have been moved to `localNotificationsConfiguration.androidConfig`.
+- iOS-specific parameters like `sound` have been moved to `localNotificationsConfiguration.iosConfig`.
+- The `notificationIdGetter` function is now also part of the `LocalNotificationsConfiguration`.
+
+### 5. FCM Token Changes
+- The callback `onFCMTokenRefresh` has been removed. Use `onFcmTokenUpdate` instead to handle token updates.
+- If you need to maintain your own stream of FCM tokens, you can do so manually in your app.
+
+### 6. Notification Sending
+- **Removed**: `sendFcmNotification` has been deprecated for sending notifications from the client side. You'll now need to send notifications using Firebase Cloud Messaging (FCM) server-side APIs.
+- **New**: A new `sendLocalNotification` function is introduced, which allows sending or scheduling local notifications.
+
+### 7. Other Notable Changes
+- New streams `notificationTapsSubscription` and `notificationArrivesSubscription` are available for handling notification taps and arrivals.
+- Android notification channel management methods have been added: create, read, and delete channels.
+- New callbacks and getters such as `permissionGetter`, `shouldHandleNotification`, `messageModifier`, and `stateKeyGetter` are introduced for finer control over the notification lifecycle.
+- Logging is now available in debug mode for better debugging.
+- Fixed issues with images not displaying in notifications.
+- `getInitialMessage` callback added for retrieving the initial notification that launched the app.
+
+### 8. Updated Example App and Documentation
+- The [example](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/example) app has been updated to use the latest SDKs and demonstrates how to implement these breaking changes.
+- Documentation has been updated to reflect all changes, along with the issue tracker link for reporting bugs or issues.
+
+For more details, refer to the [CHANGELOG](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/CHANGELOG.md#200).
 
 ---
 
