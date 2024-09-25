@@ -65,7 +65,7 @@ The package uses a widget-based approach, and exposes a widget to handle the not
 
 # 🛫 Migration Guides
 
-## Migration Guide from v1.x to v2.x+ ([Full Changelog](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/CHANGELOG.md#200---23092024))
+## Migration Guide from v1.x to v2.x+ ([Full Changelog](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/CHANGELOG.md#200))
 
 * Numerous parameters were renamed to add clarity and consistency, and some were removed. Refer to the [CHANGELOG.md](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/CHANGELOG.md#200---18032023) for more details.
 * Removed Constants class and added LocalNotificationsConfiguration class which holds android and ios specific configs for local notifications, and takes default values from firebase message, but these parameters can be overwritten by passing in values in the function getters.
