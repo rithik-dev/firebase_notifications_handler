@@ -1,6 +1,6 @@
 # Firebase Notifications Handler Demo
 
-To test the example app, clone the project and replace the [firebase_options.dart](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/example/lib/firebase_options.dart) with your firebase project file.
+To test the example app, clone the project and add the `firebase_options.dart` with your firebase options file in `lib/firebase_options.dart`.
 
 Then, build the app and run it. The app is set to receive notifications.
 
