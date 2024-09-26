@@ -60,7 +60,7 @@ class _MainApp extends StatelessWidget {
         log(
           id,
           msg:
-              'Notification tapped with $appState & payload $payload. Firebase messag: $firebaseMessage',
+              'Notification tapped with $appState & payload $payload. Firebase message: $firebaseMessage',
         );
       },
       onFcmTokenInitialize: (token) => Globals.fcmTokenNotifier.value = token,
