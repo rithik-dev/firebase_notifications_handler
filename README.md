@@ -43,7 +43,7 @@ The package uses a widget-based approach, and exposes a widget to handle the not
 
 | App In Foreground | App In Background | Expanded Notification |
 |-----------------------------------|-------------------------------------|-------------------------------------|
-| <img src="https://github.com/user-attachments/assets/9823e0df-1475-4bc4-ab1b-d755ec703b76" height="600"> | <img src="https://github.com/user-attachments/assets/3551f0da-5508-4fd0-83c8-d239e7062c7e" height="600"> | <img src="https://github.com/user-attachments/assets/e45e443b-cb55-483a-81f5-dc8b1d5b3dab" height="600"> |
+| <img src="https://github.com/user-attachments/assets/9823e0df-1475-4bc4-ab1b-d755ec703b76" height="500"> | <img src="https://github.com/user-attachments/assets/3551f0da-5508-4fd0-83c8-d239e7062c7e" height="500"> | <img src="https://github.com/user-attachments/assets/e45e443b-cb55-483a-81f5-dc8b1d5b3dab" height="500"> |
 
 ---
 
