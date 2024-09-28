@@ -37,8 +37,6 @@ The package uses a widget-based approach, and exposes a widget to handle the not
 - **[🎯 Sample Usage](#-sample-usage)**
 - **[👤 Collaborators](#-collaborators)**
 
-
-
 ---
 
 # 📷 Screenshots
@@ -184,7 +182,6 @@ void main() async {
 ## iOS
 > [!NOTE]
 > Refer to the platform specific setup for local notifications [here](https://pub.dev/packages/flutter_local_notifications#-ios-setup)
-
 
 ---
 
