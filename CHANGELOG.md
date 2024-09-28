@@ -3,6 +3,7 @@
 - Default android notification channel id is now "default" instead of "Notifications"
 - Updated example app with more custom sounds
 - Updated README.md
+- Updated package description and added additional tags
 
 # [2.0.0+1]
 
