@@ -1,6 +1,6 @@
 name: firebase_notifications_handler
 description: Easy-to-use Firebase notifications handler with built-in local notifications support, allowing your app to display notifications in the foreground without extra setup.
-version: 2.0.1
+version: 2.0.1+1
 homepage: https://github.com/rithik-dev/firebase_notifications_handler
 repository: https://github.com/rithik-dev/firebase_notifications_handler
 issue_tracker: https://github.com/rithik-dev/firebase_notifications_handler/issues
