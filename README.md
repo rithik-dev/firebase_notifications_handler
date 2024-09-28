@@ -360,6 +360,8 @@ Flutter strips off the `raw` folder during compiling build for release mode. We 
 
 See the [example](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/example) app for a complete app. Learn how to setup the example app for testing [here](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/example/README.md).
 
+Check out the full API reference [here](https://pub.dev/documentation/firebase_notifications_handler/latest/firebase_notifications_handler/firebase_notifications_handler-library.html).
+
 ```dart
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_notifications_handler/firebase_notifications_handler.dart';
