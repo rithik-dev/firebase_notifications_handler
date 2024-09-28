@@ -1,3 +1,7 @@
+# [2.0.1+1]
+
+- Updated package description
+
 # [2.0.1]
 
 - Default android notification channel id is now "default" instead of "Notifications"
