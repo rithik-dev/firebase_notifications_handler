@@ -1,3 +1,7 @@
+# [2.0.1+2]
+
+- Update API reference link in README
+
 # [2.0.1+1]
 
 - Updated package description
