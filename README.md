@@ -24,6 +24,7 @@ The package uses a widget-based approach, and exposes a widget to handle the not
 - **[🛠️ Platform-specific Setup](#%EF%B8%8F-platform-specific-setup)**  
   - [Android](#android)
   - [iOS](#ios)
+  - [Web](#web)
 - **[❓ Usage](#-usage)**  
   - [Creating notification channels for Android](#creating-notification-channels-for-android)
   - [Adding custom sound files in platform-specific folders](#adding-custom-sound-files-in-platform-specific-folders)  
@@ -148,8 +149,6 @@ void main() async {
 
 # 🛠️ Platform-Specific Setup
 
-
-
 ## Android
 > [!NOTE]
 > Refer to the platform specific setup for local notifications [here](https://pub.dev/packages/flutter_local_notifications#-android-setup)
@@ -182,6 +181,53 @@ void main() async {
 ## iOS
 > [!NOTE]
 > Refer to the platform specific setup for local notifications [here](https://pub.dev/packages/flutter_local_notifications#-ios-setup)
+
+## Web
+1. Provide the vapidKey in `FirebaseNotificationsHandler` from the cloud messaging settings by generating a new Web push certificate.
+
+2. Add this script tag in `index.html` after adding the firebase config script
+```html
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    // navigator.serviceWorker.register("/flutter_service_worker.js");
+    navigator.serviceWorker.register("/firebase-messaging-sw.js");
+  });
+}
+</script>
+```
+
+3. Create a file `firebase-messaging-sw.js` in the `web` folder itself and paste the following contents. Add your own firebase app config here.
+```js
+importScripts("https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js");
+importScripts("https://www.gstatic.com/firebasejs/7.15.5/firebase-messaging.js");
+
+firebase.initializeApp(
+    // YOUR FIREBASE CONFIG MAP HERE
+);
+
+const messaging = firebase.messaging();
+messaging.setBackgroundMessageHandler(function (payload) {
+    const promiseChain = clients
+        .matchAll({
+            type: "window",
+            includeUncontrolled: true
+        })
+        .then(windowClients => {
+            for (let i = 0; i < windowClients.length; i++) {
+                const windowClient = windowClients[i];
+                windowClient.postMessage(payload);
+            }
+        })
+        .then(() => {
+            return registration.showNotification("New Message");
+        });
+    return promiseChain;
+});
+self.addEventListener('notificationclick', function (event) {
+    console.log('notification received: ', event)
+});
+```
 
 ---
 
@@ -439,6 +485,8 @@ class _MainApp extends StatelessWidget {
   }
 }
 ```
+
+---
 
 # 👤 Collaborators
 
