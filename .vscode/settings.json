@@ -4,5 +4,6 @@
     "titleBar.activeBackground": "#4E3C31",
     "titleBar.activeForeground": "#FCFCFB"
   },
-  "dart.flutterSdkPath": ".fvm/versions/3.24.3"
+  "dart.flutterSdkPath": ".fvm/versions/3.24.3",
+  "dart.lineLength": 80
 }
