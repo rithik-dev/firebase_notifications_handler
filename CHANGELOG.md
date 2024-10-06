@@ -1,3 +1,8 @@
+# [2.0.2]
+
+- Added web documentation in README
+- Updated SDK constraints
+
 # [2.0.1+2]
 
 - Update API reference link in README
