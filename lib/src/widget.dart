@@ -582,6 +582,11 @@ class _FirebaseNotificationsHandlerState
       }
     } else {
       assert(
+        androidScheduleMode != null,
+        'androidScheduleMode cannot be null when scheduledDateTime is not null',
+      );
+
+      assert(
         uiLocalNotificationDateInterpretation != null,
         'uiLocalNotificationDateInterpretation cannot be null when scheduledDateTime is not null',
       );
@@ -594,7 +599,7 @@ class _FirebaseNotificationsHandlerState
           scheduledDateTime,
           notificationDetails,
           payload: payloadStr,
-          androidScheduleMode: androidScheduleMode,
+          androidScheduleMode: androidScheduleMode!,
           matchDateTimeComponents: matchDateTimeComponents,
           uiLocalNotificationDateInterpretation:
               uiLocalNotificationDateInterpretation!,
@@ -679,8 +684,6 @@ class _FirebaseNotificationsHandlerState
             IosNotificationsConfig.requestProvisionalPermission,
         requestCriticalPermission:
             IosNotificationsConfig.requestCriticalPermission,
-        // TODO: test this callback
-        // onDidReceiveLocalNotification: (int id, String? title, String? body, String? payload) {},
         // TODO: add support for categories
         // notificationCategories: [],
       ),
