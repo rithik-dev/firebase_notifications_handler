@@ -1,22 +1,27 @@
+# [2.0.2+1]
+
+* Updated dependency to latest release
+* Fix dart static analysis warnings
+
 # [2.0.2]
 
-- Added web documentation in README
-- Updated SDK constraints
+* Added web documentation in README
+* Updated SDK constraints
 
 # [2.0.1+2]
 
-- Update API reference link in README
+* Update API reference link in README
 
 # [2.0.1+1]
 
-- Updated package description
+* Updated package description
 
 # [2.0.1]
 
-- Default android notification channel id is now "default" instead of "Notifications"
-- Updated example app with more custom sounds
-- Updated README.md
-- Updated package description and added additional tags
+* Default android notification channel id is now "default" instead of "Notifications"
+* Updated example app with more custom sounds
+* Updated README.md
+* Updated package description and added additional tags
 
 # [2.0.0+1]
 
