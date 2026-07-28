@@ -1,3 +1,8 @@
+## 2.0.3 - 2026-07-28
+
+* Declared `timezone` and `path` as direct dependencies; both were imported by the package but resolved only transitively.
+* Added GitHub Actions CI to automate version bumps, changelog updates, tagging and pub.dev publishing.
+
 ## 2.0.2+1 - 2025-01-25
 
 * Updated dependency to latest release
