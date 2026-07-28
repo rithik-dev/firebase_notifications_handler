@@ -1,0 +1,7 @@
+# The release workflow reads these files from shell with grep/sed/cat. A CRLF line
+# ending survives command substitution as a trailing \r — `$(grep -m1 '^name:' pubspec.yaml
+# | sed ...)` yields "firebase_notifications_handler\r" — which corrupted the pub.dev link
+# in the v2.0.3 release notes. Pin the files CI touches to LF so that cannot recur.
+pubspec.yaml  text eol=lf
+CHANGELOG.md  text eol=lf
+.github/**    text eol=lf
