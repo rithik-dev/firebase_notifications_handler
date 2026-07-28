@@ -27,9 +27,11 @@ dependencies:
     sdk: flutter
 
   http: ^1.2.2
+  path: ^1.9.0
   path_provider: ^2.1.4
   firebase_messaging: ^15.1.2
   flutter_local_notifications: ^18.0.1
+  timezone: ^0.9.0
 
 dev_dependencies:
   flutter_lints: ^5.0.0

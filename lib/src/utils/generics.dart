@@ -1,8 +1,6 @@
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-
-// ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
