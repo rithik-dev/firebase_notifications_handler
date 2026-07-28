@@ -1,3 +1,7 @@
+## 2.0.4 - 2026-07-28
+
+* Maintenance release; no user-facing changes.
+
 ## 2.0.3 - 2026-07-28
 
 * Declared `timezone` and `path` as direct dependencies; both were imported by the package but resolved only transitively.
