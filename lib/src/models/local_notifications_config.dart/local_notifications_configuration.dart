@@ -12,6 +12,8 @@ class LocalNotificationsConfiguration {
     this.androidConfig,
     this.iosConfig,
     this.notificationIdGetter,
+    this.titleGetter,
+    this.bodyGetter,
   });
 
   /// {@template androidConfig}
@@ -45,4 +47,37 @@ class LocalNotificationsConfiguration {
   ///
   /// {@endtemplate}
   final NotificationIdGetter? notificationIdGetter;
+
+  /// {@template titleGetter}
+  ///
+  /// Resolves the title shown on the foreground local notification.
+  ///
+  /// Defaults to `message.notification?.title`.
+  ///
+  /// Override this to support localized notifications. A message sent with
+  /// `title_loc_key` carries no `title` — the key is meant to be resolved
+  /// against the app's own string resources, which only the app can do:
+  ///
+  /// ```dart
+  /// titleGetter: (msg) {
+  ///   final key = msg.notification?.titleLocKey;
+  ///   if (key == null) return msg.notification?.title;
+  ///   return myLocalizations.lookup(key, msg.notification!.titleLocArgs);
+  /// },
+  /// ```
+  ///
+  /// {@endtemplate}
+  final NullableStringGetter? titleGetter;
+
+  /// {@template bodyGetter}
+  ///
+  /// Resolves the body shown on the foreground local notification.
+  ///
+  /// Defaults to `message.notification?.body`.
+  ///
+  /// See [titleGetter] for how to use this with `body_loc_key` to support
+  /// localized notifications.
+  ///
+  /// {@endtemplate}
+  final NullableStringGetter? bodyGetter;
 }

@@ -24,11 +24,11 @@ class _MainApp extends StatelessWidget {
     return FirebaseNotificationsHandler(
       localNotificationsConfiguration: LocalNotificationsConfiguration(
         androidConfig: AndroidNotificationsConfig(
-            // ...
-            ),
+          // ...
+        ),
         iosConfig: IosNotificationsConfig(
-            // ...
-            ),
+          // ...
+        ),
       ),
       shouldHandleNotification: (msg) {
         // add some logic and return bool on whether to handle a notif or not
@@ -37,8 +37,7 @@ class _MainApp extends StatelessWidget {
       onOpenNotificationArrive: (info) {
         log(
           id,
-          msg:
-              'Notification received while app is open with payload ${info.payload}',
+          msg: 'Notification received while app is open with payload ${info.payload}',
         );
       },
       onTap: (info) {
@@ -59,8 +58,7 @@ class _MainApp extends StatelessWidget {
 
         log(
           id,
-          msg:
-              'Notification tapped with $appState & payload $payload. Firebase message: $firebaseMessage',
+          msg: 'Notification tapped with $appState & payload $payload. Firebase message: $firebaseMessage',
         );
       },
       onFcmTokenInitialize: (token) => Globals.fcmTokenNotifier.value = token,

@@ -4,7 +4,8 @@ version: 2.0.4
 homepage: https://github.com/rithik-dev/firebase_notifications_handler
 repository: https://github.com/rithik-dev/firebase_notifications_handler
 issue_tracker: https://github.com/rithik-dev/firebase_notifications_handler/issues
-# documentation: https://github.com/rithik-dev/firebase_notifications_handler/blob/master/README.md
+documentation: https://github.com/rithik-dev/firebase_notifications_handler/blob/master/README.md
+
 topics: 
   - flutter
   - firebase
@@ -13,28 +14,22 @@ topics:
   - push-notifications
 
 environment:
-  # constraints from http, path_provider, firebase_messaging, flutter_local_notifications dependencies
-  sdk: ^3.3.0
-  flutter: '>=3.19.0'
-
-scripts:
-  pre_publish: dart format .; flutter pub publish --dry-run
-  publish_skip_validation: flutter pub publish --skip-validation
-  publish: flutter pub publish
+  sdk: ^3.10.0
+  flutter: '>=3.38.1'
 
 dependencies:
   flutter:
     sdk: flutter
 
-  http: ^1.2.2
-  path: ^1.9.0
-  path_provider: ^2.1.4
-  firebase_messaging: ^15.1.2
-  flutter_local_notifications: ^18.0.1
-  timezone: ^0.9.0
+  http: ^1.6.0
+  path: ^1.9.1
+  timezone: ^0.11.1
+  path_provider: ^2.1.6
+  firebase_messaging: ^16.4.3
+  flutter_local_notifications: ^22.2.0
 
 dev_dependencies:
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
 
 false_secrets:
   - /example/lib/firebase_options.dart

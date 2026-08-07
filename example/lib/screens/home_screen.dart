@@ -21,8 +21,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  static const _projectLink =
-      'https://pub.dev/packages/firebase_notifications_handler';
+  static const _projectLink = 'https://pub.dev/packages/firebase_notifications_handler';
 
   final _notificationTaps = <NotificationInfo>[];
   final _notificationArrives = <NotificationInfo>[];
@@ -82,13 +81,13 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     ]);
 
-    _notificationTapsSubscription = FirebaseNotificationsHandler
-        .notificationTapsSubscription
-        .listen(_addNotificationTap);
+    _notificationTapsSubscription = FirebaseNotificationsHandler.notificationTapsSubscription.listen(
+      _addNotificationTap,
+    );
 
-    _notificationArriveSubscription = FirebaseNotificationsHandler
-        .notificationArrivesSubscription
-        .listen(_addNotificationArrive);
+    _notificationArriveSubscription = FirebaseNotificationsHandler.notificationArrivesSubscription.listen(
+      _addNotificationArrive,
+    );
   }
 
   @override
@@ -125,8 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             const SizedBox(width: 10),
                             IconButton(
                               onPressed: () async {
-                                await Clipboard.setData(
-                                    ClipboardData(text: value));
+                                await Clipboard.setData(ClipboardData(text: value));
                                 showSnackBar('FCM token copied to clipboard!');
                               },
                               icon: const Icon(Icons.copy),
@@ -150,8 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   TextSpan(
                     text: _projectLink,
                     style: const TextStyle(color: Colors.blue),
-                    recognizer: _linkTapRecognizer
-                      ..onTap = () => launchUrlString(_projectLink),
+                    recognizer: _linkTapRecognizer..onTap = () => launchUrlString(_projectLink),
                   ),
                   const TextSpan(text: ' to see how to send notifications'),
                 ],
@@ -217,7 +214,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 return EasyContainer(
                   child: _buildNotificationInfo(notificationArrive),
                 );
-              })
+              }),
           ],
         ),
       ),

@@ -19,10 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
       if (!mounted) return;
 
-      Navigator.pushReplacementNamed(
-        context,
-        HomeScreen.id,
-      );
+      Navigator.pushReplacementNamed(context, HomeScreen.id);
     })();
     super.initState();
   }
