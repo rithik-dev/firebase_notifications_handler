@@ -179,7 +179,7 @@ jobs:
           } > "$RUNNER_TEMP/GH_RELEASE_NOTES.md"
           gh release create "$TAG" --title "$TAG" --notes-file "$RUNNER_TEMP/GH_RELEASE_NOTES.md"
 
-      # Watch this run's result in Actions -> Publish to pub.dev; a failure there does not fail
+      # Watch this run's result in Actions -> Publish to pub.dev (auto-run by Release); a failure there does not fail
       # this workflow, and can be retried on its own against the tag.
       - name: Dispatch pub.dev publish
         env:
