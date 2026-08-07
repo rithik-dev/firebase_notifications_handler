@@ -19,6 +19,7 @@ The package uses a widget-based approach, and exposes a widget to handle the not
 - **[📷 Screenshots](#-screenshots)**
 - **[✨ Features](#-features)**
 - **[🛫 Migration Guides](#-migration-guides)**  
+  - [Migration Guide from v2.x to v3.x+](#migration-guide-from-v2x-to-v3x)
   - [Migration Guide from v1.x to v2.x+](#migration-guide-from-v1x-to-v2x)
 - **[🚀 Getting Started](#-getting-started)**
 - **[🛠️ Platform-specific Setup](#%EF%B8%8F-platform-specific-setup)**  
@@ -63,6 +64,37 @@ The package uses a widget-based approach, and exposes a widget to handle the not
 ---
 
 # 🛫 Migration Guides
+
+## Migration Guide from v2.x to v3.x+
+
+### 1. Minimum SDK versions raised
+- Requires Dart 3.10 / Flutter 3.38.1 or newer, up from Dart 3.3 / Flutter 3.19.
+- Android `minSdk` must be at least 24.
+
+### 2. Android now requires core library desugaring
+`flutter_local_notifications` 22 requires the consuming app to enable desugaring and compile against Java 17. Without it the build fails with `Dependency ':flutter_local_notifications' requires core library desugaring to be enabled`. See [Platform-Specific Setup → Android](#android) for the exact configuration.
+
+### 3. `sendLocalNotification` no longer takes `uiLocalNotificationDateInterpretation`
+`UILocalNotificationDateInterpretation` was removed upstream in `flutter_local_notifications` v22, so the parameter is gone. Remove the argument from your calls — there is no replacement:
+```dart
+await FirebaseNotificationsHandler.sendLocalNotification(
+  id,
+  notificationDetails: details,
+  scheduledDateTime: when,
+  androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+  // uiLocalNotificationDateInterpretation: ...,  <-- delete this line
+);
+```
+
+### 4. Re-exported plugins had major upgrades
+This package re-exports `firebase_messaging` and `flutter_local_notifications`, so their breaking changes reach your code directly. `firebase_messaging` moved 15 → 16 and `flutter_local_notifications` 18 → 22; most notably the latter moved `show`, `zonedSchedule` and `initialize` to named parameters.
+
+### 5. Localized notifications
+Messages sent with `title_loc_key` / `body_loc_key` carry no title or body, so they previously rendered blank. Provide `titleGetter` / `bodyGetter` in `LocalNotificationsConfiguration` to resolve them against your app's own localizations.
+
+For more details, refer to the [CHANGELOG](https://github.com/rithik-dev/firebase_notifications_handler/blob/master/CHANGELOG.md).
+
+---
 
 ## Migration Guide from v1.x to v2.x+
 
@@ -150,9 +182,32 @@ void main() async {
 # 🛠️ Platform-Specific Setup
 
 ## Android
+> [!IMPORTANT]
+> `flutter_local_notifications` requires **core library desugaring**. Without it the build fails with `Dependency ':flutter_local_notifications' requires core library desugaring to be enabled`. This applies even if you never schedule notifications. Android `minSdk` must also be at least 24.
+
+1. Enable desugaring in `android/app/build.gradle`:
+```gradle
+android {
+    compileOptions {
+        coreLibraryDesugaringEnabled = true
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+}
+```
+
 > [!NOTE]
-> Refer to the platform specific setup for local notifications [here](https://pub.dev/packages/flutter_local_notifications#-android-setup)
-1. Add the following meta-data tags (if required) to define default values in `AndroidManifest.xml` under the `<application>` tag:
+> For the current `desugar_jdk_libs` version and the rest of the platform specific setup for local notifications, refer [here](https://pub.dev/packages/flutter_local_notifications#-android-setup)
+
+2. Add the following meta-data tags (if required) to define default values in `AndroidManifest.xml` under the `<application>` tag:
 ```xml
 <!-- Can add a default notification channel (if not sending a channel id when sending notification) -->
 <!-- If you don't specify a default channel id, and don't pass an id when sending notification, Android creates a default channel "Miscellaneous" -->
@@ -170,7 +225,7 @@ void main() async {
     android:resource="@color/notification_color" /> -->
 ```
 
-2. Add this `<intent-filter>` in the `<activity>` tag:
+3. Add this `<intent-filter>` in the `<activity>` tag:
 ```xml
 <intent-filter>
     <action android:name="FLUTTER_NOTIFICATION_CLICK" />
