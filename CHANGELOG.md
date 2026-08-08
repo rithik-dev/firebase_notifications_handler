@@ -1,3 +1,7 @@
+## 3.0.3 - 2026-08-08
+
+* Maintenance release; no user-facing changes.
+
 ## 3.0.2 - 2026-08-08
 
 * Maintenance release; no user-facing changes.
