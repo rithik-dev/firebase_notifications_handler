@@ -5,8 +5,8 @@
 [![pub points](https://img.shields.io/pub/points/firebase_notifications_handler)](https://pub.dev/packages/firebase_notifications_handler/score)
 [![license MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 
-[![portfolio](https://img.shields.io/badge/portfolio-rithikbhandari.dev-6C63FF?style=for-the-badge)](https://rithikbhandari.dev)
-[![publisher](https://img.shields.io/pub/publisher/firebase_notifications_handler?style=for-the-badge)](https://pub.dev/publishers/rithikbhandari.dev/packages)
+<a href="https://rithikbhandari.dev" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/portfolio-rithikbhandari.dev-6C63FF?style=for-the-badge" alt="portfolio"></a>
+<a href="https://pub.dev/publishers/rithikbhandari.dev/packages" target="_blank" rel="noopener"><img src="https://img.shields.io/pub/publisher/firebase_notifications_handler?style=for-the-badge" alt="publisher"></a>
 
 ---
 
@@ -47,7 +47,7 @@ The package uses a widget-based approach, and exposes a widget to handle the not
 
 | App In Foreground | App In Background | Expanded Notification |
 |-----------------------------------|-------------------------------------|-------------------------------------|
-| <img src="https://github.com/rithik-dev/firebase_notifications_handler/raw/master/.github/assets/foreground.webp" height="500"> | <img src="https://github.com/rithik-dev/firebase_notifications_handler/raw/master/.github/assets/background.webp" height="500"> | <img src="example/screenshots/notification.webp" height="500"> |
+| <img src="https://github.com/rithik-dev/firebase_notifications_handler/raw/master/.github/assets/foreground.webp" height="500"> | <img src="https://github.com/rithik-dev/firebase_notifications_handler/raw/master/.github/assets/background.webp" height="500"> | <img src="https://github.com/rithik-dev/firebase_notifications_handler/raw/master/pub_screenshots/notification.webp" height="500"> |
 
 ---
 
