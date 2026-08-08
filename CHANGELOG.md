@@ -1,3 +1,7 @@
+## 3.0.2 - 2026-08-08
+
+* Maintenance release; no user-facing changes.
+
 ## 3.0.1 - 2026-08-08
 
 * Added a screenshot to the package listing, so pub.dev now shows a thumbnail in search results and a gallery on the package page.
