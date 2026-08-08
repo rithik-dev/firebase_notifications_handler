@@ -6,6 +6,10 @@ repository: https://github.com/rithik-dev/firebase_notifications_handler
 issue_tracker: https://github.com/rithik-dev/firebase_notifications_handler/issues
 documentation: https://github.com/rithik-dev/firebase_notifications_handler/blob/master/README.md
 
+screenshots:
+  - description: 'An expanded notification received via FirebaseNotificationsHandler.'
+    path: example/screenshots/notification.webp
+
 topics: 
   - flutter
   - firebase
