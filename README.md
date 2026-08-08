@@ -47,7 +47,7 @@ The package uses a widget-based approach, and exposes a widget to handle the not
 
 | App In Foreground | App In Background | Expanded Notification |
 |-----------------------------------|-------------------------------------|-------------------------------------|
-| <img src="https://github.com/rithik-dev/firebase_notifications_handler/raw/master/.github/assets/foreground.webp" height="500"> | <img src="https://github.com/rithik-dev/firebase_notifications_handler/raw/master/.github/assets/background.webp" height="500"> | <img src="https://github.com/rithik-dev/firebase_notifications_handler/raw/master/pub_screenshots/notification.webp" height="500"> |
+| <img src="https://github.com/rithik-dev/firebase_notifications_handler/raw/master/screenshots/unpublished/foreground.webp" height="500"> | <img src="https://github.com/rithik-dev/firebase_notifications_handler/raw/master/screenshots/unpublished/background.webp" height="500"> | <img src="https://github.com/rithik-dev/firebase_notifications_handler/raw/master/screenshots/published/notification.webp" height="500"> |
 
 ---
 
