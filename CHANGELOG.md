@@ -1,3 +1,9 @@
+## 3.0.1 - 2026-08-08
+
+* Added a screenshot to the package listing, so pub.dev now shows a thumbnail in search results and a gallery on the package page.
+* README: dropped a badge that had stopped rendering, swapped in monthly downloads, and added links to the author's portfolio and other packages.
+* README: the screenshots are now served from this repository instead of GitHub's attachment CDN, which was outside the repo's control and could have gone stale.
+
 ## 3.0.0 - 2026-08-07
 
 * **BREAKING:** Minimum SDK is now Dart 3.10 / Flutter 3.38.1, raised from Dart 3.3 / Flutter 3.19.
