@@ -1,10 +1,12 @@
 # [FirebaseNotificationsHandler](https://pub.dev/packages/firebase_notifications_handler) For Flutter
 [![pub package](https://img.shields.io/pub/v/firebase_notifications_handler.svg)](https://pub.dev/packages/firebase_notifications_handler)
+[![downloads](https://img.shields.io/pub/dm/firebase_notifications_handler)](https://pub.dev/packages/firebase_notifications_handler)
 [![likes](https://img.shields.io/pub/likes/firebase_notifications_handler)](https://pub.dev/packages/firebase_notifications_handler/score)
-[![popularity](https://img.shields.io/pub/popularity/firebase_notifications_handler)](https://pub.dev/packages/firebase_notifications_handler/score)
 [![pub points](https://img.shields.io/pub/points/firebase_notifications_handler)](https://pub.dev/packages/firebase_notifications_handler/score)
-[![code size](https://img.shields.io/github/languages/code-size/rithik-dev/firebase_notifications_handler)](https://github.com/rithik-dev/firebase_notifications_handler)
 [![license MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
+
+[![portfolio](https://img.shields.io/badge/portfolio-rithikbhandari.dev-6C63FF?style=for-the-badge)](https://rithikbhandari.dev)
+[![publisher](https://img.shields.io/pub/publisher/firebase_notifications_handler?style=for-the-badge)](https://pub.dev/publishers/rithikbhandari.dev/packages)
 
 ---
 
@@ -37,7 +39,7 @@ The package uses a widget-based approach, and exposes a widget to handle the not
   - [Notification image not showing if app in background or terminated even when passed on Android device](#notification-image-not-showing-if-app-in-background-or-terminated-even-when-passed-on-android-device)
   - [Custom sounds in Android work in debug mode but not in release mode](#custom-sounds-in-android-work-in-debug-mode-but-not-in-release-mode)
 - **[🎯 Sample Usage](#-sample-usage)**
-- **[👤 Collaborators](#-collaborators)**
+- **[👤 Author](#-author)**
 
 ---
 
@@ -543,9 +545,11 @@ class _MainApp extends StatelessWidget {
 
 ---
 
-# 👤 Collaborators
+# 👤 Author
 
+Built and maintained by **Rithik Bhandari**, a mobile developer building cross-platform apps with Flutter.
 
-| Name | GitHub | Linkedin |
-|-----------------------------------|-------------------------------------|-------------------------------------|
-| Rithik Bhandari | [github/rithik-dev](https://github.com/rithik-dev) | [linkedin/rithik-bhandari](https://www.linkedin.com/in/rithik-bhandari) |
+- 🌐 Portfolio: **[rithikbhandari.dev](https://rithikbhandari.dev)**
+- 📦 More packages: [pub.dev/publishers/rithikbhandari.dev](https://pub.dev/publishers/rithikbhandari.dev/packages)
+- 💻 GitHub: [@rithik-dev](https://github.com/rithik-dev)
+- 💼 LinkedIn: [rithik-bhandari](https://www.linkedin.com/in/rithik-bhandari)
